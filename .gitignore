@@ -1,0 +1,57 @@
+## --- Visual Studio System & User Files ---
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## --- Output and Build Directories ---
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rm/
+[Aa]rm64/
+build/
+out/
+
+## --- C++ Build Artifacts & Intermediates ---
+*.obj
+*.ilk
+*.pdb
+*.tlog
+*.idb
+*.gch
+*.pch
+*.cbp
+*.vcxproj.user
+
+## --- Static & Dynamic Libraries ---
+*.lib
+*.a
+*.dll
+*.so
+*.dylib
+
+## --- Precompiled Headers & Cache ---
+*.ipch/
+*.aps
+*.ncb
+*.sdf
+*.opensdf
+*.sdf
+*.opendb
+*.db
+
+## --- Diagnostics & Logs ---
+*.log
+*.tlog
+*.lastbuildstate
+
+# --- Ignore third-party compiled binaries in Dependencies folder
+Dependencies/**/lib/
+Dependencies/**/*.lib
+Dependencies/**/*.dll
+Dependencies/**/*.so
+Dependencies/**/*.dylib
+Dependencies

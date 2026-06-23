@@ -1,0 +1,10 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="GLAD/GLAD.vcxproj" Id="a39d7b3e-ef4f-47de-97c6-31ae24127242" />
+  <Project Path="OTTERUS_EDITOR/OTTERUS_EDITOR.vcxproj" Id="3f536871-64a4-4fe4-a7dc-7ab84eb01dc4" />
+  <Project Path="OTTERUS_UTILITIES/OTTERUS_UTILITIES.vcxproj" Id="3826c018-264c-407a-ae67-2106f556dc48" />
+  <Project Path="OTTERUS_WINDOW/OTTERUS_WINDOW.vcxproj" Id="0c38259d-0941-46a3-a4ac-e9bee9dc3c11" />
+</Solution>
