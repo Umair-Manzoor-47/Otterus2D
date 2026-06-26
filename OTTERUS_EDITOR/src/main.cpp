@@ -4,6 +4,64 @@
 #include <glad/glad.h>
 #include <iostream>
 #include <SOIL/SOIL.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+class Camera2D {
+
+private:
+	int m_width, m_height;
+	float m_scale;
+	
+	glm::vec2 m_position;
+	glm::mat4 m_cameraMatrix, m_orthoProjection;
+
+	bool m_needsUpdate;
+public:
+
+	Camera2D() :
+		Camera2D(640, 480)
+	{}
+
+	Camera2D(int width, int height) :
+		m_width{ width }, m_height{ height }, m_scale{ 1.f },
+		m_position{ glm::vec2{0} }, m_cameraMatrix{ 1.f }, m_orthoProjection{ 1.f },
+		m_needsUpdate{ true }
+	{
+		m_orthoProjection = glm::ortho(
+			0.f,								// Left
+			static_cast<float>(m_width),		// Right
+			static_cast<float>(m_height),		// Top
+			0.f,								// Bottom
+			-1.f,								// Near
+			1.f									// Far
+		);
+	
+	}
+
+	inline void SetScale(float scale) { m_scale = scale; m_needsUpdate = true; }
+
+	inline glm::mat4 GetCameraMatrix() { return m_cameraMatrix; }
+
+	void Update() {
+	
+		if (!m_needsUpdate) return;
+
+		// translate
+		glm::vec3 translate{ -m_position.x, -m_position.y, 0.f };
+		m_cameraMatrix = glm::translate(m_orthoProjection, translate);
+
+		// scale
+		glm::vec3 scale{m_scale, m_scale, 0.f};
+		m_cameraMatrix *= glm::scale(glm::mat4(1.f), scale);
+
+		m_needsUpdate = false;
+
+	}
+
+
+};
+
 
 
 // struct for Texture
@@ -154,6 +212,11 @@ int main() {
 		return -1;
 	}
 
+	// Enable Blending
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
 	// Create temp texture
 	GLuint texID;
 	glGenTextures(1, &texID);
@@ -192,25 +255,32 @@ int main() {
 	//};
 
 	// Quad vertices
-	float vertices[] = {
-		 0.5f,  0.5f, 0.0f, (UVS.u + UVS.width), (UVS.v + UVS.height),  // top-right
-		 0.5f, -0.5f, 0.0f, (UVS.u + UVS.width), UVS.v, // bottom-right
-		-0.5f, -0.5f, 0.0f, UVS.u, UVS.v, // bottom-left
-		-0.5f,  0.5f, 0.0f, UVS.u, (UVS.v + UVS.height)   // top-left
-	};
-
-	// Swapped texture vertices
 	//float vertices[] = {
-	//	 0.5f,  0.5f, 0.0f, 1.f, 0.f,  // top-right
-	//	 0.5f, -0.5f, 0.0f, 1.f, 1.f,  // bottom-right
-	//	-0.5f, -0.5f, 0.0f, 0.f, 1.f,  // bottom-left
-	//	-0.5f,  0.5f, 0.0f, 0.f, 0.f   // top-left
+	//	 0.5f,  0.5f, 0.0f, (UVS.u + UVS.width), (UVS.v + UVS.height),  // top-right
+	//	 0.5f, -0.5f, 0.0f, (UVS.u + UVS.width), UVS.v, // bottom-right
+	//	-0.5f, -0.5f, 0.0f, UVS.u, UVS.v, // bottom-left
+	//	-0.5f,  0.5f, 0.0f, UVS.u, (UVS.v + UVS.height)   // top-left
 	//};
 
+	// Swapped texture vertices
+// Vertically flipped UVs
+	float vertices[] = {
+		26.f,  26.f, 0.0f, (UVS.u + UVS.width), UVS.v,                 // top-right
+		26.f,  10.f, 0.0f, (UVS.u + UVS.width), (UVS.v + UVS.height),  // bottom-right
+		10.f,  10.f, 0.0f, UVS.u, (UVS.v + UVS.height),					// bottom-left
+		10.f,  26.f, 0.0f, UVS.u, UVS.v									// top-left
+	};
 	GLuint indices[] = {
 		0, 1, 3,  // first triangle
 		1, 2, 3   // second triangle
 	};
+
+
+	// Create temp camera
+	Camera2D camera{};
+	camera.SetScale(5.f);
+
+
 
 	// Create temp vertices source
 	const char* vertexShaderSource =
@@ -218,9 +288,10 @@ int main() {
 		"layout (location = 0) in vec3 aPosition;\n"
 		"layout (location = 1) in vec2 aTexCoords;\n"
 		"out vec2 fragUVs;\n"
+		"uniform mat4 uProjection;\n"
 		"void main()\n"
 		"{\n"
-		"    gl_Position = vec4(aPosition, 1.0);\n"
+		"    gl_Position = uProjection * vec4(aPosition, 1.0);\n"
 		"    fragUVs = aTexCoords;\n"	
 		"}\0";
 
@@ -396,11 +467,16 @@ int main() {
 			window.GetHeight()
 		);
 
-		glClearColor(0.f, 0.f, 0.f, 1.f);
+		glClearColor(1.f, 1.f, 1.f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO);
+
+		auto projection = camera.GetCameraMatrix();
+		GLuint location = glGetUniformLocation(shaderProgram, "uProjection");
+
+		glUniformMatrix4fv(location, 1, GL_FALSE, &projection[0][0]);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texID);
@@ -409,6 +485,7 @@ int main() {
 		glBindVertexArray(0);
 
 		SDL_GL_SwapWindow(window.GetWindow().get());
+		camera.Update();
 	}
 
 	std::cout << "EXIT" << std::endl;
