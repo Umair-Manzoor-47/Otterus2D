@@ -3,6 +3,85 @@
 #include <SDL.h>
 #include <glad/glad.h>
 #include <iostream>
+#include <SOIL/SOIL.h>
+
+
+// struct for Texture
+
+struct uvs {
+
+
+	float u, v, width, height;
+
+	uvs() :
+		uvs(0, 0, 0, 0)
+	{}
+
+	uvs(float u, float v, float width, float height) :
+		u{ u }, v{ v }, width{ width }, height{ height }
+	{};
+};
+
+
+
+
+
+bool LoadTexture(const std::string& path, int& width, int& height, bool blended) {
+	int channels = 0;
+
+	unsigned char* image = SOIL_load_image(
+		path.c_str(),                              // filepath         -- Path to texture file including name
+		&width,									   // width            -- Width of image
+		&height,								   // height           -- Height of image
+		&channels,                                 // channels         -- Number of channels
+		SOIL_LOAD_AUTO                             // force channels   -- Force the channel count
+	);
+	
+	if (!image) {
+		
+		std::cout << "Failed to load image from [" << path << "] -- " << SOIL_last_result();
+		return false;
+	}
+
+
+	GLint format = GL_RGBA;
+
+	switch (channels) {
+	case 3: format = GL_RGB; break;
+	case 4: format = GL_RGBA; break;
+	}
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	if (!blended) {
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	}
+	else {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	}
+
+	glTexImage2D(
+		GL_TEXTURE_2D,                   // target              -- Specifies the target texture
+		0,								 // level               -- Level of detail, 0 is base image level
+		format,							 // internal format     -- Number of color components
+		width,							 // width               -- Width of image
+		height,                          // height              -- Height of image
+		0,								 // border
+		format,							 // format              -- Format of the pixel data
+		GL_UNSIGNED_BYTE,				 // type			    -- Type of pixel data
+		image							 // data
+	);
+
+	// once texture is created, we can free SOIL image data
+	SOIL_free_image_data(image);
+	
+	return true;
+
+}
 
 int main() {
 
@@ -64,6 +143,8 @@ int main() {
 	SDL_GL_MakeCurrent(window.GetWindow().get(), window.GetGLContext());
 	SDL_GL_SetSwapInterval(1);
 
+
+	// initialize Glad
 	if (gladLoadGLLoader(SDL_GL_GetProcAddress) == 0)
 	{
 		std::cout << "Failed to load openGL --> GLAD" << std::endl;
@@ -72,6 +153,36 @@ int main() {
 
 		return -1;
 	}
+
+	// Create temp texture
+	GLuint texID;
+	glGenTextures(1, &texID);
+	glBindTexture(GL_TEXTURE_2D, texID);
+	
+	// width and height for texture 
+	int width{ 0 }, height{ 0 };
+
+
+	// load texture
+	if (!LoadTexture("assets/textures/tiles.png", width, height, false)) {
+	
+		std::cout << "Failed to load texture." << std::endl;
+		return -1;
+	}
+
+	// lamda for uvs
+
+	uvs UVS;
+	auto generateUVs = [&](float startX, float startY, float spriteWidth, float spriteHeight)
+		{
+			UVS.width = spriteWidth / width;
+			UVS.height = spriteHeight / height;
+
+			UVS.u = startX * UVS.width;
+			UVS.v = startY * UVS.height;
+		};
+
+	generateUVs(1, 0, 16, 16);
 
 	// Temporary Vertices
 	//float vertices[] = {
@@ -82,11 +193,19 @@ int main() {
 
 	// Quad vertices
 	float vertices[] = {
-		 0.5f,  0.5f, 0.0f,  // top-right
-		 0.5f, -0.5f, 0.0f,  // bottom-right
-		-0.5f, -0.5f, 0.0f,  // bottom-left
-		-0.5f,  0.5f, 0.0f   // top-left
+		 0.5f,  0.5f, 0.0f, (UVS.u + UVS.width), (UVS.v + UVS.height),  // top-right
+		 0.5f, -0.5f, 0.0f, (UVS.u + UVS.width), UVS.v, // bottom-right
+		-0.5f, -0.5f, 0.0f, UVS.u, UVS.v, // bottom-left
+		-0.5f,  0.5f, 0.0f, UVS.u, (UVS.v + UVS.height)   // top-left
 	};
+
+	// Swapped texture vertices
+	//float vertices[] = {
+	//	 0.5f,  0.5f, 0.0f, 1.f, 0.f,  // top-right
+	//	 0.5f, -0.5f, 0.0f, 1.f, 1.f,  // bottom-right
+	//	-0.5f, -0.5f, 0.0f, 0.f, 1.f,  // bottom-left
+	//	-0.5f,  0.5f, 0.0f, 0.f, 0.f   // top-left
+	//};
 
 	GLuint indices[] = {
 		0, 1, 3,  // first triangle
@@ -97,9 +216,12 @@ int main() {
 	const char* vertexShaderSource =
 		"#version 450 core\n"
 		"layout (location = 0) in vec3 aPosition;\n"
+		"layout (location = 1) in vec2 aTexCoords;\n"
+		"out vec2 fragUVs;\n"
 		"void main()\n"
 		"{\n"
 		"    gl_Position = vec4(aPosition, 1.0);\n"
+		"    fragUVs = aTexCoords;\n"	
 		"}\0";
 
 	// Create shader
@@ -129,9 +251,12 @@ int main() {
 	const char* fragmentShaderSource =
 		"#version 450 core\n"
 		"out vec4 color;\n"
+		"in vec2 fragUVs;\n"
+		"uniform sampler2D uTexture;\n"
 		"void main()\n"
 		"{\n"
-		"color = vec4(1.0f, 0.0f, 1.0f, 1.0f);\n"
+		//"	color = vec4(1.0f, 0.0f, 1.0f, 1.0f);\n"
+		"	color = texture(uTexture, fragUVs);\n"
 		"}\0";
 
 	// Create shader
@@ -210,13 +335,11 @@ int main() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
 	glBufferData(
-		GL_ELEMENT_ARRAY_BUFFER,                          // The target buffer type
-		6 * sizeof(GLuint),     // The size in Bytes of the buffer object's new data store
-		indices,                                 // A pointer to the data that will be copied into data store
-		GL_STATIC_DRAW                            // Expected usage pattern of data store         
+		GL_ELEMENT_ARRAY_BUFFER,                    // The target buffer type
+		6 * sizeof(GLuint),							// The size in Bytes of the buffer object's new data store
+		indices,									// A pointer to the data that will be copied into data store
+		GL_STATIC_DRAW								// Expected usage pattern of data store         
 	);
-
-
 
 
 	glVertexAttribPointer(
@@ -224,11 +347,24 @@ int main() {
 		3,						  // Size	    -- Number of compoenent per vertex
 		GL_FLOAT,                 // Type       -- Data type of above components
 		GL_FALSE,                 // Normalized -- Specifies if fixed-point data values should be normalized
-		3 * sizeof(float),   	  // Stride     -- Specifies the byte offest between consecutive attributes
+		5 * sizeof(float),   	  // Stride     -- Specifies the byte offest between consecutive attributes
 		(void*)0                  // Pointer    -- Specifies the offset of the first compoenent
 	);
 
 	glEnableVertexAttribArray(0);
+	
+	glVertexAttribPointer(
+		1,						// Index
+		2,						// Size	
+		GL_FLOAT,				// Type
+		GL_FALSE,				// Normalized
+		5 * sizeof(float),      // Stride
+		reinterpret_cast<void*>(sizeof(float) * 3) // offset to the positional data to the first texture UV coords
+	
+	);
+
+	glEnableVertexAttribArray(1);
+	
 	glBindVertexArray(0);
 
 	// Window Loop
@@ -266,7 +402,9 @@ int main() {
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO);
 
-		//glDrawArrays(GL_TRIANGLES, 0, 6);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texID);
+
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 		glBindVertexArray(0);
 

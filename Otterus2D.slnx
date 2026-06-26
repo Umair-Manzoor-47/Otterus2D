@@ -7,4 +7,5 @@
   <Project Path="OTTERUS_EDITOR/OTTERUS_EDITOR.vcxproj" Id="3f536871-64a4-4fe4-a7dc-7ab84eb01dc4" />
   <Project Path="OTTERUS_UTILITIES/OTTERUS_UTILITIES.vcxproj" Id="3826c018-264c-407a-ae67-2106f556dc48" />
   <Project Path="OTTERUS_WINDOW/OTTERUS_WINDOW.vcxproj" Id="0c38259d-0941-46a3-a4ac-e9bee9dc3c11" />
+  <Project Path="SOIL/SOIL.vcxproj" Id="666dfff4-a1b6-4b2a-8b15-d0efc8db8794" />
 </Solution>
