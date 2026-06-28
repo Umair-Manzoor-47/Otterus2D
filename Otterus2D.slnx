@@ -5,6 +5,7 @@
   </Configurations>
   <Project Path="GLAD/GLAD.vcxproj" Id="a39d7b3e-ef4f-47de-97c6-31ae24127242" />
   <Project Path="OTTERUS_EDITOR/OTTERUS_EDITOR.vcxproj" Id="3f536871-64a4-4fe4-a7dc-7ab84eb01dc4" />
+  <Project Path="OTTERUS_LOGGER/OTTERUS_LOGGER.vcxproj" Id="9806fa5d-7887-4de2-8222-a101ea980a72" />
   <Project Path="OTTERUS_RENDERING/OTTERUS_RENDERING.vcxproj" Id="b468db63-1d5d-4e0d-9f98-cf66d0f7f3ca" />
   <Project Path="OTTERUS_UTILITIES/OTTERUS_UTILITIES.vcxproj" Id="3826c018-264c-407a-ae67-2106f556dc48" />
   <Project Path="OTTERUS_WINDOW/OTTERUS_WINDOW.vcxproj" Id="0c38259d-0941-46a3-a4ac-e9bee9dc3c11" />

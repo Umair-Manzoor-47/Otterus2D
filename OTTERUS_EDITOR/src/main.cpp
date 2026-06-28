@@ -8,6 +8,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <Rendering/Essentials/ShaderLoader.h>
 
+#include <Logger/Logger.h>
+
+
 
 class Camera2D {
 
@@ -99,7 +102,7 @@ bool LoadTexture(const std::string& path, int& width, int& height, bool blended)
 	
 	if (!image) {
 		
-		std::cout << "Failed to load image from [" << path << "] -- " << SOIL_last_result();
+		std::cout << "Failed to load image from [" << path << "] -- " << SOIL_last_result() << std::endl;
 		return false;
 	}
 
@@ -144,6 +147,8 @@ bool LoadTexture(const std::string& path, int& width, int& height, bool blended)
 }
 
 int main() {
+
+	OTTERUS_INIT_LOGS(true, true);
 
 	bool running { true };
 
@@ -231,13 +236,15 @@ int main() {
 	// load texture
 	if (!LoadTexture("assets/textures/tiles.png", width, height, false)) {
 	
-		std::cout << "Failed to load texture." << std::endl;
+		OTTERUS_ERROR("Failed to load texture.");
 		return -1;
 	}
 
 	// lamda for uvs
 
 	uvs UVS;
+	OTTERUS_LOG("Loaded Texture: [width = {0}, height = {1} ]", width, height);
+	OTTERUS_WARN("Loaded Texture: [width = {0}, height = {1} ]", width, height);
 	auto generateUVs = [&](float startX, float startY, float spriteWidth, float spriteHeight)
 		{
 			UVS.width = spriteWidth / width;
