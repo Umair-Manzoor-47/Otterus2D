@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{3f536871-64a4-4fe4-a7dc-7ab84eb01dc4}</ProjectGuid>
-    <RootNamespace>OTTERUSEDITOR</RootNamespace>
+    <ProjectGuid>{9806fa5d-7887-4de2-8222-a101ea980a72}</ProjectGuid>
+    <RootNamespace>OTTERUSLOGGER</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -70,10 +70,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\OTTERUS_UTILITIES;$(SolutionDir).\OTTERUS_WINDOW;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\OTTERUS_LOGGER;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir).\Dependencies\SDL\lib;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -86,6 +82,9 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Manifest>
+      <EnableSegmentHeap>true</EnableSegmentHeap>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -101,6 +100,9 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Manifest>
+      <EnableSegmentHeap>true</EnableSegmentHeap>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -113,8 +115,10 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <Manifest>
+      <EnableSegmentHeap>true</EnableSegmentHeap>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -130,33 +134,18 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Manifest>
+      <EnableSegmentHeap>true</EnableSegmentHeap>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp" />
+    <ClInclude Include="Logger\Logger.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GLAD\GLAD.vcxproj">
-      <Project>{a39d7b3e-ef4f-47de-97c6-31ae24127242}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\OTTERUS_LOGGER\OTTERUS_LOGGER.vcxproj">
-      <Project>{9806fa5d-7887-4de2-8222-a101ea980a72}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\OTTERUS_RENDERING\OTTERUS_RENDERING.vcxproj">
-      <Project>{b468db63-1d5d-4e0d-9f98-cf66d0f7f3ca}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\OTTERUS_UTILITIES\OTTERUS_UTILITIES.vcxproj">
-      <Project>{3826c018-264c-407a-ae67-2106f556dc48}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\OTTERUS_WINDOW\OTTERUS_WINDOW.vcxproj">
-      <Project>{0c38259d-0941-46a3-a4ac-e9bee9dc3c11}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\SOIL\SOIL.vcxproj">
-      <Project>{666dfff4-a1b6-4b2a-8b15-d0efc8db8794}</Project>
-    </ProjectReference>
+    <None Include="Logger\Logger.inl" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\shaders\basic_shader.frag" />
-    <None Include="assets\shaders\basic_shader.vert" />
+    <ClCompile Include="Logger\Logger.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
