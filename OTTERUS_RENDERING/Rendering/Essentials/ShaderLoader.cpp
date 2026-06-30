@@ -1,6 +1,7 @@
 #include "ShaderLoader.h"
 #include <iostream>
 #include <fstream>
+#include <logger/Logger.h>
 
 namespace otterus_rendering{
 
@@ -15,7 +16,7 @@ namespace otterus_rendering{
         if (vertex == 0 || fragment == 0) return 0;
 
         if (!linkShaders(program, vertex, fragment)) {
-            std::cout << "Failed to link shader." << std::endl;
+            OTTERUS_ERROR("Failed to link shader.");
             return 0;
         }
 
@@ -29,7 +30,7 @@ namespace otterus_rendering{
 
         if(ifs.fail()){
         
-            std::cout << "Failed to open shader file [" << filepath << "]" << std::endl;
+            OTTERUS_ERROR("Failed to open shader file [{0}] .", filepath);
             return 0;
         }
 
@@ -51,7 +52,7 @@ namespace otterus_rendering{
 
         if (!compileSuccess(shaderID)) {
             
-            std::cout << "Failed to compile shader [" << filepath << "]" << std::endl;
+            OTTERUS_ERROR("Failed to compile shader [{0}] .", filepath);
             return 0;
         }
 
@@ -72,7 +73,7 @@ namespace otterus_rendering{
             std::string errorLog(maxLength, ' ');
 
             glGetShaderInfoLog(shader, maxLength, &maxLength, errorLog.data());
-            std::cout << "Failed to compile shader, " << std::string{ errorLog } << std::endl;
+            OTTERUS_ERROR("Failed to compile shader, {0}" , std::string{ errorLog } );
             
             glDeleteShader(shader);
             

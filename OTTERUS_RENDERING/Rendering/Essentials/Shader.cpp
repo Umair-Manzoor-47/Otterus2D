@@ -1,5 +1,6 @@
 #include "Shader.h"
 #include <iostream>
+#include <logger/Logger.h>
 
 namespace otterus_rendering {
 	
@@ -13,7 +14,7 @@ namespace otterus_rendering {
 
 		if (location ==  GL_INVALID_INDEX) {
 
-			std::cout << "Uniform name [" << uniformName << "]" << std::endl;
+			OTTERUS_ERROR("Uniform name [{0}] not found in shader.", uniformName);
 			return -1;
 		}
 

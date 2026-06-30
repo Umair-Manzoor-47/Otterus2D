@@ -148,7 +148,7 @@ int main() {
 
 
 	// Create temp texture
-	auto texture = otterus_rendering::TextureLoader::Create("assets/textures/tiles.png", false);
+	auto texture = otterus_rendering::TextureLoader::Create("assets/textures/tiles.png", otterus_rendering::Texture::TextureType::BLENDED);
 	
 	if (!texture) {
 		OTTERUS_ERROR("Failed to load texture.");
