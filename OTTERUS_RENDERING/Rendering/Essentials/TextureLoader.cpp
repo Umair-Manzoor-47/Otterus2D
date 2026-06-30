@@ -53,7 +53,7 @@ namespace otterus_rendering {
 		return true;
 	}
 
-	std::shared_ptr<Texture> TextureLoader::Create(const std::string& path, bool blended)
+	std::shared_ptr<Texture> otterus_rendering::TextureLoader::Create(const std::string& path, Texture::TextureType type)
 	{
 		int channels = 0, width{ 0 }, height{ 0 };
 		unsigned char* image = SOIL_load_image(
@@ -66,16 +66,32 @@ namespace otterus_rendering {
 
 		if (!image) {
 
-			//OTTERUS_ERROR("Failed to load image from {0} -- {1}", path, SOIL_last_result());
-			OTTERUS_ERROR("Failed to load image from {0}", path);
+			OTTERUS_ERROR("Failed to load image from [{0}] -- {1}", path, SOIL_last_result());
+			//OTTERUS_ERROR("Failed to load image from {0}", path);
 			return nullptr;
 		}
 
 		GLuint texID = CreateTexture();
-		SetTextureParams(blended);
+
+		switch (type) {
+		case Texture::TextureType::PIXEL:
+			SetTextureParams(false);
+			break;
+		case Texture::TextureType::BLENDED:
+			SetTextureParams(true);
+			break;
+		
+		// TODO: Add more texture type as needed, EX: framebuffer texture
+		default:
+			assert(false && "Current texture type is not defined, Please use a defined texture type.");
+			return nullptr;
+		}
+		//SetTextureParams(blended);
+		
+		
 		UploadToGPU(image, width, height, channels);
 
-		return std::make_shared<Texture>(texID, width, height);
+		return std::make_shared<Texture>(texID, width, height, type, path);
 	}
 
 }
