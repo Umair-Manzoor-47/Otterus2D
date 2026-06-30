@@ -27,8 +27,8 @@ namespace otterus_logger {
 		}
 
 		std::stringstream ss;
-		ss << "OTTERUS [INFO]: " << currentDateTime() << "-" << std::vformat(message, std::make_format_args(std::forward<Args>(args)...)) << "\n";
-
+		ss << "OTTERUS [INFO]: " << currentDateTime() << "-" << std::vformat(message, std::make_format_args(args...)) << "\n";
+		
 		if (m_consoleLog) {
 
 			HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -55,7 +55,7 @@ namespace otterus_logger {
 		}
 
 		std::stringstream ss;
-		ss << "OTTERUS [WARN]: " << currentDateTime() << "-" << std::vformat(message, std::make_format_args(std::forward<Args>(args)...)) << "\n";
+		ss << "OTTERUS [WARN]: " << currentDateTime() << "-" << std::vformat(message, std::make_format_args(args...)) << "\n";
 
 		if (m_consoleLog) {
 
@@ -84,9 +84,10 @@ namespace otterus_logger {
 		}
 
 		std::stringstream ss;
-		ss << "OTTERUS [ERROR]: " << currentDateTime() << "-" << std::vformat(message, std::make_format_args(std::forward<Args>(args)...)) << 
-			"\nFUNC: " << location.function_name() <<
-			"\nLINE: " << location.line() << "\n\n";
+		ss << "OTTERUS [ERROR]: " << currentDateTime() << "-"
+			<< std::vformat(message, std::make_format_args(args...))
+			<< "\nFUNC: " << location.function_name()
+			<< "\nLINE: " << location.line() << "\n\n";
 
 		if (m_consoleLog) {
 
