@@ -9,6 +9,7 @@
 #include <Rendering/Essentials/ShaderLoader.h>
 #include <Rendering/Essentials/TextureLoader.h>
 #include <Rendering/Core/Camera2D.h>
+#include <Rendering/Essentials/Vertex.h>
 
 #include <Logger/Logger.h>
 
@@ -135,12 +136,34 @@ int main() {
 
 	// Swapped texture vertices
 // Vertically flipped UVs
-	float vertices[] = {
-		26.f,  26.f, 0.0f, (UVS.u + UVS.width), UVS.v,                 // top-right
-		26.f,  10.f, 0.0f, (UVS.u + UVS.width), (UVS.v + UVS.height),  // bottom-right
-		10.f,  10.f, 0.0f, UVS.u, (UVS.v + UVS.height),					// bottom-left
-		10.f,  26.f, 0.0f, UVS.u, UVS.v									// top-left
-	};
+	//float vertices[] = {
+	//	26.f,  26.f, 0.0f, (UVS.u + UVS.width), UVS.v,                 // top-right
+	//	26.f,  10.f, 0.0f, (UVS.u + UVS.width), (UVS.v + UVS.height),  // bottom-right
+	//	10.f,  10.f, 0.0f, UVS.u, (UVS.v + UVS.height),					// bottom-left
+	//	10.f,  26.f, 0.0f, UVS.u, UVS.v									// top-left
+	//};
+	std::vector<otterus_rendering::Vertex> vertices{};
+	otterus_rendering::Vertex vTL{}, vTR{}, vBL{}, vBR{};
+
+	vTL.position = glm::vec2{ 10.f,  26.f };
+	vTL.uvs = glm::vec2{ UVS.u, (UVS.v + UVS.height) };
+
+	vTR.position = glm::vec2{ 10.f,  10.f };
+	vTR.uvs = glm::vec2{ UVS.u, UVS.v };
+
+	vBL.position = glm::vec2{ 26.f,  10.f };
+	vBL.uvs = glm::vec2{ (UVS.u + UVS.width), UVS.v };
+
+	vBR.position = glm::vec2{ 26.f,  26.f };
+	vBR.uvs = glm::vec2{ (UVS.u + UVS.width), (UVS.v + UVS.height) };
+
+	vertices.push_back(vTL);
+	vertices.push_back(vTR);
+	vertices.push_back(vBL);
+	vertices.push_back(vBR);
+
+
+
 	GLuint indices[] = {
 		0, 1, 3,  // first triangle
 		1, 2, 3   // second triangle
@@ -174,10 +197,10 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
 	glBufferData(
-		GL_ARRAY_BUFFER,                          // The target buffer type
-		sizeof(vertices) * 3 * sizeof(float),     // The size in Bytes of the buffer object's new data store
-		vertices,                                 // A pointer to the data that will be copied into data store
-		GL_STATIC_DRAW                            // Expected usage pattern of data store         
+		GL_ARRAY_BUFFER,											// The target buffer type
+		vertices.size() * sizeof(otterus_rendering::Vertex),		// The size in Bytes of the buffer object's new data store
+		vertices.data(),											// A pointer to the data that will be copied into data store
+		GL_STATIC_DRAW												// Expected usage pattern of data store         
 		);
 
 	// Bind IBO
@@ -193,28 +216,38 @@ int main() {
 
 
 	glVertexAttribPointer(
-		0,                        // Attrib 0   -- Layout position in shader source code
-		3,						  // Size	    -- Number of compoenent per vertex
-		GL_FLOAT,                 // Type       -- Data type of above components
-		GL_FALSE,                 // Normalized -- Specifies if fixed-point data values should be normalized
-		5 * sizeof(float),   	  // Stride     -- Specifies the byte offest between consecutive attributes
-		(void*)0                  // Pointer    -- Specifies the offset of the first compoenent
+		0,													 // Attrib 0   -- Layout position in shader source code
+		2,													 // Size	    -- Number of compoenent per vertex
+		GL_FLOAT,											 // Type       -- Data type of above components
+		GL_FALSE,											 // Normalized -- Specifies if fixed-point data values should be normalized
+		sizeof(otterus_rendering::Vertex),   				 // Stride     -- Specifies the byte offest between consecutive attributes
+		(void*)offsetof(otterus_rendering::Vertex, position) // Pointer    -- Specifies the offset of the first compoenent
 	);
 
 	glEnableVertexAttribArray(0);
 	
 	glVertexAttribPointer(
-		1,						// Index
-		2,						// Size	
-		GL_FLOAT,				// Type
-		GL_FALSE,				// Normalized
-		5 * sizeof(float),      // Stride
-		reinterpret_cast<void*>(sizeof(float) * 3) // offset to the positional data to the first texture UV coords
-	
+		1,													// Index
+		2,													// Size	
+		GL_FLOAT,											// Type
+		GL_FALSE,											// Normalized
+		sizeof(otterus_rendering::Vertex),					// Stride
+		(void*)offsetof(otterus_rendering::Vertex, uvs)		// offset to the positional data to the first texture UV coords
 	);
 
 	glEnableVertexAttribArray(1);
 	
+	glVertexAttribPointer(
+		2,													// Index
+		4,													// Size	
+		GL_UNSIGNED_BYTE,											// Type
+		GL_TRUE,											// Normalized
+		sizeof(otterus_rendering::Vertex),					// Stride
+		(void*)offsetof(otterus_rendering::Vertex, color)		// offset to the positional data to the first texture UV coords
+	);
+
+	glEnableVertexAttribArray(2);
+
 	glBindVertexArray(0);
 
 	// Window Loop
