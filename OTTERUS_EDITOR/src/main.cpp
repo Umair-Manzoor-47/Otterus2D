@@ -8,65 +8,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <Rendering/Essentials/ShaderLoader.h>
 #include <Rendering/Essentials/TextureLoader.h>
+#include <Rendering/Core/Camera2D.h>
 
 #include <Logger/Logger.h>
-
-
-
-class Camera2D {
-
-private:
-	int m_width, m_height;
-	float m_scale;
-	
-	glm::vec2 m_position;
-	glm::mat4 m_cameraMatrix, m_orthoProjection;
-
-	bool m_needsUpdate;
-public:
-
-	Camera2D() :
-		Camera2D(640, 480)
-	{}
-
-	Camera2D(int width, int height) :
-		m_width{ width }, m_height{ height }, m_scale{ 1.f },
-		m_position{ glm::vec2{0} }, m_cameraMatrix{ 1.f }, m_orthoProjection{ 1.f },
-		m_needsUpdate{ true }
-	{
-		m_orthoProjection = glm::ortho(
-			0.f,								// Left
-			static_cast<float>(m_width),		// Right
-			static_cast<float>(m_height),		// Top
-			0.f,								// Bottom
-			-1.f,								// Near
-			1.f									// Far
-		);
-	
-	}
-
-	inline void SetScale(float scale) { m_scale = scale; m_needsUpdate = true; }
-
-	inline glm::mat4 GetCameraMatrix() { return m_cameraMatrix; }
-
-	void Update() {
-	
-		if (!m_needsUpdate) return;
-
-		// translate
-		glm::vec3 translate{ -m_position.x, -m_position.y, 0.f };
-		m_cameraMatrix = glm::translate(m_orthoProjection, translate);
-
-		// scale
-		glm::vec3 scale{m_scale, m_scale, 0.f};
-		m_cameraMatrix *= glm::scale(glm::mat4(1.f), scale);
-
-		m_needsUpdate = false;
-
-	}
-
-
-};
 
 
 int main() {
@@ -204,7 +148,7 @@ int main() {
 
 
 	// Create temp camera
-	Camera2D camera{};
+	otterus_rendering::Camera2D camera{};
 	camera.SetScale(5.f);
 
 
