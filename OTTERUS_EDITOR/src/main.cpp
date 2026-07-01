@@ -1,4 +1,5 @@
 #define SDL_MAIN_HANDLED 1;
+#define NOMINMAX
 #include <windowing/window/window.h>
 #include <SDL.h>
 #include <glad/glad.h>
@@ -10,9 +11,42 @@
 #include <Rendering/Essentials/TextureLoader.h>
 #include <Rendering/Core/Camera2D.h>
 #include <Rendering/Essentials/Vertex.h>
+#include <entt.hpp>
 
 #include <Logger/Logger.h>
 
+
+// Temporary will move it to sprite
+
+struct UVs {
+	float u{ 0.f }, v{ 0.f }, uv_width{ 0.f }, uv_height{ 0.f };
+};
+
+struct TransformComponent {
+
+	glm::vec2 position{ glm::vec2{0.f} }, scale{ glm::vec2{1.f} };
+	float rotation{0.f};
+};
+
+struct SpriteComponent {
+	float width{ 0.f }, height{ 0.f };
+	
+	UVs uvs{.u=0.f, .v = 0.f, .uv_width = 0.f, .uv_height = 0.f};
+
+	otterus_rendering::Color color{ .r = 255, .g = 255, .b = 255, .a = 255 };
+
+	int start_x{0}, start_y{0};
+
+	void generate_uvs(float textureWidth, float textureHeight)
+	{
+		uvs.uv_width = width / textureWidth;
+		uvs.uv_height = height / textureHeight;
+
+		uvs.u = start_x * uvs.uv_width;
+		uvs.v = start_y * uvs.uv_height;
+	};
+
+};
 
 int main() {
 
@@ -92,6 +126,15 @@ int main() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
+	// Registry from EnTT 
+	auto pRegistry = std::make_unique<entt::registry>();
+	if (!pRegistry) {
+		OTTERUS_ERROR("Failed to create the EnTT registry");
+		return -1;
+	}
+
+
+
 	// Create temp texture
 	auto texture = otterus_rendering::TextureLoader::Create("assets/textures/tiles.png", otterus_rendering::Texture::TextureType::BLENDED);
 	
@@ -102,60 +145,61 @@ int main() {
 
 	int width = texture->GetWidth();
 	int height = texture->GetHeight();
-
-	// lamda for uvs
-
-	otterus_rendering::uvs UVS;
 	OTTERUS_LOG("Loaded Texture: [width = {0}, height = {1} ]", width, height);
 	OTTERUS_WARN("Loaded Texture: [width = {0}, height = {1} ]", width, height);
-	auto generateUVs = [&](float startX, float startY, float spriteWidth, float spriteHeight)
-		{
-			UVS.width = spriteWidth / width;
-			UVS.height = spriteHeight / height;
 
-			UVS.u = startX * UVS.width;
-			UVS.v = startY * UVS.height;
-		};
+	UVs UVS;
+	
+	// Create Entities
+	auto ent1 = pRegistry->create();
 
-	generateUVs(1, 0, 16, 16);
+	auto& transform = pRegistry->emplace<TransformComponent>(ent1, TransformComponent{
+		.position = glm::vec2{10.f, 10.f},
+		.scale = glm::vec2{1.f, 1.f},
+		.rotation = 0.f
+		});
 
-	// Temporary Vertices
-	//float vertices[] = {
-	//	0.0f, 0.5f, 0.f,
-	//	-0.5f, -0.5f, 0.f,
-	//	0.5f, -0.5f, 0.f,
-	//};
+	auto& sprite = pRegistry->emplace<SpriteComponent>(ent1, SpriteComponent{
+	.width = 16.f,
+	.height = 16.f,
+	.color = otterus_rendering::Color{.r = 0, .g = 255, .b = 255, .a = 255 },
+	.start_x = 0,
+	.start_y = 0,
+	});
 
-	// Quad vertices
-	//float vertices[] = {
-	//	 0.5f,  0.5f, 0.0f, (UVS.u + UVS.width), (UVS.v + UVS.height),  // top-right
-	//	 0.5f, -0.5f, 0.0f, (UVS.u + UVS.width), UVS.v, // bottom-right
-	//	-0.5f, -0.5f, 0.0f, UVS.u, UVS.v, // bottom-left
-	//	-0.5f,  0.5f, 0.0f, UVS.u, (UVS.v + UVS.height)   // top-left
-	//};
+	sprite.generate_uvs(texture->GetWidth(), texture->GetHeight());
+	std::vector<otterus_rendering::Vertex> vertices;
+	vertices.reserve(4);
 
-	// Swapped texture vertices
-// Vertically flipped UVs
-	//float vertices[] = {
-	//	26.f,  26.f, 0.0f, (UVS.u + UVS.width), UVS.v,                 // top-right
-	//	26.f,  10.f, 0.0f, (UVS.u + UVS.width), (UVS.v + UVS.height),  // bottom-right
-	//	10.f,  10.f, 0.0f, UVS.u, (UVS.v + UVS.height),					// bottom-left
-	//	10.f,  26.f, 0.0f, UVS.u, UVS.v									// top-left
-	//};
-	std::vector<otterus_rendering::Vertex> vertices{};
-	otterus_rendering::Vertex vTL{}, vTR{}, vBL{}, vBR{};
+	const float left = transform.position.x;
+	const float top = transform.position.y;
+	const float right = left + sprite.width * transform.scale.x;
+	const float bottom = top + sprite.height * transform.scale.y;
 
-	vTL.position = glm::vec2{ 10.f,  26.f };
-	vTL.uvs = glm::vec2{ UVS.u, (UVS.v + UVS.height) };
+	otterus_rendering::Vertex vTL{
+		.position = { left, bottom },
+		.uvs = { sprite.uvs.u, sprite.uvs.v + sprite.uvs.uv_height },
+		.color = sprite.color
+	};
 
-	vTR.position = glm::vec2{ 10.f,  10.f };
-	vTR.uvs = glm::vec2{ UVS.u, UVS.v };
+	otterus_rendering::Vertex vTR{
+		.position = { left, top },
+		.uvs = { sprite.uvs.u, sprite.uvs.v },
+		.color = sprite.color
+	};
 
-	vBL.position = glm::vec2{ 26.f,  10.f };
-	vBL.uvs = glm::vec2{ (UVS.u + UVS.width), UVS.v };
+	otterus_rendering::Vertex vBL{
+		.position = { right, top },
+		.uvs = { sprite.uvs.u + sprite.uvs.uv_width, sprite.uvs.v },
+		.color = sprite.color
+	};
 
-	vBR.position = glm::vec2{ 26.f,  26.f };
-	vBR.uvs = glm::vec2{ (UVS.u + UVS.width), (UVS.v + UVS.height) };
+	otterus_rendering::Vertex vBR{
+		.position = { right, bottom },
+		.uvs = { sprite.uvs.u + sprite.uvs.uv_width,
+				 sprite.uvs.v + sprite.uvs.uv_height },
+		.color = sprite.color
+	};
 
 	vertices.push_back(vTL);
 	vertices.push_back(vTR);
