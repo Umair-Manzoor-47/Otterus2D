@@ -4,6 +4,7 @@
     <Platform Name="x86" />
   </Configurations>
   <Project Path="GLAD/GLAD.vcxproj" Id="a39d7b3e-ef4f-47de-97c6-31ae24127242" />
+  <Project Path="OTTERUS_CORE/OTTERUS_CORE.vcxproj" Id="a7c25e7e-66af-438a-8ca1-3388df279267" />
   <Project Path="OTTERUS_EDITOR/OTTERUS_EDITOR.vcxproj" Id="3f536871-64a4-4fe4-a7dc-7ab84eb01dc4" />
   <Project Path="OTTERUS_LOGGER/OTTERUS_LOGGER.vcxproj" Id="9806fa5d-7887-4de2-8222-a101ea980a72" />
   <Project Path="OTTERUS_RENDERING/OTTERUS_RENDERING.vcxproj" Id="b468db63-1d5d-4e0d-9f98-cf66d0f7f3ca" />
