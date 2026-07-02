@@ -3,19 +3,6 @@
 #include <string>
 
 namespace otterus_rendering {
-	// struct for Texture
-
-	struct uvs {
-		float u, v, width, height;
-
-		uvs() :
-			uvs(0, 0, 0, 0)
-		{}
-
-		uvs(float u, float v, float width, float height) :
-			u{ u }, v{ v }, width{ width }, height{ height }
-		{};
-	};
 
 	class Texture {
 	
