@@ -17,6 +17,7 @@ namespace otterus_rendering {
 		GLuint GetUniformLocation(const std::string& uniformName);
 
 	public:
+		Shader();
 		Shader(GLuint shaderProgram, const std::string& vertexSrcPath, const std::string& fragmentSrcPath);
 		~Shader();
 

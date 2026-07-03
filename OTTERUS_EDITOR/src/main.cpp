@@ -17,6 +17,8 @@
 #include <Core/ECS/Components/SpriteComponent.h>
 #include <Core/ECS/Components/Identification.h>
 
+#include <Core/Resources/AssetManager.h>
+
 #include <Logger/Logger.h>
 
 
@@ -99,18 +101,22 @@ int main() {
 
 
 
-
-
-	// Create temp texture
-	auto texture = otterus_rendering::TextureLoader::Create("assets/textures/tiles.png", otterus_rendering::Texture::TextureType::BLENDED);
-	
-	if (!texture) {
-		OTTERUS_ERROR("Failed to load texture.");
+	auto assetManager = std::make_shared<otterus_resources::AssetManager>();
+	if (!assetManager) {
+		OTTERUS_ERROR("Failed to create Asset Manager.");
 		return -1;
 	}
 
-	int width = texture->GetWidth();
-	int height = texture->GetHeight();
+	if (!assetManager->AddTexture("Tile", "assets/textures/tiles.png", true)) {
+		OTTERUS_ERROR("Failed to create and add Texture.");
+		return -1;
+	}
+
+	// Create temp texture
+	auto texture = assetManager->GetTexture("Tile");
+	
+	int width = texture.GetWidth();
+	int height = texture.GetHeight();
 	OTTERUS_LOG("Loaded Texture: [width = {0}, height = {1} ]", width, height);
 	OTTERUS_WARN("Loaded Texture: [width = {0}, height = {1} ]", width, height);
 
@@ -141,7 +147,7 @@ int main() {
 	OTTERUS_LOG("Entity Name={0}, group={1}, id={2} ", id.name, id.group, id.entity_id);
 
 
-	sprite.generate_uvs(texture->GetWidth(), texture->GetHeight());
+	sprite.generate_uvs(texture.GetWidth(), texture.GetHeight());
 	std::vector<otterus_rendering::Vertex> vertices;
 	vertices.reserve(4);
 
@@ -192,13 +198,11 @@ int main() {
 	otterus_rendering::Camera2D camera{};
 	camera.SetScale(5.f);
 
+	assetManager->AddShader("basic", "assets/shaders/basic_shader.vert", "assets/shaders/basic_shader.frag");
 
-	auto shader = otterus_rendering::ShaderLoader::Create("assets/shaders/basic_shader.vert", "assets/shaders/basic_shader.frag");
 
-	if (!shader) {
-		std::cout << "Failed to create the shader." << std::endl;
-		return -1;
-	}
+	auto shader = assetManager->GetShader("basic");
+
 
 	// Create Vertex Array Object (VAO) and Vertex Buffer Object (VBO)
 	GLuint VAO, VBO, IBO;
@@ -300,22 +304,22 @@ int main() {
 		glClearColor(1.f, 1.f, 1.f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		shader->Enable();
+		shader.Enable();
 
 		glBindVertexArray(VAO);
 
 		auto projection = camera.GetCameraMatrix();
-		shader->SetUniformMat4("uProjection", projection);
+		shader.SetUniformMat4("uProjection", projection);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture->GetID());
+		glBindTexture(GL_TEXTURE_2D, texture.GetID());
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 		glBindVertexArray(0);
 
 		SDL_GL_SwapWindow(window.GetWindow().get());
 		camera.Update();
-		shader->Disable();
+		shader.Disable();
 	}
 
 	std::cout << "EXIT" << std::endl;

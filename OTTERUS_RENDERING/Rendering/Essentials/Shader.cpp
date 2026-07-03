@@ -22,6 +22,11 @@ namespace otterus_rendering {
 
 		return location;
 	}
+
+	Shader::Shader() :
+		Shader(0, "", "")
+	{}
+
 	Shader::Shader(GLuint shaderProgram, const std::string& vertexSrcPath, const std::string& fragmentSrcPath) :
 		m_shaderProgramID{ shaderProgram }, m_vertexSrcPath{ vertexSrcPath }, m_fragmentSrcPath{fragmentSrcPath} 
 	{}
