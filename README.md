@@ -42,8 +42,8 @@ asset loading — while keeping the code clean and well-structured.
 
 
 ## Planned
-- [ ] ECS with EnTT
-- [ ] Asset Manager
+- [x] ECS with EnTT
+- [x] Asset Manager
 - [ ] Lua Scripting support
 - [ ] Renderer System
 - [ ] Input system
