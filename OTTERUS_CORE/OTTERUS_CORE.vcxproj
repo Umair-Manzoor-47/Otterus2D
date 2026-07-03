@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\Dependencies\glm;D:\Hiking\Otterus2D\Dependencies\entt;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\SOIL\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -142,11 +142,17 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GLAD\GLAD.vcxproj">
+      <Project>{a39d7b3e-ef4f-47de-97c6-31ae24127242}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\OTTERUS_LOGGER\OTTERUS_LOGGER.vcxproj">
       <Project>{9806fa5d-7887-4de2-8222-a101ea980a72}</Project>
     </ProjectReference>
     <ProjectReference Include="..\OTTERUS_RENDERING\OTTERUS_RENDERING.vcxproj">
       <Project>{b468db63-1d5d-4e0d-9f98-cf66d0f7f3ca}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\SOIL\SOIL.vcxproj">
+      <Project>{666dfff4-a1b6-4b2a-8b15-d0efc8db8794}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -155,10 +161,12 @@
     <ClInclude Include="Core\ECS\Components\TransformComponent.h" />
     <ClInclude Include="Core\ECS\Entity.h" />
     <ClInclude Include="Core\ECS\Registry.h" />
+    <ClInclude Include="Core\Resources\AssetManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\ECS\Entity.cpp" />
     <ClCompile Include="Core\ECS\Registry.cpp" />
+    <ClCompile Include="Core\Resources\AssetManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Core\ECS\Entity.inl" />
