@@ -63,13 +63,14 @@ namespace otterus_resources {
         return true;
     }
 
-    const otterus_rendering::Shader& AssetManager::GetShader(const std::string& shaderName)
+    otterus_rendering::Shader& AssetManager::GetShader(const std::string& shaderName)
     {
         auto shaderItr = m_mapShaders.find(shaderName);
         if (shaderItr == m_mapShaders.end()) {
 
             OTTERUS_ERROR("Failed to get shader [{0}] -- Does not exist.", shaderName);
-            return otterus_rendering::Shader();
+            otterus_rendering::Shader shader{};
+            return shader;
         }
 
         return *shaderItr->second;
