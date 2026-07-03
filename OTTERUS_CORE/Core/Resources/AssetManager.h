@@ -23,7 +23,7 @@ namespace otterus_resources {
 		const otterus_rendering::Texture& GetTexture(const std::string& textureName);
 
 		bool AddShader(const std::string & shaderName, const std::string & vertexPath, const std::string & fragmentPath);
-		const otterus_rendering::Shader& GetShader(const std::string& shaderName);
+		otterus_rendering::Shader& GetShader(const std::string& shaderName);
 
 	};
 
