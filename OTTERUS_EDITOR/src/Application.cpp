@@ -173,6 +173,41 @@ namespace otterus_editor {
 			1, 2, 3   // second triangle
 		};
 
+		// Create script module
+		auto lua = std::make_shared<sol::state>();
+
+		if (!lua) {
+		
+			OTTERUS_ERROR("Failed to create the lua state.");
+			return false;
+		}
+
+		lua->open_libraries(sol::lib::base, sol::lib::math, sol::lib::os, sol::lib::table, sol::lib::io, sol::lib::string);
+
+		if (!m_registry->AddToContext<std::shared_ptr<sol::state>>(lua)) {
+		
+			OTTERUS_ERROR("Failed to add sol::state to registry context.");
+			return false;
+		}
+
+		auto scriptingSystem = std::make_shared<otterus_core::Systems::ScriptingSystem>(*m_registry);
+		if (!scriptingSystem) {
+
+			OTTERUS_ERROR("Failed to create the scripting system.");
+			return false;
+		}
+
+		if (!scriptingSystem->LoadMainScript(*lua)) {
+
+			OTTERUS_ERROR("Failed to load the main lua script.");
+			return false;
+		}
+
+		if (!m_registry->AddToContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>(scriptingSystem)) {
+
+			OTTERUS_ERROR("Failed to add otterus_core::Systems::ScriptingSystem to registry context.");
+			return false;
+		}
 
 		// Create temp camera
 		auto camera = std::make_shared<otterus_rendering::Camera2D>();
@@ -309,6 +344,9 @@ namespace otterus_editor {
 		}
 
 		camera->Update();
+
+		auto& scriptSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>();
+		scriptSystem->Update();
 	
 	}
 
@@ -351,6 +389,9 @@ namespace otterus_editor {
 
 		SDL_GL_SwapWindow(m_window->GetWindow().get());
 		shader.Disable();
+
+		auto& scriptSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>();
+		scriptSystem->Render();
 	}
 
     void Application::CleanUp()
