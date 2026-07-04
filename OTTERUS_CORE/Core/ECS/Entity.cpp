@@ -18,5 +18,17 @@ namespace otterus_core::ECS {
 			});
 	}
 
+	Entity::Entity(Registry& registry, const entt::entity& entity):
+		m_registry{ registry }, m_entity{ entity }, m_name{ "" }, m_group{ "" }
+	{
+		if (m_registry.GetRegistry().all_of<Identification>(m_entity)) {
+		
+			auto id = GetComponent<Identification>();
+			m_name = id.name;
+			m_group = id.group;
+		}
+	
+	}
+
 }
 

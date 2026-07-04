@@ -16,6 +16,8 @@
 #include <Core/ECS/Components/TransformComponent.h>
 #include <Core/ECS/Components/SpriteComponent.h>
 #include <Core/ECS/Components/Identification.h>
+#include <Core/ECS/Systems/ScriptingSystem.h>
+
 
 #include <Core/Resources/AssetManager.h>
 
