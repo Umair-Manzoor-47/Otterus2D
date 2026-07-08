@@ -163,11 +163,13 @@ namespace otterus_rendering {
 					.position = model * glm::vec4{spriteRect.x + spriteRect.z, spriteRect.y, 0.f, 1.f},
 					.uvs = glm::vec2{uvRect.x + uvRect.w, uvRect.y},
 					.color = color
-				}
+				},
+			.layer = layer,
+			.textureID = textureID
 			
 			}
 		);
-	
+		m_sprites.push_back(std::move(newSprite));
 	}
 	
 }
