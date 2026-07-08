@@ -20,6 +20,7 @@ namespace otterus_rendering {
 		{
 			Vertex topLeft, bottomLeft, topRight, bottomRight;
 			int layer;
+			GLuint textureID;
 		};
 
 	private:
