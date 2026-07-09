@@ -111,7 +111,7 @@ namespace otterus_editor {
 
 		auto& transform = entity1.AddComponent<otterus_core::ECS::TransformComponent>(otterus_core::ECS::TransformComponent{
 			.position = glm::vec2{10.f, 10.f},
-			.scale = glm::vec2{1.f, 1.f},
+			.scale = glm::vec2{5.f, 5.f},
 			.rotation = 0.f
 			});
 
@@ -121,6 +121,8 @@ namespace otterus_editor {
 		.color = otterus_rendering::Color{.r = 0, .g = 255, .b = 255, .a = 255 },
 		.start_x = 0,
 		.start_y = 0,
+		.texture_name = "Tile",
+		.layer = 0
 			});
 
 		auto& id = entity1.GetComponent<otterus_core::ECS::Identification>();
@@ -128,45 +130,7 @@ namespace otterus_editor {
 
 
 		sprite.generate_uvs(texture.GetWidth(), texture.GetHeight());
-		std::vector<otterus_rendering::Vertex> vertices;
-		vertices.reserve(4);
-
-		const float left = transform.position.x;
-		const float top = transform.position.y;
-		const float right = left + sprite.width * transform.scale.x;
-		const float bottom = top + sprite.height * transform.scale.y;
-
-		otterus_rendering::Vertex vTL{
-			.position = { left, bottom },
-			.uvs = { sprite.uvs.u, sprite.uvs.v + sprite.uvs.uv_height },
-			.color = sprite.color
-		};
-
-		otterus_rendering::Vertex vTR{
-			.position = { left, top },
-			.uvs = { sprite.uvs.u, sprite.uvs.v },
-			.color = sprite.color
-		};
-
-		otterus_rendering::Vertex vBL{
-			.position = { right, top },
-			.uvs = { sprite.uvs.u + sprite.uvs.uv_width, sprite.uvs.v },
-			.color = sprite.color
-		};
-
-		otterus_rendering::Vertex vBR{
-			.position = { right, bottom },
-			.uvs = { sprite.uvs.u + sprite.uvs.uv_width,
-					 sprite.uvs.v + sprite.uvs.uv_height },
-			.color = sprite.color
-		};
-
-		vertices.push_back(vTL);
-		vertices.push_back(vTR);
-		vertices.push_back(vBL);
-		vertices.push_back(vBR);
-
-
+		
 
 		GLuint indices[] = {
 			0, 1, 3,  // first triangle
@@ -209,9 +173,19 @@ namespace otterus_editor {
 			return false;
 		}
 
+		auto renderSystem = std::make_shared<otterus_core::Systems::RenderSystem>(*m_registry);
+		if (!renderSystem) {
+
+			OTTERUS_ERROR("Failed to create the render system.");
+			return false;
+		}
+		if (!m_registry->AddToContext<std::shared_ptr<otterus_core::Systems::RenderSystem>>(renderSystem)) {
+			OTTERUS_ERROR("Failed to add Render System into registry context.");
+			return false;
+		}
+
 		// Create temp camera
 		auto camera = std::make_shared<otterus_rendering::Camera2D>();
-		camera->SetScale(5.f);
 
 		if (!m_registry->AddToContext<std::shared_ptr<otterus_resources::AssetManager>>(assetManager)) {
 			OTTERUS_ERROR("Failed to add AssetManager into registry context.");
@@ -229,69 +203,6 @@ namespace otterus_editor {
 		}
 
 
-		// Generate VAO 
-		glGenVertexArrays(1, &VAO);
-
-		// Generate VBO
-		glGenBuffers(1, &VBO);
-
-		// Bind VAO, VBO
-		glBindVertexArray(VAO);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-		glBufferData(
-			GL_ARRAY_BUFFER,											// The target buffer type
-			vertices.size() * sizeof(otterus_rendering::Vertex),		// The size in Bytes of the buffer object's new data store
-			vertices.data(),											// A pointer to the data that will be copied into data store
-			GL_STATIC_DRAW												// Expected usage pattern of data store         
-		);
-
-		// Bind IBO
-		glGenBuffers(1, &IBO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-
-		glBufferData(
-			GL_ELEMENT_ARRAY_BUFFER,                    // The target buffer type
-			6 * sizeof(GLuint),							// The size in Bytes of the buffer object's new data store
-			indices,									// A pointer to the data that will be copied into data store
-			GL_STATIC_DRAW								// Expected usage pattern of data store         
-		);
-
-
-		glVertexAttribPointer(
-			0,													 // Attrib 0   -- Layout position in shader source code
-			2,													 // Size	    -- Number of compoenent per vertex
-			GL_FLOAT,											 // Type       -- Data type of above components
-			GL_FALSE,											 // Normalized -- Specifies if fixed-point data values should be normalized
-			sizeof(otterus_rendering::Vertex),   				 // Stride     -- Specifies the byte offest between consecutive attributes
-			(void*)offsetof(otterus_rendering::Vertex, position) // Pointer    -- Specifies the offset of the first compoenent
-		);
-
-		glEnableVertexAttribArray(0);
-
-		glVertexAttribPointer(
-			1,													// Index
-			2,													// Size	
-			GL_FLOAT,											// Type
-			GL_FALSE,											// Normalized
-			sizeof(otterus_rendering::Vertex),					// Stride
-			(void*)offsetof(otterus_rendering::Vertex, uvs)		// offset to the positional data to the first texture UV coords
-		);
-
-		glEnableVertexAttribArray(1);
-
-		glVertexAttribPointer(
-			2,													// Index
-			4,													// Size	
-			GL_UNSIGNED_BYTE,											// Type
-			GL_TRUE,											// Normalized
-			sizeof(otterus_rendering::Vertex),					// Stride
-			(void*)offsetof(otterus_rendering::Vertex, color)		// offset to the positional data to the first texture UV coords
-		);
-
-		glEnableVertexAttribArray(2);
-
-		glBindVertexArray(0);
     }
 
     bool Application::LoadShaders()
@@ -352,18 +263,7 @@ namespace otterus_editor {
 
     void Application::Render()
     {	
-		auto& assetManager = m_registry->GetContext<std::shared_ptr<otterus_resources::AssetManager>>();
-		auto& camera = m_registry->GetContext<std::shared_ptr<otterus_rendering::Camera2D>>();
-		
-		auto& shader = assetManager->GetShader("basic");
-		auto projection = camera->GetCameraMatrix();
-
-		auto& texture = assetManager->GetTexture("Tile");
-
-		if (shader.GetProgramID() == 0) {
-			OTTERUS_ERROR("Failed to Get Basic Shader from AssetManager.");
-			return;
-		}
+		auto& renderSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::RenderSystem>>();
 
 		glViewport(
 			0,
@@ -375,23 +275,12 @@ namespace otterus_editor {
 		glClearColor(1.f, 1.f, 1.f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		shader.Enable();
-
-		glBindVertexArray(VAO);
-
-		shader.SetUniformMat4("uProjection", projection);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture.GetID());
-
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-		glBindVertexArray(0);
-
-		SDL_GL_SwapWindow(m_window->GetWindow().get());
-		shader.Disable();
-
 		auto& scriptSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>();
 		scriptSystem->Render();
+		renderSystem->Upate();
+
+		SDL_GL_SwapWindow(m_window->GetWindow().get());
+
 	}
 
     void Application::CleanUp()
@@ -400,8 +289,7 @@ namespace otterus_editor {
 	}
 
     Application::Application():
-        m_window{ nullptr }, m_registry{nullptr}, m_event {}, m_isRunning{ true },
-        VAO{ 0 }, VBO{ 0 }, IBO{ 0 } // TODO: Remove them
+        m_window{ nullptr }, m_registry{nullptr}, m_event {}, m_isRunning{ true }
     {}
 
     Application& Application::GetInstance()

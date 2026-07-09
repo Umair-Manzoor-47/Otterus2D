@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Registry.h"
+#include "../ECS/Registry.h"
 #include <sol/sol.hpp>
 
 namespace otterus_core::Systems {
