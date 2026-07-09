@@ -15,6 +15,10 @@ namespace otterus_core::ECS {
 
 		int start_x{ 0 }, start_y{ 0 };
 
+		std::string texture_name{""};
+
+		int layer{0};
+
 		void generate_uvs(float textureWidth, float textureHeight)
 		{
 			uvs.uv_width = width / textureWidth;

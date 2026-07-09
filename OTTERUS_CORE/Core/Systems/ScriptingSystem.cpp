@@ -1,6 +1,6 @@
 #include "ScriptingSystem.h"
-#include "../Components/ScriptComponent.h"
-#include "../Entity.h"
+#include "../ECS/Components/ScriptComponent.h"
+#include "../ECS/Entity.h"
 #include <logger/Logger.h>
 
 
