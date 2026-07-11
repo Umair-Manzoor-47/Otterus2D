@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <sol/sol.hpp>
 
 namespace otterus_core::ECS {
 	
@@ -7,6 +8,8 @@ namespace otterus_core::ECS {
 
 		glm::vec2 position{ glm::vec2{0.f} }, scale{ glm::vec2{1.f} };
 		float rotation{ 0.f };
+
+		static void CreateLuaTransformBind(sol::state& lua);
 	};
 
 }
