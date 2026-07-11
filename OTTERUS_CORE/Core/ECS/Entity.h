@@ -1,5 +1,6 @@
 #pragma once
 #include "Registry.h"
+#include <sol/sol.hpp>
 
 namespace otterus_core::ECS {
 
@@ -26,6 +27,11 @@ namespace otterus_core::ECS {
 		inline entt::entity& GetEntity() { return m_entity; }
 		inline entt::registry& GetRegistry() { return m_registry.GetRegistry(); }
 
+		static void CreateLuaEntityBind(sol::state& lua, Registry& registry);
+
+		template <typename TComponent>
+		static void RegisterMetaComponent();
+
 		template <typename TComponent, typename ...Args>
 		TComponent& AddComponent(Args&& ...args);
 
@@ -42,6 +48,8 @@ namespace otterus_core::ECS {
 		bool RemoveComponent();
 	};
 
+	template <typename TComponent>
+	auto add_component(Entity& entity, const sol::table& comp, sol::this_state s);
 }
 
 #include "Entity.inl"
