@@ -92,13 +92,6 @@ namespace otterus_editor {
 			return false;
 		}
 
-		// Create temp texture
-		auto texture = assetManager->GetTexture("Tile");
-
-		int width = texture.GetWidth();
-		int height = texture.GetHeight();
-		OTTERUS_LOG("Loaded Texture: [width = {0}, height = {1} ]", width, height);
-		OTTERUS_WARN("Loaded Texture: [width = {0}, height = {1} ]", width, height);
 
 		// Registry from EnTT 
 		m_registry = std::make_unique<otterus_core::ECS::Registry>();
@@ -107,30 +100,6 @@ namespace otterus_editor {
 			return false;
 		}
 
-		otterus_core::ECS::Entity entity1{ *m_registry, "Ent1", "Test" };
-
-		auto& transform = entity1.AddComponent<otterus_core::ECS::TransformComponent>(otterus_core::ECS::TransformComponent{
-			.position = glm::vec2{10.f, 10.f},
-			.scale = glm::vec2{5.f, 5.f},
-			.rotation = 0.f
-			});
-
-		auto& sprite = entity1.AddComponent<otterus_core::ECS::SpriteComponent>(otterus_core::ECS::SpriteComponent{
-		.width = 16.f,
-		.height = 16.f,
-		.color = otterus_rendering::Color{.r = 0, .g = 255, .b = 255, .a = 255 },
-		.start_x = 0,
-		.start_y = 0,
-		.texture_name = "Tile",
-		.layer = 0
-			});
-
-		auto& id = entity1.GetComponent<otterus_core::ECS::Identification>();
-		OTTERUS_LOG("Entity Name={0}, group={1}, id={2} ", id.name, id.group, id.entity_id);
-
-
-		sprite.generate_uvs(texture.GetWidth(), texture.GetHeight());
-		
 
 		GLuint indices[] = {
 			0, 1, 3,  // first triangle
@@ -161,11 +130,7 @@ namespace otterus_editor {
 			return false;
 		}
 
-		if (!scriptingSystem->LoadMainScript(*lua)) {
-
-			OTTERUS_ERROR("Failed to load the main lua script.");
-			return false;
-		}
+		
 
 		if (!m_registry->AddToContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>(scriptingSystem)) {
 
@@ -201,7 +166,13 @@ namespace otterus_editor {
 			OTTERUS_ERROR("Failed to load Shaders.");
 			return false;
 		}
+		otterus_core::Systems::ScriptingSystem::RegisterLuaBindings(*lua, *m_registry);
 
+		if (!scriptingSystem->LoadMainScript(*lua)) {
+
+			OTTERUS_ERROR("Failed to load the main lua script.");
+			return false;
+		}
 
     }
 

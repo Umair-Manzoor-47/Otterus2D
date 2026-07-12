@@ -22,6 +22,7 @@ namespace otterus_core::Systems {
 		void Render();
 		
 
+		static void RegisterLuaBindings(sol::state& lua, otterus_core::ECS::Registry& registry);
 	};
 
 	
