@@ -1,8 +1,11 @@
 #include "ScriptingSystem.h"
 #include "../ECS/Components/ScriptComponent.h"
+#include "../ECS/Components/TransformComponent.h"
+#include "../ECS/Components/SpriteComponent.h"
 #include "../ECS/Entity.h"
 #include <logger/Logger.h>
 
+using namespace otterus_core::ECS;
 
 namespace otterus_core::Systems {
 	ScriptingSystem::ScriptingSystem(otterus_core::ECS::Registry& registry)
@@ -105,5 +108,15 @@ namespace otterus_core::Systems {
 			}
 
 		}
+	}
+	void ScriptingSystem::RegisterLuaBindings(sol::state& lua, otterus_core::ECS::Registry& registry)
+	{
+		Entity::CreateLuaEntityBind(lua, registry);
+		TransformComponent::CreateLuaTransformBind(lua);
+		SpriteComponent::CreateStaticLuaBind(lua, registry);
+
+		Entity::RegisterMetaComponent<TransformComponent>();
+		Entity::RegisterMetaComponent<SpriteComponent>();
+	
 	}
 }

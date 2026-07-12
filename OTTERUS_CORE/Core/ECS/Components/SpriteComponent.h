@@ -1,5 +1,9 @@
 #pragma once
 #include <Rendering/Essentials/Vertex.h>
+#include "../Registry.h"
+
+#include <sol/sol.hpp>
+
 
 namespace otterus_core::ECS {
 	struct UVs {
@@ -28,5 +32,7 @@ namespace otterus_core::ECS {
 			uvs.v = start_y * uvs.uv_height;
 		};
 
+
+		static void CreateStaticLuaBind(sol::state& lua, otterus_core::ECS::Registry& registry);
 	};
 }

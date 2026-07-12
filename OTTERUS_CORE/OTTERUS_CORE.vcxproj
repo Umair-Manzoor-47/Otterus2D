@@ -172,6 +172,7 @@
     <ClInclude Include="Core\Resources\AssetManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Core\ECS\Components\SpriteComponent.cpp" />
     <ClCompile Include="Core\ECS\Components\TransformComponent.cpp" />
     <ClCompile Include="Core\ECS\Entity.cpp" />
     <ClCompile Include="Core\ECS\MetaUtilities.cpp" />

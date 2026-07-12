@@ -63,16 +63,15 @@ namespace otterus_core::Systems {
 				transform.scale.x > 1.f || transform.scale.x < 1.f || 
 				transform.scale.y > 1.f || transform.scale.y < 1.f ) 
 			{
-				model = glm::translate(model, glm::vec3{transform.position, 0.f});
-				model = glm::translate(model, glm::vec3{ (sprite.width * transform.position.x ) * 0.5f, 
-					(sprite.height * transform.position.y) * 0.5f, 0.f });
+				model = glm::translate(model, glm::vec3{ transform.position, 0.f });
+				model = glm::translate(model, glm::vec3{ sprite.width * 0.5f, sprite.height * 0.5f, 0.f });
 
-				model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3{0.f, 0.f, 1.f});
-				model = glm::translate(model, glm::vec3{ (sprite.width * transform.position.x) * -0.5f,
-					(sprite.height * transform.position.y) * -0.5f, 0.f });
-			
-				model = glm::scale(model, glm::vec3{transform.scale, 1.f});
-				model = glm::translate(model, glm::vec3{-transform.position, 0.f});
+
+				model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3{ 0.f, 0.f, 1.f });
+
+				model = glm::translate(model, glm::vec3{ sprite.width * -0.5f, sprite.height * -0.5f, 0.f });
+				model = glm::scale(model, glm::vec3{ transform.scale, 1.f });
+				model = glm::translate(model, glm::vec3{ -transform.position, 0.f });
 
 			}
 
