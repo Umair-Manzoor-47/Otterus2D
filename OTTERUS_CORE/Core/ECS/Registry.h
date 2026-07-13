@@ -1,9 +1,13 @@
 #pragma once
 #include <entt.hpp>
+#include <sol/sol.hpp>
 
 namespace otterus_core::ECS {
 	class Registry
 	{
+	private:
+		std::unique_ptr<entt::registry> m_registry;
+
 	public:
 		Registry();
 		~Registry() = default;
@@ -17,22 +21,19 @@ namespace otterus_core::ECS {
 		template <typename TContext>
 		TContext& GetContext();
 
-	private:
-		std::unique_ptr<entt::registry> m_registry; 
+		static void CreateLuaRegistryBind(sol::state& lua, Registry& registry);
+
+		template <typename TComponent>
+		static void RegisterMetaComponent();
 
 	};
 
+	template <typename TComponent>
+	entt::runtime_view& add_component_to_view(Registry* registry, entt::runtime_view& view);
 
-	template<typename TContext>
-	inline TContext Registry::AddToContext(TContext context)
-	{
-		return m_registry->ctx().emplace<TContext>(context);
-	}
-
-	template<typename TContext>
-	inline TContext& Registry::GetContext()
-	{
-		return m_registry->ctx().get<TContext>();
-	}
+	template <typename TComponent>
+	entt::runtime_view& exclude_component_from_view(Registry* registry, entt::runtime_view& view);
 
 }
+
+#include "Registry.inl"

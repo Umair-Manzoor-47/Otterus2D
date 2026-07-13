@@ -111,6 +111,7 @@ namespace otterus_core::Systems {
 	}
 	void ScriptingSystem::RegisterLuaBindings(sol::state& lua, otterus_core::ECS::Registry& registry)
 	{
+		Registry::CreateLuaRegistryBind(lua, registry);
 		Entity::CreateLuaEntityBind(lua, registry);
 		TransformComponent::CreateLuaTransformBind(lua);
 		SpriteComponent::CreateStaticLuaBind(lua, registry);
@@ -118,5 +119,7 @@ namespace otterus_core::Systems {
 		Entity::RegisterMetaComponent<TransformComponent>();
 		Entity::RegisterMetaComponent<SpriteComponent>();
 	
+		Registry::RegisterMetaComponent<TransformComponent>();
+		Registry::RegisterMetaComponent<SpriteComponent>();
 	}
 }
