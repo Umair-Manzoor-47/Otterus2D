@@ -23,11 +23,10 @@ void otterus_core::ECS::TransformComponent::CreateLuaTransformBind(sol::state& l
 				};
 			}
 		),
-		"position", [](TransformComponent& transform) { return std::make_tuple(transform.position.x, transform.position.y); },
-		"scale", [](TransformComponent& transform) { return std::make_tuple(transform.scale.x, transform.scale.y); },
-		"rotation", &TransformComponent::rotation,
-		"set_pos", [](TransformComponent& transform, float x, float y) { return transform.position = glm::vec2{ x, y }; },
-		"set_scale", [](TransformComponent& transform, float x, float y) { return transform.scale = glm::vec2{ x, y }; }
+		"position", &TransformComponent::position,
+		"scale", &TransformComponent::scale,
+		"rotation", &TransformComponent::rotation
+
 	);
 
 }
