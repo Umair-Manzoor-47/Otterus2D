@@ -32,4 +32,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\Packages\PlayerSheet.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>
