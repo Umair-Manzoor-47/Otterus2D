@@ -18,6 +18,7 @@
 #include <Core/ECS/Components/Identification.h>
 #include <Core/Systems/ScriptingSystem.h>
 #include <Core/Systems/RenderSystem.h>
+#include <Core/Systems/AnimationSystem.h>
 
 
 #include <Core/Resources/AssetManager.h>

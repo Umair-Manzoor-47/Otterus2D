@@ -91,6 +91,10 @@ namespace otterus_editor {
 			OTTERUS_ERROR("Failed to create and add Texture.");
 			return false;
 		}
+		if (!assetManager->AddTexture("player", "assets/textures/player.png", true)) {
+			OTTERUS_ERROR("Failed to create and add Texture.");
+			return false;
+		}
 
 
 		// Registry from EnTT 
@@ -148,7 +152,17 @@ namespace otterus_editor {
 			OTTERUS_ERROR("Failed to add Render System into registry context.");
 			return false;
 		}
+		
+		auto animationSystem = std::make_shared<otterus_core::Systems::AnimationSystem>(*m_registry);
+		if (!animationSystem) {
 
+			OTTERUS_ERROR("Failed to create the animation system.");
+			return false;
+		}
+		if (!m_registry->AddToContext<std::shared_ptr<otterus_core::Systems::AnimationSystem>>(animationSystem)) {
+			OTTERUS_ERROR("Failed to add Animation System into registry context.");
+			return false;
+		}
 		// Create temp camera
 		auto camera = std::make_shared<otterus_rendering::Camera2D>();
 
@@ -230,6 +244,9 @@ namespace otterus_editor {
 		auto& scriptSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>();
 		scriptSystem->Update();
 	
+		auto& animationSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::AnimationSystem>>();
+		animationSystem->Update();
+
 	}
 
     void Application::Render()

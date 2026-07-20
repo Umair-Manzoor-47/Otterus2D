@@ -13,10 +13,15 @@ local sprite = gEntity:add_component(
 
 
 gEntity2:add_component(
-	Transform(200, 100, 1, 1, 0)
+	Transform(200, 200, 6, 6, 0)
 )
 
+local sprite2 = gEntity2:add_component(Sprite("player", 48.0, 48.0, 0, 0, 0))
+
+sprite2:generate_uvs()
 sprite:generate_uvs()
+
+gEntity2:add_component(Animation(4, 10, 0, false))
 
 local rotation = 0.0
 local x_pos = 10.0
