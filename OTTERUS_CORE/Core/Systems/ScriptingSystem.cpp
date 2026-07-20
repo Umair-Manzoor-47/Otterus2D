@@ -2,6 +2,7 @@
 #include "../ECS/Components/ScriptComponent.h"
 #include "../ECS/Components/TransformComponent.h"
 #include "../ECS/Components/SpriteComponent.h"
+#include "../ECS/Components/AnimationComponent.h"
 #include "../ECS/Entity.h"
 #include <logger/Logger.h>
 #include "../Scripting/GlmLuaBindings.h"
@@ -119,11 +120,14 @@ namespace otterus_core::Systems {
 		Entity::CreateLuaEntityBind(lua, registry);
 		TransformComponent::CreateLuaTransformBind(lua);
 		SpriteComponent::CreateStaticLuaBind(lua, registry);
+		AnimationComponent::CreateAnimationLuaBind(lua);
 
 		Entity::RegisterMetaComponent<TransformComponent>();
 		Entity::RegisterMetaComponent<SpriteComponent>();
+		Entity::RegisterMetaComponent<AnimationComponent>();
 	
 		Registry::RegisterMetaComponent<TransformComponent>();
 		Registry::RegisterMetaComponent<SpriteComponent>();
+		Registry::RegisterMetaComponent<AnimationComponent>();
 	}
 }
