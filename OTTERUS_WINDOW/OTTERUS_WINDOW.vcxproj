@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir).\OTTERUS_UTILITIES\;$(SolutionDir).\Dependencies\SDL\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir).\OTTERUS_UTILITIES\;$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\OTTERUS_LOGGER\Logger;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir).\Dependencies\SDL\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -134,14 +134,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Windowing\Inputs\Button.h" />
+    <ClInclude Include="Windowing\Inputs\Keyboard.h" />
+    <ClInclude Include="Windowing\Inputs\Keys.h" />
     <ClInclude Include="Windowing\window\window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OTTERUS_LOGGER\OTTERUS_LOGGER.vcxproj">
+      <Project>{9806fa5d-7887-4de2-8222-a101ea980a72}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\OTTERUS_UTILITIES\OTTERUS_UTILITIES.vcxproj">
       <Project>{3826c018-264c-407a-ae67-2106f556dc48}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Windowing\Inputs\Button.cpp" />
+    <ClCompile Include="Windowing\Inputs\Keyboard.cpp" />
     <ClCompile Include="Windowing\window\window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
