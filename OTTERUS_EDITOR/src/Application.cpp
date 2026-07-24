@@ -1,5 +1,6 @@
 #include "Application.h"
 #include <Windowing/Inputs/Keyboard.h>
+#include <Windowing/Inputs/Mouse.h>
 #include <Core/Scripting/InputManager.h>
 
 namespace otterus_editor {
@@ -215,6 +216,8 @@ namespace otterus_editor {
     {
 		auto& inputManager = otterus_core::InputManager::GetInstance();
 		auto& keyboard = inputManager.GetKeyboard();
+		auto& mouse = inputManager.GetMouse();
+
 		while (SDL_PollEvent(&m_event)) {
 			switch (m_event.type) {
 			case SDL_QUIT:
@@ -230,6 +233,19 @@ namespace otterus_editor {
 			case SDL_KEYUP:
 				keyboard.OnKeyReleased(m_event.key.keysym.sym);
 				break;
+
+			case SDL_MOUSEBUTTONDOWN:
+				mouse.OnBtnPressed(m_event.button.button);
+				break;
+			case SDL_MOUSEBUTTONUP:
+				mouse.OnBtnReleased(m_event.button.button);
+				break;
+			case SDL_MOUSEWHEEL:
+				mouse.SetMouseWheelX(m_event.wheel.x);
+				mouse.SetMouseWheelY(m_event.wheel.y);
+				break;
+			case SDL_MOUSEMOTION:
+				mouse.SetMouseMoving(true);
 			default:
 				break;
 
@@ -256,7 +272,10 @@ namespace otterus_editor {
 
 		auto& inputManager = otterus_core::InputManager::GetInstance();
 		auto& keyboard = inputManager.GetKeyboard();
+		auto& mouse = inputManager.GetMouse();
+
 		keyboard.Update();
+		mouse.Update();
 
 	}
 

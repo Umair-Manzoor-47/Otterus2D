@@ -3,7 +3,7 @@
 namespace otterus_core {
 
     InputManager::InputManager()
-        : m_Keyboard{ std::make_unique<Keyboard>() }
+        : m_Keyboard{ std::make_unique<Keyboard>() }, m_Mouse{ std::make_unique<Mouse>() }
     {
         //m_pKeyboard = std::make_unique<Keyboard>();
     }
@@ -102,6 +102,13 @@ namespace otterus_core {
 
 	}
 
+    void InputManager::RegisterLuaBtnNames(sol::state& lua)
+    {
+        lua.set("LEFT_BTN", OT_MOUSE_LEFT);
+        lua.set("MIDDLE_BTN", OT_MOUSE_MIDDLE);
+        lua.set("RIGHT_BTN", OT_MOUSE_RIGHT);
+    }
+
 	InputManager& InputManager::GetInstance()
 	{
 		static InputManager instance{};
@@ -111,6 +118,8 @@ namespace otterus_core {
 	void InputManager::CreateLuaBindings(sol::state& lua)
 	{
         RegisterLuaKeyNames(lua);
+        RegisterLuaBtnNames(lua);
+
         auto& inputManager = InputManager::GetInstance();
         auto& keyboard = inputManager.GetKeyboard();
     
@@ -120,6 +129,21 @@ namespace otterus_core {
             "just_pressed", [&](int key) { return keyboard.IsKeyJustPressed(key); },
             "just_released", [&](int key) { return keyboard.IsKeyJustReleased(key); },
             "pressed", [&](int key) { return keyboard.IsKeyPressed(key); }
+        );
+
+        auto& mouse = inputManager.GetMouse();
+
+        lua.new_usertype<Mouse>(
+            "Mouse",
+            sol::no_constructor,
+            "just_pressed", [&](int btn) { return mouse.IsBtnJustPressed(btn); },
+            "just_released", [&](int btn) { return mouse.IsBtnJustReleased(btn); },
+            "pressed", [&](int btn) { return mouse.IsBtnPressed(btn); },
+            "screen_position", [&]() { return mouse.GetMouseScreenPosition(); },
+            "is_moving", [&]() { return mouse.GetMouseMoving(); },
+            "wheel_x", [&]() { return mouse.GetMouseWheelX(); },
+            "wheel_y", [&]() { return mouse.GetMouseWheelY(); }
+
         );
     }
 
