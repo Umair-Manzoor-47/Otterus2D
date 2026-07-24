@@ -46,5 +46,5 @@ asset loading — while keeping the code clean and well-structured.
 - [x] Asset Manager
 - [x] Lua Scripting support
 - [x] Renderer System
-- [ ] Input system
+- [x] Input system
 - [ ] Audio
