@@ -71,8 +71,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(SolutionDir).\Dependencies\SDL\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\OTTERUS_WINDOW\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir).\Dependencies\lua53\lib;$(SolutionDir).\Dependencies\SDL\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);;$(SolutionDir).\OTTERUS_WINDOW\Windowing</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -155,6 +158,9 @@
     <ProjectReference Include="..\OTTERUS_RENDERING\OTTERUS_RENDERING.vcxproj">
       <Project>{b468db63-1d5d-4e0d-9f98-cf66d0f7f3ca}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\OTTERUS_WINDOW\OTTERUS_WINDOW.vcxproj">
+      <Project>{0c38259d-0941-46a3-a4ac-e9bee9dc3c11}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\SOIL\SOIL.vcxproj">
       <Project>{666dfff4-a1b6-4b2a-8b15-d0efc8db8794}</Project>
     </ProjectReference>
@@ -169,6 +175,7 @@
     <ClInclude Include="Core\ECS\MetaUtilities.h" />
     <ClInclude Include="Core\ECS\Registry.h" />
     <ClInclude Include="Core\Scripting\GlmLuaBindings.h" />
+    <ClInclude Include="Core\Scripting\InputManager.h" />
     <ClInclude Include="Core\Systems\AnimationSystem.h" />
     <ClInclude Include="Core\Systems\RenderSystem.h" />
     <ClInclude Include="Core\Systems\ScriptingSystem.h" />
@@ -182,6 +189,7 @@
     <ClCompile Include="Core\ECS\MetaUtilities.cpp" />
     <ClCompile Include="Core\ECS\Registry.cpp" />
     <ClCompile Include="Core\Scripting\GlmLuaBindings.cpp" />
+    <ClCompile Include="Core\Scripting\InputManager.cpp" />
     <ClCompile Include="Core\Systems\AnimationSystem.cpp" />
     <ClCompile Include="Core\Systems\RenderSystem.cpp" />
     <ClCompile Include="Core\Systems\ScriptingSystem.cpp" />

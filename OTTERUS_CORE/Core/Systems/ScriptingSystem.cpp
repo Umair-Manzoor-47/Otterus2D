@@ -6,6 +6,7 @@
 #include "../ECS/Entity.h"
 #include <logger/Logger.h>
 #include "../Scripting/GlmLuaBindings.h"
+#include "../Scripting/InputManager.h"
 
 
 using namespace otterus_core::ECS;
@@ -115,6 +116,7 @@ namespace otterus_core::Systems {
 	void ScriptingSystem::RegisterLuaBindings(sol::state& lua, otterus_core::ECS::Registry& registry)
 	{
 		otterus_core::Scripting::GLMBindings::CreateGLMBindings(lua);
+		otterus_core::InputManager::CreateLuaBindings(lua);
 
 		Registry::CreateLuaRegistryBind(lua, registry);
 		Entity::CreateLuaEntityBind(lua, registry);

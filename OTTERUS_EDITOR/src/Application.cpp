@@ -1,5 +1,6 @@
 #include "Application.h"
-
+#include <Windowing/Inputs/Keyboard.h>
+#include <Core/Scripting/InputManager.h>
 
 namespace otterus_editor {
 
@@ -212,6 +213,8 @@ namespace otterus_editor {
 
     void Application::ProcessEvents()
     {
+		auto& inputManager = otterus_core::InputManager::GetInstance();
+		auto& keyboard = inputManager.GetKeyboard();
 		while (SDL_PollEvent(&m_event)) {
 			switch (m_event.type) {
 			case SDL_QUIT:
@@ -221,8 +224,12 @@ namespace otterus_editor {
 				if (m_event.key.keysym.sym == SDLK_ESCAPE) {
 					m_isRunning = false;
 				}
+				keyboard.OnKeyPressed(m_event.key.keysym.sym);
 				break;
 
+			case SDL_KEYUP:
+				keyboard.OnKeyReleased(m_event.key.keysym.sym);
+				break;
 			default:
 				break;
 
@@ -246,6 +253,10 @@ namespace otterus_editor {
 	
 		auto& animationSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::AnimationSystem>>();
 		animationSystem->Update();
+
+		auto& inputManager = otterus_core::InputManager::GetInstance();
+		auto& keyboard = inputManager.GetKeyboard();
+		keyboard.Update();
 
 	}
 
