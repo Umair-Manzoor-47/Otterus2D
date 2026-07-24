@@ -89,6 +89,25 @@ main = {
 
 			transform.scale = vec2(scale, scale)
 
+			-- Mouse Events
+
+			if Mouse.just_pressed(LEFT_BTN) then
+				print("LMB was pressed.")
+
+			elseif Mouse.just_pressed(RIGHT_BTN) then
+				print("RMB was pressed.")
+
+			elseif Mouse.just_pressed(MIDDLE_BTN) then
+				print("MMB was pressed.")
+			elseif Mouse.is_moving then
+				local mouse_x, mouse_y = Mouse.screen_position()
+				print("MouseX:", mouse_x, "MouseY:", mouse_y) 
+			end
+
+			local wheel_y = Mouse.wheel_y()
+			print("Wheel Y: " ..wheel_y)
+
+			-- Keyboard Events and Movement
 			if Keyboard.pressed(KEY_W) then
 				y_move = y_move - 10
 				sprite2.start_y = 1
