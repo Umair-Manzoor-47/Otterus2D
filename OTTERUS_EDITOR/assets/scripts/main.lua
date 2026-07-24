@@ -12,7 +12,7 @@ local sprite = gEntity:add_component(
 )
 
 
-gEntity2:add_component(
+local transform2 = gEntity2:add_component(
 	Transform(200, 200, 6, 6, 0)
 )
 
@@ -29,6 +29,8 @@ local scale = 1.0
 local move_right = true
 local value = 0.0
 
+local y_move = transform2.position.y
+local x_move = transform2.position.x
 
 local view = Registry.get_entities(Transform)
 view:exclude(Sprite)
@@ -87,15 +89,30 @@ main = {
 
 			transform.scale = vec2(scale, scale)
 
-			if Keyboard.just_pressed(KEY_W) then
+			if Keyboard.pressed(KEY_W) then
+				y_move = y_move - 10
+				sprite2.start_y = 1
+				sprite2:generate_uvs()
 				print("Key W was pressed.")
-			elseif Keyboard.just_pressed(KEY_S) then
+
+			elseif Keyboard.pressed(KEY_S) then
+				y_move = y_move + 10
+				sprite2.start_y = 0
+				sprite2:generate_uvs()
 				print("Key S was pressed.")
-			elseif Keyboard.just_pressed(KEY_A) then
+			elseif Keyboard.pressed(KEY_A) then
+				x_move = x_move - 10
+				sprite2.start_y = 2
+				sprite2:generate_uvs()
 				print("Key A was pressed.")
-			elseif Keyboard.just_pressed(KEY_D) then
+			elseif Keyboard.pressed(KEY_D) then
+				x_move = x_move + 10
+				sprite2.start_y = 3
+				sprite2:generate_uvs()
 				print("Key D was pressed.")
 			end
+			transform2.position.x = x_move
+			transform2.position.y = y_move
 
 		end
 	},
