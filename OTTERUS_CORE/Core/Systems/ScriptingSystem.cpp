@@ -7,6 +7,7 @@
 #include <logger/Logger.h>
 #include "../Scripting/GlmLuaBindings.h"
 #include "../Scripting/InputManager.h"
+#include "../Resources/AssetManager.h"
 
 
 using namespace otterus_core::ECS;
@@ -117,6 +118,7 @@ namespace otterus_core::Systems {
 	{
 		otterus_core::Scripting::GLMBindings::CreateGLMBindings(lua);
 		otterus_core::InputManager::CreateLuaBindings(lua);
+		otterus_resources::AssetManager::CreateLuaAssetManager(lua, registry);
 
 		Registry::CreateLuaRegistryBind(lua, registry);
 		Entity::CreateLuaEntityBind(lua, registry);
