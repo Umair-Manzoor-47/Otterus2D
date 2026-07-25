@@ -183,6 +183,7 @@ namespace otterus_editor {
 			return false;
 		}
 		otterus_core::Systems::ScriptingSystem::RegisterLuaBindings(*lua, *m_registry);
+		otterus_core::Systems::ScriptingSystem::RegisterLuaFunctions(*lua);
 
 		if (!scriptingSystem->LoadMainScript(*lua)) {
 
