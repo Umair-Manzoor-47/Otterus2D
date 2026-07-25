@@ -132,4 +132,24 @@ namespace otterus_core::Systems {
 		Registry::RegisterMetaComponent<SpriteComponent>();
 		Registry::RegisterMetaComponent<AnimationComponent>();
 	}
+	void ScriptingSystem::RegisterLuaFunctions(sol::state& lua)
+	{
+		lua.set_function(
+			"run_script", [&](const std::string& path) {
+			
+				try {
+				
+					lua.safe_script_file(path);
+				}
+				catch (const sol::error& error) {
+				
+					OTTERUS_ERROR("Error loading lua script file: {}", error.what());
+					return false;
+				
+				}
+				return true;
+			}
+		);
+	
+	}
 }

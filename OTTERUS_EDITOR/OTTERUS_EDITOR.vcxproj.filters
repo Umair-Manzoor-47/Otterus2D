@@ -26,6 +26,7 @@
     <None Include="assets\shaders\basic_shader.vert" />
     <None Include="assets\shaders\basic_shader.frag" />
     <None Include="assets\scripts\main.lua" />
+    <None Include="assets\scripts\asteroids\entityDefs.lua" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h">
