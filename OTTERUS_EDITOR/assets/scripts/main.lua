@@ -1,8 +1,14 @@
 -- Main Lua Script!
 
-if run_script("assets/scripts/asteroids/entityDefs.lua") then
-	print("script registered")
-end
+run_script("assets/scripts/asteroids/entityDefs.lua")
+run_script("assets/scripts/asteroids/assetDef.lua")
+run_script("assets/scripts/asteroids/utilities.lua")
+
+LoadAssets()
+
+local ship = LoadEntity(ShipDefs["red_ship"])
+local ast1 = LoadEntity(AsteroidDefs["asteroid_big"])
+local ast2 = LoadEntity(AsteroidDefs["asteroid_small"])
 
 main = {
 	[1] = {

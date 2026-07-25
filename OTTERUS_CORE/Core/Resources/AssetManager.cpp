@@ -75,4 +75,21 @@ namespace otterus_resources {
 
         return *shaderItr->second;
     }
+    void AssetManager::CreateLuaAssetManager(sol::state& lua, otterus_core::ECS::Registry& registry)
+    {
+        auto& assetManager = registry.GetContext <std::shared_ptr<AssetManager>>();
+        if (!assetManager) {
+            OTTERUS_ERROR("AssetManager does not exists in Registry.");
+            return;
+        }
+
+        lua.new_usertype<AssetManager>(
+            "AssetManager",
+            sol::no_constructor,
+            "add_texture", [&](const std::string& assetName, const std::string& filepath, bool pixel_art) {
+                return assetManager->AddTexture(assetName, filepath, pixel_art);
+            }
+        
+        );
+    }
 }

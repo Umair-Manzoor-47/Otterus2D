@@ -159,7 +159,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\scripts\asteroids\assetDef.lua" />
     <None Include="assets\scripts\asteroids\entityDefs.lua" />
+    <None Include="assets\scripts\asteroids\utilities.lua" />
     <None Include="assets\scripts\main.lua" />
     <None Include="assets\shaders\basic_shader.frag" />
     <None Include="assets\shaders\basic_shader.vert" />
