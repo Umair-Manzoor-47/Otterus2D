@@ -29,6 +29,7 @@
     <None Include="assets\scripts\asteroids\entityDefs.lua" />
     <None Include="assets\scripts\asteroids\utilities.lua" />
     <None Include="assets\scripts\asteroids\assetDef.lua" />
+    <None Include="assets\scripts\asteroids\ship.lua" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h">
