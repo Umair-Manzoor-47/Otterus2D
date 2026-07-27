@@ -5,6 +5,7 @@ AssetDefs = {
 		{ name = "ship", path = "assets/textures/aestroid/ship.png", pixel_art = true },
 		{ name = "ast1", path = "assets/textures/aestroid/meteor_small.png", pixel_art = true },
 		{ name = "ast2", path = "assets/textures/aestroid/meteor_big.png", pixel_art = true },
+		{ name = "bg", path = "assets/textures/aestroid/bg.png", pixel_art = true },
 	
 	}
 

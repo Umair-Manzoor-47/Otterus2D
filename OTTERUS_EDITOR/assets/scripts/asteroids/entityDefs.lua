@@ -14,7 +14,10 @@ AsteroidDefs = {
 				start_x = 0, start_y = 0,
 				layer = 2
 			}
-		}
+		},
+		type = "big",
+		min_speed = -2,
+		max_speed = 5,
 
 	},
 	asteroid_small = {
@@ -32,7 +35,10 @@ AsteroidDefs = {
 				start_x = 0, start_y = 0,
 				layer = 2
 			}
-		}
+		},
+		type = "small",
+		min_speed = -5,
+		max_speed = 5,
 
 	}
 
