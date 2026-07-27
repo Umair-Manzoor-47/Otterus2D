@@ -135,9 +135,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="OtterusUtilities\SDL_wrappers.h" />
+    <ClInclude Include="OtterusUtilities\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OtterusUtilities\SDL_wrappers.cpp" />
+    <ClCompile Include="OtterusUtilities\Timer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

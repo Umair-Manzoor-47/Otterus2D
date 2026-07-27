@@ -18,9 +18,15 @@
     <ClInclude Include="OtterusUtilities\SDL_wrappers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="OtterusUtilities\Timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OtterusUtilities\SDL_wrappers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OtterusUtilities\Timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
