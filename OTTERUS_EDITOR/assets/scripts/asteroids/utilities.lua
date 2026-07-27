@@ -49,6 +49,21 @@ function LoadEntity(def)
 end
 
 
+function LoadBackground()
+	for i=0,2 do
+		for j=0,3 do
+			local bgtile = Entity("", "bg")
+			bgtile:add_component(Transform(vec2(j*256, i*256), vec2(1, 1), 0))
+			local sprite = bgtile:add_component(Sprite("bg", 256.0, 256.0, 0, 0, 0))
+			sprite:generate_uvs()
+
+		end
+	end
+
+end
+
+
+
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
 
@@ -73,3 +88,54 @@ function CheckPosition(position, width, height)
 
 end
 
+function GetRandomPosition()
+	return vec2(
+		math.random(SCREEN_WIDTH) + SCREEN_WIDTH,
+		math.random(SCREEN_HEIGHT) + SCREEN_HEIGHT
+	)
+end
+
+function GetRandomVelocity(min_speed, max_speed)
+	return vec2(
+		math.random(min_speed, max_speed),
+		math.random(min_speed, max_speed)
+	)
+end
+
+Asteroids = {}
+
+function AddAsteroid( asteroid )
+	table.insert(Asteroids, asteroid)
+end
+
+function UpdateAsteroids()
+	for k , v in pairs(Asteroids) do
+		v:Update()
+	end
+
+end
+
+
+gSpawnTimer = Timer()
+
+function SpawnAsteroids()
+	if not gSpawnTimer:is_running() then
+		gSpawnTimer:start()
+	end
+
+	if gSpawnTimer:elapsed_sec() > 2 then
+		local val = math.random(1, 3)
+		
+		if val == 1 then
+			local asteroid = Asteroid:Create("asteroid_big")
+			AddAsteroid(asteroid)
+		elseif val == 2 then
+			local asteroid = Asteroid:Create("asteroid_small")
+			AddAsteroid(asteroid)
+		elseif val == 3 then
+			-- Create Ship
+		end
+		gSpawnTimer:stop()
+	end
+
+end
