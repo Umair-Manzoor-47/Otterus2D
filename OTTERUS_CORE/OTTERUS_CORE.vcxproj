@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\OTTERUS_WINDOW\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\OTTERUS_WINDOW\;$(SolutionDir).\OTTERUS_UTILITIES;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir).\Dependencies\lua53\lib;$(SolutionDir).\Dependencies\SDL\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -157,6 +157,9 @@
     </ProjectReference>
     <ProjectReference Include="..\OTTERUS_RENDERING\OTTERUS_RENDERING.vcxproj">
       <Project>{b468db63-1d5d-4e0d-9f98-cf66d0f7f3ca}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\OTTERUS_UTILITIES\OTTERUS_UTILITIES.vcxproj">
+      <Project>{3826c018-264c-407a-ae67-2106f556dc48}</Project>
     </ProjectReference>
     <ProjectReference Include="..\OTTERUS_WINDOW\OTTERUS_WINDOW.vcxproj">
       <Project>{0c38259d-0941-46a3-a4ac-e9bee9dc3c11}</Project>

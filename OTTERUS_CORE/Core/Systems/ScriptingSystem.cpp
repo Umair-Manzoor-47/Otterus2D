@@ -8,7 +8,7 @@
 #include "../Scripting/GlmLuaBindings.h"
 #include "../Scripting/InputManager.h"
 #include "../Resources/AssetManager.h"
-
+#include <OtterusUtilities/Timer.h>
 
 using namespace otterus_core::ECS;
 
@@ -114,11 +114,40 @@ namespace otterus_core::Systems {
 
 		}
 	}
+
+	auto create_timer = [](sol::state& lua) {
+		using namespace otterus_utils;
+		lua.new_usertype<Timer>(
+			"Timer",
+			sol::call_constructor,
+			sol::constructors<Timer()>(),
+			"start", &Timer::Start,
+			"stop", &Timer::Stop,
+			"pause", &Timer::Pause,
+			"resume", &Timer::Resume,
+			"is_running", &Timer::IsRunning,
+			"is_paused", &Timer::IsPaused,
+			"elapsed_ms", &Timer::ElapsedMS,
+			"elapsed_sec", &Timer::ElapsedSec,
+			"restart", [](Timer& timer) {
+				if (timer.IsRunning())
+					timer.Stop();
+
+				timer.Start();
+			}
+		
+		);
+
+		
+	};
+
 	void ScriptingSystem::RegisterLuaBindings(sol::state& lua, otterus_core::ECS::Registry& registry)
 	{
 		otterus_core::Scripting::GLMBindings::CreateGLMBindings(lua);
 		otterus_core::InputManager::CreateLuaBindings(lua);
 		otterus_resources::AssetManager::CreateLuaAssetManager(lua, registry);
+
+		create_timer(lua);
 
 		Registry::CreateLuaRegistryBind(lua, registry);
 		Entity::CreateLuaEntityBind(lua, registry);
