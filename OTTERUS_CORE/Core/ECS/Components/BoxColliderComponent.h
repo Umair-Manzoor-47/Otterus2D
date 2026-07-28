@@ -8,7 +8,7 @@ namespace otterus_core::ECS {
 	{
 		int width{ 1 }, height{ 1 };
 		glm::vec2 offset{ glm::vec2{0} };
-		bool Colliding{ false };
+		bool colliding{ false };
 
 		static void CreateBoxColliderLuaBind(sol::state& lua);
 	};
