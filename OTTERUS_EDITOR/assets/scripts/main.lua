@@ -5,6 +5,7 @@ run_script("assets/scripts/asteroids/assetDef.lua")
 run_script("assets/scripts/asteroids/utilities.lua")
 run_script("assets/scripts/asteroids/ship.lua")
 run_script("assets/scripts/asteroids/asteroid.lua")
+run_script("assets/scripts/asteroids/collision_system.lua")
 
 LoadAssets()
 LoadBackground()
@@ -14,6 +15,7 @@ local ship = LoadEntity(ShipDefs["red_ship"])
 -- local ast2 = LoadEntity(AsteroidDefs["asteroid_small"])
 
 gShip = Ship:Create({id = ship})
+gCollision = CollisionSystem:Create()
 
 main = {
 	[1] = {
@@ -21,6 +23,7 @@ main = {
 			gShip:UpdateShip()
 			SpawnAsteroids()
 			UpdateAsteroids()
+			gCollision:Update()
 		end
 	},
 	[2] = {

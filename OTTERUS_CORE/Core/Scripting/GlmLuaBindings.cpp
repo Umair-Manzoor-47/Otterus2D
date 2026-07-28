@@ -1,5 +1,6 @@
 #include "GlmLuaBindings.h"
 #include <glm/glm.hpp>
+#include <glm/gtx/norm.hpp>
 
 namespace otterus_core::Scripting {
 	
@@ -44,7 +45,9 @@ namespace otterus_core::Scripting {
 			sol::meta_function::multiplication, vec2_mulitplication_overloads,
 			sol::meta_function::division, vec2_division_overloads,
 			sol::meta_function::addition, vec2_addition_overloads,
-			sol::meta_function::subtraction, vec2_subtraction_overloads
+			sol::meta_function::subtraction, vec2_subtraction_overloads,
+			"length", [](const glm::vec2& v) { return glm::length(v); },
+			"lengthSq", [](const glm::vec2& v) { return glm::length2(v); }
 		);
 
 	}

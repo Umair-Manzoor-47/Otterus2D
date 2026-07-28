@@ -13,6 +13,9 @@ AsteroidDefs = {
 				height = 84,
 				start_x = 0, start_y = 0,
 				layer = 2
+			},
+			circle_collider = {
+				radius = 40
 			}
 		},
 		type = "big",
@@ -34,6 +37,9 @@ AsteroidDefs = {
 				height = 43,
 				start_x = 0, start_y = 0,
 				layer = 2
+			},
+			circle_collider = {
+				radius = 21
 			}
 		},
 		type = "small",
@@ -48,6 +54,7 @@ ShipDefs = {
 	
 	 red_ship = {
 		tag = "ship",
+		group = "player",
 		components = {
 			transform = {
 				position = { x = 320, y = 240 },
@@ -60,6 +67,9 @@ ShipDefs = {
 				height = 112,
 				start_x = 0, start_y = 0,
 				layer = 2
+			},
+			circle_collider = {
+				radius = 37
 			}
 		}
 	

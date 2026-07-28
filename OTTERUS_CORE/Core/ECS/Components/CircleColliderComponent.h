@@ -4,13 +4,13 @@
 
 namespace otterus_core::ECS {
 
-	struct BoxColliderComponent
+	struct CircleColliderComponent
 	{
-		int width{ 1 }, height{ 1 };
+		float radius{ 0 };
 		glm::vec2 offset{ glm::vec2{0} };
 		bool colliding{ false };
 
-		static void CreateBoxColliderLuaBind(sol::state& lua);
+		static void CreateLuaCircleColliderBind(sol::state& lua);
 	};
 
 
