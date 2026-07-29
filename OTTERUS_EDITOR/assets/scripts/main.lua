@@ -5,6 +5,7 @@ run_script("assets/scripts/asteroids/assetDef.lua")
 run_script("assets/scripts/asteroids/utilities.lua")
 run_script("assets/scripts/asteroids/ship.lua")
 run_script("assets/scripts/asteroids/asteroid.lua")
+run_script("assets/scripts/asteroids/projectile.lua")
 run_script("assets/scripts/asteroids/collision_system.lua")
 
 LoadAssets()
@@ -23,6 +24,7 @@ main = {
 			gShip:UpdateShip()
 			SpawnAsteroids()
 			UpdateAsteroids()
+			UpdateProjectiles()
 			gCollision:Update()
 		end
 	},

@@ -147,3 +147,22 @@ function SpawnAsteroids()
 	end
 
 end
+
+
+Projectiles = {}
+
+function AddProjectile( projectile )
+	table.insert(Projectiles, projectile)
+end
+
+function UpdateProjectiles()
+	for k , v in pairs(Projectiles) do
+		if v: TimesUp() then
+			v:Destroy()
+			Projectiles[k] = nil
+		else 
+			v:Update()
+		end
+	end
+
+end

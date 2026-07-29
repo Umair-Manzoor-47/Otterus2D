@@ -1,5 +1,6 @@
 #include "GlmLuaBindings.h"
 #include <glm/glm.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/norm.hpp>
 
 namespace otterus_core::Scripting {

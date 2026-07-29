@@ -69,5 +69,24 @@ function Ship:UpdateShip()
         transform.position +
         self.m_Velocity
 
+    -- Shoot projectile
+    if Keyboard.just_pressed(KEY_SPACE) then
+        local projectile = Projectile:Create(
+            {
+                def = "proj_1",
+                dir = fwd,
+                start_pos = vec2(
+                        transform.position.x + sprite.width / 2,
+                        transform.position.y + sprite.height / 2
+                ),
+                rotation = transform.rotation
+
+            }
+        )
+        AddProjectile( projectile )
+
+    end
+
+
     CheckPosition(transform.position, sprite.width, sprite.height)
 end

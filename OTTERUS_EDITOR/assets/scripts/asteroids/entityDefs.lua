@@ -77,3 +77,33 @@ ShipDefs = {
 	}
 
 }
+
+ProjectileDefs = {
+
+	proj_1 = {
+		
+		group = "projectile",
+		components = {
+			transform = {
+				position = { x = 0, y = 0 },
+				scale = { x = 1, y = 1 },
+				rotation = 0
+			},
+			sprite = {
+				asset_name = "laser",
+				width = 37,
+				height = 13,
+				start_x = 0, start_y = 0,
+				layer = 2
+			},
+			circle_collider = {
+				radius = 12
+			
+		},
+		life_time = 2000,
+		speed = 10
+		
+		}
+
+	}
+}
