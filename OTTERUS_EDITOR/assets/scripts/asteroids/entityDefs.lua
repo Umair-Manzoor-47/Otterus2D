@@ -19,8 +19,8 @@ AsteroidDefs = {
 			}
 		},
 		type = "big",
-		min_speed = -2,
-		max_speed = 5,
+		min_speed = -1,
+		max_speed = 1,
 
 	},
 	asteroid_small = {
@@ -43,8 +43,8 @@ AsteroidDefs = {
 			}
 		},
 		type = "small",
-		min_speed = -5,
-		max_speed = 5,
+		min_speed = -2,
+		max_speed = 2,
 
 	}
 
@@ -82,7 +82,7 @@ ProjectileDefs = {
 
 	proj_1 = {
 		
-		group = "projectile",
+		group = "projectiles",
 		components = {
 			transform = {
 				position = { x = 0, y = 0 },
@@ -97,11 +97,11 @@ ProjectileDefs = {
 				layer = 2
 			},
 			circle_collider = {
-				radius = 12
+				radius = 20
 			
 		},
 		life_time = 2000,
-		speed = 10
+		speed = 5
 		
 		}
 

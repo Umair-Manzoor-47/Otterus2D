@@ -12,8 +12,6 @@ LoadAssets()
 LoadBackground()
 
 local ship = LoadEntity(ShipDefs["red_ship"])
--- local ast1 = LoadEntity(AsteroidDefs["asteroid_big"])
--- local ast2 = LoadEntity(AsteroidDefs["asteroid_small"])
 
 gShip = Ship:Create({id = ship})
 gCollision = CollisionSystem:Create()

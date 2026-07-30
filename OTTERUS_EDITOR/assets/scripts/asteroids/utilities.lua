@@ -123,6 +123,38 @@ function UpdateAsteroids()
 
 end
 
+function RemoveAsteroid(asteroid_id)
+
+	for k, v in pairs(Asteroids) do
+		if v.m_EntityID == asteroid_id then
+			if v.m_Type == "big" then
+				CreateSmallFromBig(v)
+			elseif v.m_Type == "small" then
+			end
+			local asteroid = Entity(v.m_EntityID)
+			asteroid:kill()
+			Asteroids[k] = nil
+		end
+	end
+
+ end
+
+function CreateSmallFromBig( asteroid )
+	local transform = Entity(asteroid.m_EntityID):get_component(Transform)
+	
+	for i=1,2 do
+		local small = Asteroid:Create("asteroid_small")
+		local small_transform = Entity(small.m_EntityID):get_component(Transform)
+		small_transform.position = transform.position
+		AddAsteroid(small)
+	end
+
+	
+end
+
+
+
+
 
 gSpawnTimer = Timer()
 
