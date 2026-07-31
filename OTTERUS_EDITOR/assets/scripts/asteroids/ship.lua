@@ -1,6 +1,9 @@
 Ship = {}
 Ship.__index = Ship
 
+CooldownTimer = Timer()
+CooldownTime = 300
+
 function Ship:Create(def)
     local this = {
         m_EntityID = def.id,
@@ -17,6 +20,8 @@ function Ship:Create(def)
         -- Maximum movement speed
         m_MaxSpeed = 7,
     }
+
+    CooldownTimer:start()
 
     setmetatable(this, self)
 
@@ -70,7 +75,7 @@ function Ship:UpdateShip()
         self.m_Velocity
 
     -- Shoot projectile
-    if Keyboard.just_pressed(KEY_SPACE) then
+    if Keyboard.just_pressed(KEY_SPACE) and self:CooldownEnded() then
         local projectile = Projectile:Create(
             {
                 def = "proj_1",
@@ -84,9 +89,14 @@ function Ship:UpdateShip()
             }
         )
         AddProjectile( projectile )
+        CooldownTimer:restart()
 
     end
 
 
     CheckPosition(transform.position, sprite.width, sprite.height)
+end
+
+function Ship:CooldownEnded()
+    return CooldownTimer:elapsed_ms() >= CooldownTime
 end

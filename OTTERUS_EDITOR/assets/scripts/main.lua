@@ -7,6 +7,7 @@ run_script("assets/scripts/asteroids/ship.lua")
 run_script("assets/scripts/asteroids/asteroid.lua")
 run_script("assets/scripts/asteroids/projectile.lua")
 run_script("assets/scripts/asteroids/collision_system.lua")
+run_script("assets/scripts/asteroids/game_data.lua")
 
 LoadAssets()
 LoadBackground()
@@ -24,6 +25,7 @@ main = {
 			UpdateAsteroids()
 			UpdateProjectiles()
 			gCollision:Update()
+			print("Lives: "..gData:NumLives())
 		end
 	},
 	[2] = {

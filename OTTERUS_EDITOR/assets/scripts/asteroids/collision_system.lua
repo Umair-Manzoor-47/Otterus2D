@@ -73,7 +73,7 @@ function CollisionSystem:UpdateCircleCollision()
             RemoveAsteroid(entity:id())
 
         elseif entity:name() == "ship" then
-
+            gData:RemoveLife()
         end
 
     end
