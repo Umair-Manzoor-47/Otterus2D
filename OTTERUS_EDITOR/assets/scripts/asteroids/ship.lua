@@ -19,6 +19,12 @@ function Ship:Create(def)
 
         -- Maximum movement speed
         m_MaxSpeed = 7,
+
+        m_DeathTimer = Timer(),
+        m_InvincibleTimer = Timer(),
+
+        m_Dead = false,
+        m_NumLives = gData:NumLives()
     }
 
     CooldownTimer:start()
@@ -29,6 +35,10 @@ function Ship:Create(def)
 end
 
 function Ship:UpdateShip()
+    if self.m_Dead then
+        return
+    end
+
     local ship = Entity(self.m_EntityID)
 
     -- Components
@@ -93,10 +103,33 @@ function Ship:UpdateShip()
 
     end
 
+    self:CheckDeath()
 
     CheckPosition(transform.position, sprite.width, sprite.height)
 end
 
 function Ship:CooldownEnded()
     return CooldownTimer:elapsed_ms() >= CooldownTime
+end
+
+function Ship:CheckDeath()
+    if self.m_NumLives ~= gData:NumLives() then
+        self.m_NumLives = gData:NumLives()
+        self.m_InvincibleTimer:start()
+    end
+
+    if self.m_InvincibleTimer:is_running() then
+        local ship = Entity(self.m_EntityID)
+
+        local sprite = ship:get_component(Sprite)
+        sprite.color.a = 150
+        if self.m_InvincibleTimer:elapsed_ms() > 3000 then
+            local collider = ship:get_component(CircleCollider)
+            collider.is_colliding = false
+            self.m_InvincibleTimer:stop()
+            sprite.color.a = 255
+        end
+        
+    end
+
 end
