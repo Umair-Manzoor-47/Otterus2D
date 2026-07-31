@@ -35,4 +35,14 @@ function GameData:RemoveLife()
 end
 
 
+function GameData:AddScore(value)
+	self.m_Scores = clamp(self.m_Scores + value, 0, 99999)
+end
+
+function GameData:GetScore( )
+	return self:m_Scores
+end
+
+
+
 gData = GameData:Create()
