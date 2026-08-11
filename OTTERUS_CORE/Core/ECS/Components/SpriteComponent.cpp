@@ -8,6 +8,20 @@ using namespace otterus_resources;
 
 void otterus_core::ECS::SpriteComponent::CreateStaticLuaBind(sol::state& lua, otterus_core::ECS::Registry& registry)
 {
+	lua.new_usertype<otterus_rendering::Color>(
+		"Color",
+		sol::call_constructor,
+		sol::factories(
+			[](GLubyte r, GLubyte g, GLubyte b, GLubyte a) {
+				
+				return otterus_rendering::Color{ .r = r, .g = g, .b = b, .a = a };
+			}
+		),
+		"r", &otterus_rendering::Color::r,
+		"g", &otterus_rendering::Color::g,
+		"b", &otterus_rendering::Color::b,
+		"a", &otterus_rendering::Color::a
+	);
 
 	lua.new_usertype<SpriteComponent>(
 		"Sprite",
@@ -36,6 +50,7 @@ void otterus_core::ECS::SpriteComponent::CreateStaticLuaBind(sol::state& lua, ot
 		"start_x", &SpriteComponent::start_x,
 		"start_y", &SpriteComponent::start_y,
 		"layer", &SpriteComponent::layer,
+		"color", &SpriteComponent::color,
 		"generate_uvs", [&](SpriteComponent& sprite) {
 			auto& assetManager = registry.GetContext<std::shared_ptr<AssetManager>>();
 			auto& texture = assetManager->GetTexture(sprite.texture_name);
