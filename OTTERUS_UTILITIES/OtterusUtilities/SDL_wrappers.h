@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL.h>
+#include <SDL_Mixer.h>
 #include <memory>
 
 namespace otterus_utils {
@@ -7,6 +8,8 @@ namespace otterus_utils {
 	{
 		void operator()(SDL_Window* window) const;
 		void operator()(SDL_GameController* controller) const;
+		void operator()(Mix_Chunk* chunk) const;
+		void operator()(Mix_Music* chunk) const;
 		void operator()(SDL_Cursor* cursor) const;
 	};
 }
