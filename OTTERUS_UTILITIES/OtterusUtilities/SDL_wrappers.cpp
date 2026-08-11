@@ -10,6 +10,18 @@ void otterus_utils::SDLDestroyer::operator()(SDL_Window* window) const
 void otterus_utils::SDLDestroyer::operator()(SDL_GameController * controller) const
 {}
 
+void otterus_utils::SDLDestroyer::operator()(Mix_Chunk * chunk) const
+{
+    Mix_FreeChunk(chunk);
+    std::cout << "Freed SDL Mix_Chunk.";
+}
+
+void otterus_utils::SDLDestroyer::operator()(Mix_Music * music) const
+{
+    Mix_FreeMusic(music);
+    std::cout << "Freed SDL Mix_Music.";
+}
+
 void otterus_utils::SDLDestroyer::operator()(SDL_Cursor * cursor) const
 {}
 

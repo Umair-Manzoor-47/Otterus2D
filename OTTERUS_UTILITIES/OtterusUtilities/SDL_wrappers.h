@@ -9,7 +9,7 @@ namespace otterus_utils {
 		void operator()(SDL_Window* window) const;
 		void operator()(SDL_GameController* controller) const;
 		void operator()(Mix_Chunk* chunk) const;
-		void operator()(Mix_Music* chunk) const;
+		void operator()(Mix_Music* music) const;
 		void operator()(SDL_Cursor* cursor) const;
 	};
 }
@@ -20,4 +20,7 @@ static Controller make_shared_controller(SDL_GameController* controller);
 typedef std::shared_ptr<SDL_Cursor> Cursor;
 static Cursor make_shared_cursor(SDL_Cursor* cursor);
 
-typedef std::unique_ptr<SDL_Window, otterus_utils::SDLDestroyer> WindowPtr;
+typedef std::unique_ptr<SDL_Window, otterus_utils::SDLDestroyer>   WindowPtr;
+
+typedef std::unique_ptr<Mix_Chunk, otterus_utils::SDLDestroyer>    SoundFxPtr;
+typedef std::unique_ptr<Mix_Music, otterus_utils::SDLDestroyer>    MusicPtr;

@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir).\OTTERUS_LOGGER\Logger;$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\OTTERUS_UTILITIES;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir).\OTTERUS_LOGGER\Logger;$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\OTTERUS_UTILITIES\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir).\Dependencies\SDL\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -151,7 +151,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Sounds\Essentials\Music.h" />
     <ClInclude Include="src\Sounds\Essentials\SoundParams.h" />
+    <ClInclude Include="src\Sounds\MusicPlayer\MusicPlayer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Sounds\Essentials\Music.cpp" />
+    <ClCompile Include="src\Sounds\MusicPlayer\MusicPlayer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-namespace otterus_sound {
+namespace otterus_sounds {
 
 	struct SoundParams
 	{
