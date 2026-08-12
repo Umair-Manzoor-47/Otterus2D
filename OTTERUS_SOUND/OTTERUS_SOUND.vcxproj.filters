@@ -18,5 +18,19 @@
     <ClInclude Include="src\Sounds\Essentials\SoundParams.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Sounds\Essentials\Music.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sounds\MusicPlayer\MusicPlayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Sounds\Essentials\Music.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sounds\MusicPlayer\MusicPlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
