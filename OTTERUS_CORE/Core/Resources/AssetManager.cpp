@@ -75,6 +75,49 @@ namespace otterus_resources {
 
         return *shaderItr->second;
     }
+    bool AssetManager::AddMusic(const std::string& musicName, const std::string& filePath)
+    {
+        if (m_mapMusic.find(musicName) != m_mapMusic.end()) {
+
+            OTTERUS_LOG("Failed to add music [{0}] -- Music already exists.", musicName);
+            return false;
+        }
+
+        Mix_Music* music = Mix_LoadMUS(filePath.c_str());
+        if (!music) {
+            std::string error{ Mix_GetError() };
+            OTTERUS_LOG("Failed to add music [{0}] -- Mix_error {}.", musicName, error);
+            return false;
+        }
+
+        otterus_sounds::SoundParams params{
+            .name = musicName,
+            .filename = filePath,
+            .duration = Mix_MusicDuration(music),
+        };
+
+        auto musicPtr = std::make_shared<otterus_sounds::Music>(params, MusicPtr{ music });
+
+        if (!musicPtr) {
+            OTTERUS_LOG("Failed to create music pointer for [{0}]", musicName);
+            return false;
+        }
+
+        m_mapMusic.emplace(musicName, std::move(musicPtr));
+
+        return true;
+    }
+    std::shared_ptr<otterus_sounds::Music> AssetManager::GetMusic(const std::string& musicName)
+    {
+        auto musicItr = m_mapMusic.find(musicName);
+        if (musicItr == m_mapMusic.end()) {
+
+            OTTERUS_ERROR("Failed to get music [{0}] -- Does not exist.", musicName);
+            return nullptr;
+        }
+
+        return musicItr->second;
+    }
     void AssetManager::CreateLuaAssetManager(sol::state& lua, otterus_core::ECS::Registry& registry)
     {
         auto& assetManager = registry.GetContext <std::shared_ptr<AssetManager>>();
@@ -88,6 +131,9 @@ namespace otterus_resources {
             sol::no_constructor,
             "add_texture", [&](const std::string& assetName, const std::string& filepath, bool pixel_art) {
                 return assetManager->AddTexture(assetName, filepath, pixel_art);
+            },
+            "add_music", [&](const std::string& musicName, const std::string& filepath){
+                return assetManager->AddMusic(musicName, filepath);
             }
         
         );
