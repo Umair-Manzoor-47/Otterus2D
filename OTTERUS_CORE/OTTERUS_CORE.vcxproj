@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\OTTERUS_WINDOW\;$(SolutionDir).\OTTERUS_UTILITIES;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\OTTERUS_WINDOW\;$(SolutionDir).\OTTERUS_UTILITIES;$(SolutionDir).\OTTERUS_SOUND\src;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir).\Dependencies\lua53\lib;$(SolutionDir).\Dependencies\SDL\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -127,7 +127,7 @@
       <EnableSegmentHeap>true</EnableSegmentHeap>
     </Manifest>
     <Lib>
-      <AdditionalDependencies>lua53.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>lua53.lib;SDL2.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -158,6 +158,9 @@
     <ProjectReference Include="..\OTTERUS_RENDERING\OTTERUS_RENDERING.vcxproj">
       <Project>{b468db63-1d5d-4e0d-9f98-cf66d0f7f3ca}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\OTTERUS_SOUND\OTTERUS_SOUND.vcxproj">
+      <Project>{a91ebba8-54b7-4cb2-801f-30d01e08e587}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\OTTERUS_UTILITIES\OTTERUS_UTILITIES.vcxproj">
       <Project>{3826c018-264c-407a-ae67-2106f556dc48}</Project>
     </ProjectReference>
@@ -181,6 +184,7 @@
     <ClInclude Include="Core\ECS\Registry.h" />
     <ClInclude Include="Core\Scripting\GlmLuaBindings.h" />
     <ClInclude Include="Core\Scripting\InputManager.h" />
+    <ClInclude Include="Core\Scripting\SoundBindings.h" />
     <ClInclude Include="Core\Systems\AnimationSystem.h" />
     <ClInclude Include="Core\Systems\RenderSystem.h" />
     <ClInclude Include="Core\Systems\ScriptingSystem.h" />
@@ -197,6 +201,7 @@
     <ClCompile Include="Core\ECS\Registry.cpp" />
     <ClCompile Include="Core\Scripting\GlmLuaBindings.cpp" />
     <ClCompile Include="Core\Scripting\InputManager.cpp" />
+    <ClCompile Include="Core\Scripting\SoundBindings.cpp" />
     <ClCompile Include="Core\Systems\AnimationSystem.cpp" />
     <ClCompile Include="Core\Systems\RenderSystem.cpp" />
     <ClCompile Include="Core\Systems\ScriptingSystem.cpp" />
