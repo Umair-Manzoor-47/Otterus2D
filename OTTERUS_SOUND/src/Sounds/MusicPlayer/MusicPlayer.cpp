@@ -3,7 +3,7 @@
 #include <Logger.h>
 
 namespace otterus_sounds {
-    MusicPLayer::MusicPLayer()
+    MusicPlayer::MusicPlayer()
     {
         if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) == -1) 
         {
@@ -14,14 +14,14 @@ namespace otterus_sounds {
         OTTERUS_LOG("Channels Allocated [{}] ", Mix_AllocateChannels(16));
     }
 
-    MusicPLayer::~MusicPLayer()
+    MusicPlayer::~MusicPlayer()
     {
         Mix_HaltMusic();
         Mix_Quit();
         OTTERUS_LOG("Music Player closed");
     }
 
-    void MusicPLayer::Play(Music& music, int loops)
+    void MusicPlayer::Play(Music& music, int loops)
     {
         if (!music.GetMusicPtr()) {
             OTTERUS_ERROR("Failed to play music [{}] - Mix music was null.", music.GetName());
@@ -34,19 +34,19 @@ namespace otterus_sounds {
         }
     }
 
-    void MusicPLayer::Pause()
+    void MusicPlayer::Pause()
     {}
 
-    void MusicPLayer::Resume()
+    void MusicPlayer::Resume()
     {}
 
-    void MusicPLayer::Stop()
+    void MusicPlayer::Stop()
     {}
 
-    void MusicPLayer::SetVolume(int volume)
+    void MusicPlayer::SetVolume(int volume)
     {}
 
-    bool MusicPLayer::IsPlaying()
+    bool MusicPlayer::IsPlaying()
     {
         return false;
     }

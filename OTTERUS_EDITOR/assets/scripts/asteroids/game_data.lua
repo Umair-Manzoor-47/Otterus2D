@@ -8,7 +8,7 @@ function GameData:Create()
 		m_NumAsteroids = 0,
 		m_Scores = 0
 	}
-	
+
 	setmetatable(this, self)
 	return this
 end
@@ -40,7 +40,7 @@ function GameData:AddScore(value)
 end
 
 function GameData:GetScore( )
-	return self:m_Scores
+	return self.m_Scores
 end
 
 

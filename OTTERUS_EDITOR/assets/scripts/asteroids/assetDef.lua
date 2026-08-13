@@ -8,7 +8,9 @@ AssetDefs = {
 		{ name = "bg", path = "assets/textures/aestroid/bg.png", pixel_art = true },
 		{ name = "laser", path = "assets/textures/aestroid/laser.png", pixel_art = true },
 	
-	}
+	},
+
+	music = {{ name = "bgm", path = "assets/music/bgm.mp3" }}
 
 }
 
@@ -21,5 +23,12 @@ function LoadAssets()
 		end
 	end
 
+	for k, v in pairs(AssetDefs.music) do
+		if not AssetManager.add_music(v.name, v.path) then
+			print("Failed to add music [" ..v.name .."] at path [" ..v.path .."]")
+		else
+			print("Added music [" ..v.name .."]")
+		end
+	end
 
 end
