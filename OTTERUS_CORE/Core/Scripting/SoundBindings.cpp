@@ -7,9 +7,9 @@
 using namespace otterus_sounds;
 using namespace otterus_resources;
 
-void otterus_core::Scripting::SoundBindings::CreateSoundBind(sol::state& lua, otterus_core::ECS::Registry& registry)
+void otterus_core::Scripting::SoundBinder::CreateSoundBind(sol::state& lua, otterus_core::ECS::Registry& registry)
 {
-	auto& musicPlayer = registry.GetContext<std::shared_ptr<MusicPLayer>>();
+	auto& musicPlayer = registry.GetContext<std::shared_ptr<MusicPlayer>>();
 	if (!musicPlayer) {
 		OTTERUS_ERROR("Failed to bind Music Player to lua -- Not in registry.");
 		return;
@@ -22,7 +22,7 @@ void otterus_core::Scripting::SoundBindings::CreateSoundBind(sol::state& lua, ot
 		return;
 	}
 
-	lua.new_usertype<MusicPLayer>(
+	lua.new_usertype<MusicPlayer>(
 		"Music",
 		sol::no_constructor,
 		"play", sol::overload(

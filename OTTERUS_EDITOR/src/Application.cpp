@@ -2,6 +2,8 @@
 #include <Windowing/Inputs/Keyboard.h>
 #include <Windowing/Inputs/Mouse.h>
 #include <Core/Scripting/InputManager.h>
+#include <Sounds/MusicPlayer/MusicPlayer.h>
+
 
 namespace otterus_editor {
 
@@ -165,6 +167,20 @@ namespace otterus_editor {
 			OTTERUS_ERROR("Failed to add Animation System into registry context.");
 			return false;
 		}
+
+		auto musicPlayer = std::make_shared<otterus_sounds::MusicPlayer>();
+		if (!musicPlayer) {
+			OTTERUS_ERROR("Failed to create music player.");
+			return false;
+		}
+
+		if (!m_registry->AddToContext<std::shared_ptr<otterus_sounds::MusicPlayer>>(musicPlayer)) {
+		
+			OTTERUS_ERROR("Failed to add music player to registry context.");
+			return false;
+		}
+
+
 		// Create temp camera
 		auto camera = std::make_shared<otterus_rendering::Camera2D>();
 

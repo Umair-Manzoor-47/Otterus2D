@@ -3,11 +3,11 @@
 
 namespace otterus_sounds {
 
-	class MusicPLayer
+	class MusicPlayer
 	{
 	public:
-		MusicPLayer();
-		~MusicPLayer();
+		MusicPlayer();
+		~MusicPlayer();
 		
 		void Play(class Music& music, int loops = 0);
 		void Pause();

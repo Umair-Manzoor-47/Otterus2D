@@ -17,6 +17,8 @@ local ship = LoadEntity(ShipDefs["red_ship"])
 gShip = Ship:Create({id = ship})
 gCollision = CollisionSystem:Create()
 
+Music.play("bgm")
+
 main = {
 	[1] = {
 		update = function()
@@ -25,7 +27,6 @@ main = {
 			UpdateAsteroids()
 			UpdateProjectiles()
 			gCollision:Update()
-			print("Lives: "..gData:NumLives())
 		end
 	},
 	[2] = {

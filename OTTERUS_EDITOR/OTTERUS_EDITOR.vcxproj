@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\OTTERUS_UTILITIES;$(SolutionDir).\OTTERUS_WINDOW;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\OTTERUS_CORE;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\OTTERUS_UTILITIES;$(SolutionDir).\OTTERUS_WINDOW;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\OTTERUS_CORE;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(SolutionDir).\OTTERUS_SOUND\src;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir).\Dependencies\SDL\lib;$(SolutionDir).\Dependencies\lua53\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -147,6 +147,9 @@
     </ProjectReference>
     <ProjectReference Include="..\OTTERUS_RENDERING\OTTERUS_RENDERING.vcxproj">
       <Project>{b468db63-1d5d-4e0d-9f98-cf66d0f7f3ca}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\OTTERUS_SOUND\OTTERUS_SOUND.vcxproj">
+      <Project>{a91ebba8-54b7-4cb2-801f-30d01e08e587}</Project>
     </ProjectReference>
     <ProjectReference Include="..\OTTERUS_UTILITIES\OTTERUS_UTILITIES.vcxproj">
       <Project>{3826c018-264c-407a-ae67-2106f556dc48}</Project>

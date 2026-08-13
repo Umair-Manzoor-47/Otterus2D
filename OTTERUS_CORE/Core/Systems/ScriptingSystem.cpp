@@ -10,6 +10,7 @@
 #include "../Scripting/GlmLuaBindings.h"
 #include "../Scripting/InputManager.h"
 #include "../Resources/AssetManager.h"
+#include "../Scripting/SoundBindings.h"
 #include <OtterusUtilities/Timer.h>
 
 using namespace otterus_core::ECS;
@@ -148,6 +149,7 @@ namespace otterus_core::Systems {
 		otterus_core::Scripting::GLMBindings::CreateGLMBindings(lua);
 		otterus_core::InputManager::CreateLuaBindings(lua);
 		otterus_resources::AssetManager::CreateLuaAssetManager(lua, registry);
+		otterus_core::Scripting::SoundBinder::CreateSoundBind(lua, registry);
 
 		create_timer(lua);
 
