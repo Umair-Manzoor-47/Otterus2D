@@ -2,16 +2,16 @@ AssetDefs = {
 
 	textures = {
 	
-		{ name = "ship", path = "assets/textures/aestroid/ship.png", pixel_art = true },
-		{ name = "ast1", path = "assets/textures/aestroid/meteor_small.png", pixel_art = true },
-		{ name = "ast2", path = "assets/textures/aestroid/meteor_big.png", pixel_art = true },
-		{ name = "bg", path = "assets/textures/aestroid/bg.png", pixel_art = true },
-		{ name = "laser", path = "assets/textures/aestroid/laser.png", pixel_art = true },
+		{ name = "ship", path = "../Games/asteroids/textures/ship.png", pixel_art = true },
+		{ name = "ast1", path = "../Games/asteroids/textures/meteor_small.png", pixel_art = true },
+		{ name = "ast2", path = "../Games/asteroids/textures/meteor_big.png", pixel_art = true },
+		{ name = "bg", path = "../Games/asteroids/textures/bg.png", pixel_art = true },
+		{ name = "laser", path = "../Games/asteroids/textures/laser.png", pixel_art = true },
 	
 	},
 
-	music = {{ name = "bgm", path = "assets/music/bgm.mp3" }},
-	sfx = {{ name = "laser", path = "assets/music/laser.mp3" }}
+	music = {{ name = "bgm", path = "../Games/asteroids/music/bgm.mp3" }},
+	sfx = {{ name = "laser", path = "../Games/asteroids/music/laser.mp3" }}
 
 }
 
