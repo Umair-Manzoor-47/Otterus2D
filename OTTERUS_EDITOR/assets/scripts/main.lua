@@ -27,6 +27,15 @@ main = {
 			UpdateAsteroids()
 			UpdateProjectiles()
 			gCollision:Update()
+			if Keyboard.just_pressed(KEY_Z) then
+				Music.pause()
+			end
+			if Keyboard.just_pressed(KEY_C) then
+				Music.stop()
+			end
+			if Keyboard.just_pressed(KEY_X) then
+				Music.resume()
+			end
 		end
 	},
 	[2] = {

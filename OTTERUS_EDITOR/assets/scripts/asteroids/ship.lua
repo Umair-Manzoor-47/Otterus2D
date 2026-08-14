@@ -99,6 +99,7 @@ function Ship:UpdateShip()
             }
         )
         AddProjectile( projectile )
+        Sound.play("laser")
         CooldownTimer:restart()
 
     end

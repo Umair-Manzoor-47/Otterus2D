@@ -10,7 +10,8 @@ AssetDefs = {
 	
 	},
 
-	music = {{ name = "bgm", path = "assets/music/bgm.mp3" }}
+	music = {{ name = "bgm", path = "assets/music/bgm.mp3" }},
+	sfx = {{ name = "laser", path = "assets/music/laser.mp3" }}
 
 }
 
@@ -28,6 +29,14 @@ function LoadAssets()
 			print("Failed to add music [" ..v.name .."] at path [" ..v.path .."]")
 		else
 			print("Added music [" ..v.name .."]")
+		end
+	end
+
+	for k, v in pairs(AssetDefs.sfx) do
+		if not AssetManager.add_sound(v.name, v.path) then
+			print("Failed to add sfx [" ..v.name .."] at path [" ..v.path .."]")
+		else
+			print("Added sfx [" ..v.name .."]")
 		end
 	end
 
