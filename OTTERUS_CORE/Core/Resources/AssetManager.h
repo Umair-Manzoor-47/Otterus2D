@@ -8,6 +8,7 @@
 #include <Rendering/Essentials/Shader.h>
 #include <Rendering/Essentials/Texture.h>
 #include <Sounds/Essentials/Music.h>
+#include <Sounds/Essentials/SoundFX.h>
 #include <sol/sol.hpp>
 #include "../ECS/Registry.h"
 
@@ -18,6 +19,7 @@ namespace otterus_resources {
 		std::map<std::string, std::shared_ptr<otterus_rendering::Texture>> m_mapTextures;
 		std::map<std::string, std::shared_ptr<otterus_rendering::Shader>> m_mapShaders;
 		std::map<std::string, std::shared_ptr<otterus_sounds::Music>> m_mapMusic;
+		std::map<std::string, std::shared_ptr<otterus_sounds::SoundFX>> m_mapSoundFX;
 
 	public:
 		AssetManager() = default;
@@ -31,6 +33,9 @@ namespace otterus_resources {
 
 		bool AddMusic(const std::string& musicName, const std::string& filePath);
 		std::shared_ptr<otterus_sounds::Music> GetMusic(const std::string& musicName);
+
+		bool AddSoundFX(const std::string& soundFXName, const std::string& filePath);
+		std::shared_ptr<otterus_sounds::SoundFX> GetSoundFX(const std::string& soundFXName);
 
 		static void CreateLuaAssetManager(sol::state& lua, otterus_core::ECS::Registry& registry);
 	};

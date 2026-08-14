@@ -35,19 +35,34 @@ namespace otterus_sounds {
     }
 
     void MusicPlayer::Pause()
-    {}
+    {
+        Mix_PauseMusic();
+    }
 
     void MusicPlayer::Resume()
-    {}
+    {
+        Mix_ResumeMusic();
+    }
 
     void MusicPlayer::Stop()
-    {}
+    {
+        Mix_HaltMusic();
+    }
 
     void MusicPlayer::SetVolume(int volume)
-    {}
+    {
+        if(volume < 0 || volume > 100)
+        {
+            OTTERUS_ERROR("Invalid volume level. Please provide a value between 0 and 100.");
+            return;
+        }
+        int volumechanged = static_cast<int>((volume/100) * 128);
+        Mix_VolumeMusic(volumechanged);
+    }
 
     bool MusicPlayer::IsPlaying()
     {
-        return false;
+
+        return Mix_PlayingMusic();
     }
 }

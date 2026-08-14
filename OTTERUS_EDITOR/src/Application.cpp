@@ -3,6 +3,7 @@
 #include <Windowing/Inputs/Mouse.h>
 #include <Core/Scripting/InputManager.h>
 #include <Sounds/MusicPlayer/MusicPlayer.h>
+#include <Sounds/SoundPlayer/SoundFxPlayer.h>
 
 
 namespace otterus_editor {
@@ -179,7 +180,17 @@ namespace otterus_editor {
 			OTTERUS_ERROR("Failed to add music player to registry context.");
 			return false;
 		}
+		auto soundFxPlayer = std::make_shared<otterus_sounds::SoundFxPlayer>();
+		if (!soundFxPlayer) {
+			OTTERUS_ERROR("Failed to create SoundFxPlayer player.");
+			return false;
+		}
 
+		if (!m_registry->AddToContext<std::shared_ptr<otterus_sounds::SoundFxPlayer>>(soundFxPlayer)) {
+
+			OTTERUS_ERROR("Failed to add Sound FX player to registry context.");
+			return false;
+		}
 
 		// Create temp camera
 		auto camera = std::make_shared<otterus_rendering::Camera2D>();

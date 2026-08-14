@@ -2,6 +2,7 @@
 #include "../ECS/Registry.h"
 #include "../Resources/AssetManager.h"
 #include <Sounds/MusicPlayer/MusicPlayer.h>
+#include <Sounds/SoundPlayer/SoundFxPlayer.h>
 #include <Logger/Logger.h>
 
 using namespace otterus_sounds;
@@ -29,7 +30,7 @@ void otterus_core::Scripting::SoundBinder::CreateSoundBind(sol::state& lua, otte
 			[&](const std::string& musicName, int loops) {
 				auto music = assetManager->GetMusic(musicName);
 				if (!music) {
-					OTTERUS_ERROR("Failed to get music [{}] from AssetManager.");
+					OTTERUS_ERROR("Failed to get music [{}] from AssetManager.", musicName);
 					return;
 				}
 				musicPlayer->Play(*music, loops);
@@ -37,7 +38,7 @@ void otterus_core::Scripting::SoundBinder::CreateSoundBind(sol::state& lua, otte
 			[&](const std::string& musicName) {
 				auto music = assetManager->GetMusic(musicName);
 				if (!music) {
-					OTTERUS_ERROR("Failed to get music [{}] from AssetManager.");
+					OTTERUS_ERROR("Failed to get music [{}] from AssetManager.", musicName);
 					return;
 				}
 				musicPlayer->Play(*music, -1);
@@ -56,6 +57,42 @@ void otterus_core::Scripting::SoundBinder::CreateSoundBind(sol::state& lua, otte
 		},
 		"is_playing", [&]() {
 			return musicPlayer->IsPlaying();
+		}
+	);
+
+	auto& soundFxPlayer = registry.GetContext<std::shared_ptr<SoundFxPlayer>>();
+	if (!soundFxPlayer) {
+		OTTERUS_ERROR("Failed to bind SoundFX Player to lua -- Not in registry.");
+		return;
+	}
+	lua.new_usertype<SoundFxPlayer>(
+		"Sound",
+		sol::no_constructor,
+		"play", sol::overload(
+			[&](const std::string& soundFxName, int loops, int channel) {
+				auto soundFx = assetManager->GetSoundFX(soundFxName);
+				if (!soundFx) {
+					OTTERUS_ERROR("Failed to get SoundFx [{}] from AssetManager.", soundFxName);
+					return;
+				}
+				soundFxPlayer->Play(*soundFx, loops, channel);
+			},
+			[&](const std::string& soundFxName) {
+				auto soundFx = assetManager->GetSoundFX(soundFxName);
+				if (!soundFx) {
+					OTTERUS_ERROR("Failed to get SoundFx [{}] from AssetManager.");
+					return;
+				}
+				soundFxPlayer->Play(*soundFx);
+			}),
+		"stop", [&](int channel) {
+			soundFxPlayer->Stop(channel);
+		},
+		"set_volume", [&](int volume, int channel) {
+			soundFxPlayer->SetVolume(volume, channel);
+		},
+		"is_playing", [&](int channel) {
+			return soundFxPlayer->IsPlaying(channel);
 		}
 	);
 

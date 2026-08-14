@@ -118,6 +118,52 @@ namespace otterus_resources {
 
         return musicItr->second;
     }
+
+    bool AssetManager::AddSoundFX(const std::string& soundFXName, const std::string& filePath)
+    {
+        if (m_mapSoundFX.find(soundFXName) != m_mapSoundFX.end()) {
+
+            OTTERUS_LOG("Failed to add SoundFX [{0}] -- SoundFX already exists.", soundFXName);
+            return false;
+        }
+
+        Mix_Chunk* chunk = Mix_LoadWAV(filePath.c_str());
+        if (!chunk) {
+            std::string error{ Mix_GetError() };
+            OTTERUS_LOG("Failed to add soundFX [{0}] -- Mix_error {}.", soundFXName, error);
+            return false;
+        }
+
+        otterus_sounds::SoundParams params{
+            .name = soundFXName,
+            .filename = filePath,
+            .duration = chunk->alen/179.4,
+        };
+
+        auto soundFXPtr = std::make_shared<otterus_sounds::SoundFX>(params, SoundFxPtr{ chunk });
+
+        if (!soundFXPtr) {
+            OTTERUS_LOG("Failed to create soundFX pointer for [{0}]", soundFXName);
+            return false;
+        }
+
+        m_mapSoundFX.emplace(soundFXName, std::move(soundFXPtr));
+
+        return true;
+    }
+
+    std::shared_ptr<otterus_sounds::SoundFX> AssetManager::GetSoundFX(const std::string& soundFXName)
+    {
+        auto soundFXItr = m_mapSoundFX.find(soundFXName);
+        if (soundFXItr == m_mapSoundFX.end()) {
+
+            OTTERUS_ERROR("Failed to get soundFX [{0}] -- Does not exist.", soundFXName);
+            return nullptr;
+        }
+
+        return soundFXItr->second;
+    }
+
     void AssetManager::CreateLuaAssetManager(sol::state& lua, otterus_core::ECS::Registry& registry)
     {
         auto& assetManager = registry.GetContext <std::shared_ptr<AssetManager>>();
@@ -134,6 +180,9 @@ namespace otterus_resources {
             },
             "add_music", [&](const std::string& musicName, const std::string& filepath){
                 return assetManager->AddMusic(musicName, filepath);
+            },
+            "add_sound", [&](const std::string& soundFXName, const std::string& filepath) {
+                return assetManager->AddSoundFX(soundFXName, filepath);
             }
         
         );
