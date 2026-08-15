@@ -160,10 +160,10 @@ namespace otterus_rendering {
 					.color = color
 				},
 			.bottomRight = Vertex{
-					.position = model * glm::vec4{spriteRect.x + spriteRect.z, spriteRect.y, 0.f, 1.f},
-					.uvs = glm::vec2{uvRect.x + uvRect.w, uvRect.y},
-					.color = color
-				},
+				.position = model * glm::vec4{spriteRect.x + spriteRect.z, spriteRect.y, 0.f, 1.f},
+				.uvs = glm::vec2{ uvRect.x + uvRect.z, uvRect.y},
+				.color = color
+			},
 			.layer = layer,
 			.textureID = textureID
 			
