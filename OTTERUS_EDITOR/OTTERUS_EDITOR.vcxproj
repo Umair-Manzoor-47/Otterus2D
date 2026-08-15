@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -162,6 +162,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\scripts\asset_defs.lua" />
     <None Include="assets\scripts\asteroids\asteroid.lua" />
     <None Include="assets\scripts\asteroids\assetDef.lua" />
     <None Include="assets\scripts\asteroids\collision_system.lua" />
@@ -171,6 +172,7 @@
     <None Include="assets\scripts\asteroids\ship.lua" />
     <None Include="assets\scripts\asteroids\utilities.lua" />
     <None Include="assets\scripts\main.lua" />
+    <None Include="assets\scripts\utilities.lua" />
     <None Include="assets\shaders\basic_shader.frag" />
     <None Include="assets\shaders\basic_shader.vert" />
   </ItemGroup>
