@@ -11,6 +11,8 @@ assert(tilemap)
 LoadAssets(AssetDefs)
 LoadMap(tilemap)
 Music.play("bgm")
+LoadEntity(AnimalsDefs.baby_bunny)
+LoadEntity(AnimalsDefs.baby_bunny_grey)
 main = {
     [1] = {
         update = function()
