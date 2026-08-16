@@ -44,6 +44,17 @@ function LoadEntity(def)
 		sprite:generate_uvs()
 	end
 
+	if def.components.animation then
+		newEntity:add_component(
+			Animation(
+				def.components.animation.numFrames,
+				def.components.animation.frameRate,
+				def.components.animation.frameOffset,
+				def.components.animation.isVertical
+			)
+		)
+	end
+
 	if def.components.circle_collider then
 		newEntity:add_component(
 			CircleCollider(
