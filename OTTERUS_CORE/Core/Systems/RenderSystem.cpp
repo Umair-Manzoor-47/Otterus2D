@@ -15,7 +15,7 @@ namespace otterus_core::Systems {
 	RenderSystem::RenderSystem(Registry& registry):
 		m_registry{ registry }, m_batchRenderer{nullptr}
 	{
-		m_batchRenderer = std::make_unique<otterus_rendering::BatchRenderer>();
+		m_batchRenderer = std::make_unique<otterus_rendering::SpriteBatchRenderer>();
 	}
 	void RenderSystem::Upate()
 	{
