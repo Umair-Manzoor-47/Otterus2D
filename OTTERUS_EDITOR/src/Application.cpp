@@ -92,15 +92,6 @@ namespace otterus_editor {
 			return false;
 		}
 
-		if (!assetManager->AddTexture("Tile", "assets/textures/tiles.png", true)) {
-			OTTERUS_ERROR("Failed to create and add Texture.");
-			return false;
-		}
-		if (!assetManager->AddTexture("player", "assets/textures/player.png", true)) {
-			OTTERUS_ERROR("Failed to create and add Texture.");
-			return false;
-		}
-
 
 		// Registry from EnTT 
 		m_registry = std::make_unique<otterus_core::ECS::Registry>();
@@ -108,12 +99,6 @@ namespace otterus_editor {
 			OTTERUS_ERROR("Failed to create the EnTT registry");
 			return false;
 		}
-
-
-		GLuint indices[] = {
-			0, 1, 3,  // first triangle
-			1, 2, 3   // second triangle
-		};
 
 		// Create script module
 		auto lua = std::make_shared<sol::state>();
