@@ -8,6 +8,11 @@ namespace otterus_rendering {
 
 	};
 
+	struct LineBatch {
+		GLuint offset{ 2 }, numVertices{ 0 };
+		float lineWidth{1.f};
+	};
+
 	struct SpriteGlyph
 	{
 		Vertex topLeft, bottomLeft, topRight, bottomRight;
@@ -15,5 +20,9 @@ namespace otterus_rendering {
 		GLuint textureID;
 	};
 
-
+	struct LineGlyph
+	{
+		Vertex p1, p2;
+		float lineWidth;
+	};
 }
