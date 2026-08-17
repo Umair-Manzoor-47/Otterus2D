@@ -80,6 +80,8 @@ namespace otterus_editor {
 			return false;
 		}
 
+		auto renderer = std::make_shared<otterus_rendering::Renderer>();
+
 		// Enable Blending
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -97,6 +99,13 @@ namespace otterus_editor {
 		m_registry = std::make_unique<otterus_core::ECS::Registry>();
 		if (!m_registry) {
 			OTTERUS_ERROR("Failed to create the EnTT registry");
+			return false;
+		}
+
+		// Add Renderer to Registry 
+		if (!m_registry->AddToContext<std::shared_ptr<otterus_rendering::Renderer>>(renderer)) {
+
+			OTTERUS_ERROR("Failed to add Renderer to registry context.");
 			return false;
 		}
 
@@ -203,6 +212,13 @@ namespace otterus_editor {
 			return false;
 		}
 
+		renderer->DrawLine(otterus_rendering::Line{
+				.p1 = glm::vec2{50.f},
+				.p2 = glm::vec2{200.f},
+				.color = otterus_rendering::Color{255, 0, 0, 255}
+			});
+
+		return true;
     }
 
     bool Application::LoadShaders()
@@ -214,14 +230,26 @@ namespace otterus_editor {
 			return false;
 		}
 
+		if (!assetManager->AddShader("color", "assets/shaders/color_shader.vert", "assets/shaders/color_shader.frag")) {
 
+			OTTERUS_ERROR("Failed to add Color Shader to AssetManager.");
+			return false;
+		}
 		auto& shader = assetManager->GetShader("basic");
 		if(shader.GetProgramID() == 0) {
 			OTTERUS_ERROR("Failed to Get Basic Shader from AssetManager.");
 			return false;
 		}
+		auto& colorShader = assetManager->GetShader("color");
+		if (colorShader.GetProgramID() == 0) {
+			OTTERUS_ERROR("Failed to Get Color Shader from AssetManager.");
+			return false;
+		}
+
 
 		OTTERUS_LOG("Shader Log {0}", shader.GetProgramID());
+		OTTERUS_LOG("Shader Log {0}", colorShader.GetProgramID());
+
         return true;
     }
 
@@ -295,6 +323,11 @@ namespace otterus_editor {
     void Application::Render()
     {	
 		auto& renderSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::RenderSystem>>();
+		auto& renderer = m_registry->GetContext<std::shared_ptr<otterus_rendering::Renderer>>();
+		auto& camera = m_registry->GetContext<std::shared_ptr<otterus_rendering::Camera2D>>();
+		auto& assetManager = m_registry->GetContext<std::shared_ptr<otterus_resources::AssetManager>>();
+
+		auto& shader = assetManager->GetShader("color");
 
 		glViewport(
 			0,
@@ -309,6 +342,7 @@ namespace otterus_editor {
 		auto& scriptSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>();
 		scriptSystem->Render();
 		renderSystem->Upate();
+		renderer->DrawLines(shader, *camera);
 
 		SDL_GL_SwapWindow(m_window->GetWindow().get());
 
