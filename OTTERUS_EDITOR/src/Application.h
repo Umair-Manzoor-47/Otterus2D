@@ -10,6 +10,8 @@
 #include <Rendering/Essentials/ShaderLoader.h>
 #include <Rendering/Essentials/TextureLoader.h>
 #include <Rendering/Core/Camera2D.h>
+#include <Rendering/Core/Renderer.h>
+
 #include <Rendering/Essentials/Vertex.h>
 #include <entt.hpp>
 #include <Core/ECS/Entity.h>

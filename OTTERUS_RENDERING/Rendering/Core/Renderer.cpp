@@ -1,4 +1,7 @@
 #include "Renderer.h"
+#include "../Essentials/Shader.h"
+#include "Camera2D.h"
+
 
 namespace otterus_rendering {
 	Renderer::Renderer()
@@ -60,8 +63,22 @@ namespace otterus_rendering {
 	{
 	}
 
-	void Renderer::DrawLines()
+	void Renderer::DrawLines(Shader& shader, Camera2D& camera)
 	{
+		auto cam_mat = camera.GetCameraMatrix();
+		shader.Enable();
+		shader.SetUniformMat4("projection", cam_mat);
+
+		m_LineBatch->Begin();
+
+		for (const auto& line : m_Lines)
+		{
+			m_LineBatch->AddLine(line);
+		}
+		
+		m_LineBatch->End();
+		m_LineBatch->Render();
+		shader.Disable();
 	}
 
 	void Renderer::DrawRects()

@@ -53,7 +53,7 @@ namespace otterus_rendering {
 		void DrawCircle(const Circle& circle);
 		void DrawCircle(const glm::vec2& position, float radius, const Color& color, float thickness = 1.f);
 
-		void DrawLines();
+		void DrawLines(class Shader& shader, class Camera2D& camera);
 		void DrawRects();
 		void DrawFilledRects();
 		void DrawCircles();

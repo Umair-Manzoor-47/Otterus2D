@@ -7,6 +7,11 @@ namespace otterus_rendering {
 
 		int currentVertex{ 0 };
 
+		m_Batches.push_back(std::make_shared<LineBatch>(LineBatch{
+			.offset = 0,
+			.numVertices = 2
+			}));
+
 		for (const auto& line : m_Glyphs)
 		{
 			vertices[currentVertex++] = line->p1;
@@ -15,7 +20,7 @@ namespace otterus_rendering {
 			m_Batches.back()->lineWidth = line->lineWidth;
 
 
-			if (m_Glyphs.size() == 1) return;
+			if (m_Glyphs.size() == 1) break;
 
 			m_Batches.back()->numVertices += 2;
 

@@ -175,6 +175,8 @@
     <None Include="assets\scripts\utilities.lua" />
     <None Include="assets\shaders\basic_shader.frag" />
     <None Include="assets\shaders\basic_shader.vert" />
+    <None Include="assets\shaders\color_shader.frag" />
+    <None Include="assets\shaders\color_shader.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h" />
