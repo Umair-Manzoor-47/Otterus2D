@@ -210,18 +210,6 @@ namespace otterus_editor {
 			return false;
 		}
 
-		//renderer->DrawLine(otterus_rendering::Line{
-		//		.p1 = glm::vec2{50.f},
-		//		.p2 = glm::vec2{200.f},
-		//		.color = otterus_rendering::Color{255, 0, 0, 255}
-		//	});
-		
-		renderer->DrawRect(otterus_rendering::Rect{
-				.position = glm::vec2{100, 200},
-				.width = 100,
-				.height = 100,
-				.color = otterus_rendering::Color{255, 0, 0, 255}
-			});
 
 		return true;
     }

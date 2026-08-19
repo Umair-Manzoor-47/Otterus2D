@@ -184,6 +184,7 @@
     <ClInclude Include="Core\ECS\Registry.h" />
     <ClInclude Include="Core\Scripting\GlmLuaBindings.h" />
     <ClInclude Include="Core\Scripting\InputManager.h" />
+    <ClInclude Include="Core\Scripting\RendererBindings.h" />
     <ClInclude Include="Core\Scripting\SoundBindings.h" />
     <ClInclude Include="Core\Systems\AnimationSystem.h" />
     <ClInclude Include="Core\Systems\RenderSystem.h" />
@@ -201,6 +202,7 @@
     <ClCompile Include="Core\ECS\Registry.cpp" />
     <ClCompile Include="Core\Scripting\GlmLuaBindings.cpp" />
     <ClCompile Include="Core\Scripting\InputManager.cpp" />
+    <ClCompile Include="Core\Scripting\RendererBindings.cpp" />
     <ClCompile Include="Core\Scripting\SoundBindings.cpp" />
     <ClCompile Include="Core\Systems\AnimationSystem.cpp" />
     <ClCompile Include="Core\Systems\RenderSystem.cpp" />
