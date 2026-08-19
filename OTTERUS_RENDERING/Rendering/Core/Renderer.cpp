@@ -91,9 +91,9 @@ namespace otterus_rendering {
 	{
 		// TOP
 		DrawLine(Line{
-				.p1 = rect.position,
-				.p2 = glm::vec2{rect.position.x + rect.width},
-				.color = rect.color
+			.p1 = rect.position,
+			.p2 = glm::vec2{ rect.position.x + rect.width, rect.position.y},
+			.color = rect.color
 			});
 		
 		// BOTTOM
@@ -101,19 +101,19 @@ namespace otterus_rendering {
 				.p1 = glm::vec2{rect.position.x , rect.position.y + rect.height},
 				.p2 = glm::vec2{rect.position.x + rect.width, rect.position.y + rect.height},
 				.color = rect.color
-			});
+		});
 		// LEFT
 		DrawLine(Line{
 				.p1 = rect.position,
 				.p2 = glm::vec2{rect.position.x, rect.position.y + rect.height},
 				.color = rect.color
-			});
+		});
 		// RIGHT
 		DrawLine(Line{
-				.p1 = glm::vec2{rect.position.x + rect.width},
+				.p1 = glm::vec2{rect.position.x + rect.width, rect.position.y},
 				.p2 = glm::vec2{rect.position.x + rect.width, rect.position.y + rect.height},
 				.color = rect.color
-			});
+		});
 
 
 	}

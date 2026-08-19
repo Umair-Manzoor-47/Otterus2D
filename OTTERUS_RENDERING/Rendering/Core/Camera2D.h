@@ -22,8 +22,8 @@ namespace otterus_rendering {
 		inline void SetScale(float scale) { m_scale = scale; m_needsUpdate = true; }
 		
 		inline glm::mat4 GetCameraMatrix() { return m_cameraMatrix; }
-		inline const float GetPosition() const { return m_scale; }
-
+		inline const glm::vec2 GetPosition() const { return m_position; }
+		inline const float GetScale() const { return m_scale; }
 
 		void Update();
 
