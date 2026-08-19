@@ -83,9 +83,7 @@ namespace otterus_editor {
 		auto renderer = std::make_shared<otterus_rendering::Renderer>();
 
 		// Enable Blending
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+		renderer->SetBlendCapabilitiy(otterus_rendering::Renderer::BlendingFactors::SRC_ALPHA, otterus_rendering::Renderer::BlendingFactors::ONE_MINUS_SRC_ALPHA);
 
 
 		auto assetManager = std::make_shared<otterus_resources::AssetManager>();
@@ -212,9 +210,16 @@ namespace otterus_editor {
 			return false;
 		}
 
-		renderer->DrawLine(otterus_rendering::Line{
-				.p1 = glm::vec2{50.f},
-				.p2 = glm::vec2{200.f},
+		//renderer->DrawLine(otterus_rendering::Line{
+		//		.p1 = glm::vec2{50.f},
+		//		.p2 = glm::vec2{200.f},
+		//		.color = otterus_rendering::Color{255, 0, 0, 255}
+		//	});
+		
+		renderer->DrawRect(otterus_rendering::Rect{
+				.position = glm::vec2{100, 200},
+				.width = 100,
+				.height = 100,
 				.color = otterus_rendering::Color{255, 0, 0, 255}
 			});
 
@@ -329,15 +334,10 @@ namespace otterus_editor {
 
 		auto& shader = assetManager->GetShader("color");
 
-		glViewport(
-			0,
-			0,
-			m_window->GetWidth(),
-			m_window->GetHeight()
-		);
+		renderer->SetViewport(0, 0, m_window->GetWidth(), m_window->GetHeight());
 
-		glClearColor(1.f, 1.f, 1.f, 1.f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		renderer->SetClearColor(1.f, 1.f, 1.f, 1.f);
+		renderer->ClearBuffers(true, false, false);
 
 		auto& scriptSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>();
 		scriptSystem->Render();
