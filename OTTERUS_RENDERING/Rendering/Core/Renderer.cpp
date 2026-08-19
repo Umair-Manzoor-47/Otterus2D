@@ -14,18 +14,62 @@ namespace otterus_rendering {
 
 	void Renderer::SetClearColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat aplha)
 	{
+		glClearColor(red, green, blue, aplha);
 	}
 
 	void Renderer::ClearBuffers(bool color, bool depth, bool stencil)
 	{
+		GLbitfield mask = 0;
+
+		if (color)
+			mask |= GL_COLOR_BUFFER_BIT;
+
+		if (depth)
+			mask |= GL_DEPTH_BUFFER_BIT;
+
+		if (stencil)
+			mask |= GL_STENCIL_BUFFER_BIT;
+
+		if (mask != 0)
+			glClear(mask);
 	}
 
 	void Renderer::SetBlendCapabilitiy(BlendingFactors sFactor, BlendingFactors dFactor)
 	{
+		glEnable(static_cast<GLenum>(GLCapabilities::BLEND));
+
+		glBlendFunc(
+			static_cast<GLenum>(sFactor),
+			static_cast<GLenum>(dFactor)
+		);
+
 	}
 
 	void Renderer::SetViewport(GLint x, GLint y, GLsizei width, GLsizei height)
 	{
+		glViewport(
+			x,
+			y,
+			width,
+			height
+		);
+	}
+
+	void Renderer::SetCapability(GLCapabilities capability, bool enabled)
+	{
+		if (enabled) {
+	
+			glEnable(static_cast<GLenum>(capability));
+		}
+		else
+		{
+			glDisable(static_cast<GLenum>(capability));
+		}
+	}
+
+	bool Renderer::IsCapabilityEnabled(GLCapabilities capability) const
+	{
+		return glIsEnabled(static_cast<GLenum>(capability));;
 	}
 
 	void Renderer::DrawLine(const Line& line)
@@ -45,10 +89,43 @@ namespace otterus_rendering {
 
 	void Renderer::DrawRect(const Rect& rect)
 	{
+		// TOP
+		DrawLine(Line{
+				.p1 = rect.position,
+				.p2 = glm::vec2{rect.position.x + rect.width},
+				.color = rect.color
+			});
+		
+		// BOTTOM
+		DrawLine(Line{
+				.p1 = glm::vec2{rect.position.x , rect.position.y + rect.height},
+				.p2 = glm::vec2{rect.position.x + rect.width, rect.position.y + rect.height},
+				.color = rect.color
+			});
+		// LEFT
+		DrawLine(Line{
+				.p1 = rect.position,
+				.p2 = glm::vec2{rect.position.x, rect.position.y + rect.height},
+				.color = rect.color
+			});
+		// RIGHT
+		DrawLine(Line{
+				.p1 = glm::vec2{rect.position.x + rect.width},
+				.p2 = glm::vec2{rect.position.x + rect.width, rect.position.y + rect.height},
+				.color = rect.color
+			});
+
+
 	}
 
 	void Renderer::DrawRect(const glm::vec2& position, float width, float height, const Color& color)
 	{
+		DrawRect(Rect{
+				.position = position,
+				.width = width,
+				.height = height,
+				.color = color
+			});
 	}
 
 	void Renderer::DrawFillRect(const Rect& rect)
@@ -81,19 +158,19 @@ namespace otterus_rendering {
 		shader.Disable();
 	}
 
-	void Renderer::DrawRects()
+
+	void Renderer::DrawFilledRects(Shader& shader, Camera2D& camera)
 	{
 	}
 
-	void Renderer::DrawFilledRects()
-	{
-	}
-
-	void Renderer::DrawCircles()
+	void Renderer::DrawCircles(Shader& shader, Camera2D& camera)
 	{
 	}
 
 	void Renderer::ClearPrimitives()
 	{
+		m_Lines.clear();
+		m_Rects.clear();
+		m_Circles.clear();
 	}
 }
