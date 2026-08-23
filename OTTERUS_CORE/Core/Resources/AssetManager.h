@@ -7,6 +7,7 @@
 
 #include <Rendering/Essentials/Shader.h>
 #include <Rendering/Essentials/Texture.h>
+#include <Rendering/Essentials/Font.h>
 #include <Sounds/Essentials/Music.h>
 #include <Sounds/Essentials/SoundFX.h>
 #include <sol/sol.hpp>
@@ -18,6 +19,7 @@ namespace otterus_resources {
 	private:
 		std::map<std::string, std::shared_ptr<otterus_rendering::Texture>> m_mapTextures;
 		std::map<std::string, std::shared_ptr<otterus_rendering::Shader>> m_mapShaders;
+		std::map<std::string, std::shared_ptr<otterus_rendering::Font>> m_mapFonts;
 		std::map<std::string, std::shared_ptr<otterus_sounds::Music>> m_mapMusic;
 		std::map<std::string, std::shared_ptr<otterus_sounds::SoundFX>> m_mapSoundFX;
 
@@ -30,6 +32,9 @@ namespace otterus_resources {
 
 		bool AddShader(const std::string & shaderName, const std::string & vertexPath, const std::string & fragmentPath);
 		otterus_rendering::Shader& GetShader(const std::string& shaderName);
+
+		bool AddFont(const std::string& fontName, const std::string& fontPath, float fontSize = 32.f, int width = 512, int height = 512);
+		std::shared_ptr<otterus_rendering::Font> GetFont(const std::string& fontName);
 
 		bool AddMusic(const std::string& musicName, const std::string& filePath);
 		std::shared_ptr<otterus_sounds::Music> GetMusic(const std::string& musicName);

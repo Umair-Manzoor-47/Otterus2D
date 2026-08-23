@@ -1,6 +1,7 @@
 #include "AssetManager.h"
 #include <Rendering/Essentials/TextureLoader.h>
 #include <Rendering/Essentials/ShaderLoader.h>
+#include <Rendering/Essentials/FontLoader.h>
 #include <Logger/Logger.h>
 
 
@@ -163,6 +164,40 @@ namespace otterus_resources {
 
         return soundFXItr->second;
     }
+
+    bool AssetManager::AddFont(const std::string& fontName, const std::string& fontPath, float fontSize, int width, int height)
+    {
+        if (m_mapFonts.find(fontName) != m_mapFonts.end()) {
+
+            OTTERUS_LOG("Failed to add Font [{0}] -- Font already exists.", fontName);
+            return false;
+        }
+        auto font = std::move(otterus_rendering::FontLoader::Create(fontPath, fontSize, width, height));
+
+        if (!font) {
+
+            OTTERUS_LOG("Failed to load font [{0}] -- At path {1}.",
+                fontName, fontPath);
+            return false;
+        }
+
+        m_mapFonts.emplace(fontName, std::move(font));
+
+        return true;
+    }
+
+    std::shared_ptr<otterus_rendering::Font> AssetManager::GetFont(const std::string& fontName)
+    {
+        auto fontItr = m_mapFonts.find(fontName);
+        if (fontItr == m_mapFonts.end()) {
+
+            OTTERUS_ERROR("Failed to get font [{0}] -- Does not exist.", fontName);
+            return nullptr;
+        }
+
+        return fontItr->second;
+    }
+
 
     void AssetManager::CreateLuaAssetManager(sol::state& lua, otterus_core::ECS::Registry& registry)
     {
