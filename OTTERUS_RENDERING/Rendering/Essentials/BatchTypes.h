@@ -13,6 +13,16 @@ namespace otterus_rendering {
 		float lineWidth{1.f};
 	};
 
+	struct RectBatch
+	{
+		GLuint numIndices{ 0 }, offset{ 0 };
+	};
+
+	struct RectGlyph
+	{
+		Vertex topLeft, bottomLeft, topRight, bottomRight;
+	};
+
 	struct SpriteGlyph
 	{
 		Vertex topLeft, bottomLeft, topRight, bottomRight;
