@@ -23,6 +23,11 @@ namespace otterus_rendering {
 		Vertex topLeft, bottomLeft, topRight, bottomRight;
 	};
 
+	struct CircleGlyph
+	{
+		CircleVertex topLeft, bottomLeft, topRight, bottomRight;
+	};
+
 	struct SpriteGlyph
 	{
 		Vertex topLeft, bottomLeft, topRight, bottomRight;

@@ -21,9 +21,8 @@ namespace otterus_rendering {
 	struct Circle
 	{
 		glm::vec2 position{ 0.f };
-		float thickness{ 1.f }, radius{ 0.f };
+		float lineThickness{ 1.f }, radius{ 0.f };
 		Color color{};
-
 	};
 
 
