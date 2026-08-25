@@ -32,6 +32,13 @@ namespace otterus_rendering {
 			color.b = (newColor >> 8) & 0xFF;
 			color.a = (newColor >> 0) & 0xFF;
 		}
+
+		struct CircleVertex
+		{
+			glm::vec2 position, uvs;
+			Color color;
+			float lineThickness;
+		};
 	};
 
 
