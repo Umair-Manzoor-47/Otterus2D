@@ -57,14 +57,12 @@ void otterus_core::Scripting::RendererBinder::CreateRendererBind(sol::state& lua
 
 				return Circle{
 					.position = position,
-					.thickness = thickness,
 					.radius = radius,
 					.color = color,
 				};
 			}
 		),
 		"position", &Circle::position,
-		"thickness",&Circle::thickness,
 		"radius",	&Circle::radius,
 		"color",	&Circle::color
 	);

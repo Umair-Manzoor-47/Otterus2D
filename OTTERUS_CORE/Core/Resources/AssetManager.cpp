@@ -165,19 +165,39 @@ namespace otterus_resources {
         return soundFXItr->second;
     }
 
-    bool AssetManager::AddFont(const std::string& fontName, const std::string& fontPath, float fontSize, int width, int height)
+    bool AssetManager::AddFont(const std::string& fontName, const std::string& fontPath, float fontSize)
     {
-        if (m_mapFonts.find(fontName) != m_mapFonts.end()) {
+        if (m_mapFonts.contains(fontName)) {
 
             OTTERUS_LOG("Failed to add Font [{0}] -- Font already exists.", fontName);
             return false;
         }
-        auto font = std::move(otterus_rendering::FontLoader::Create(fontPath, fontSize, width, height));
+        auto font = std::move(otterus_rendering::FontLoader::Create(fontPath, fontSize));
 
         if (!font) {
 
             OTTERUS_LOG("Failed to load font [{0}] -- At path {1}.",
                 fontName, fontPath);
+            return false;
+        }
+
+        m_mapFonts.emplace(fontName, std::move(font));
+
+        return true;
+    }
+
+    bool AssetManager::AddFontFromMemory(const std::string& fontName, unsigned char* fontData, float fontSize)
+    {
+        if (m_mapFonts.contains(fontName)) {
+
+            OTTERUS_LOG("Failed to add Font [{0}] -- Font already exists.", fontName);
+            return false;
+        }
+        auto font = std::move(otterus_rendering::FontLoader::CreateFromMemory(fontData, fontSize));
+
+        if (!font) {
+
+            OTTERUS_LOG("Failed to load font [{0}] from memory.", fontName);
             return false;
         }
 
@@ -218,6 +238,10 @@ namespace otterus_resources {
             },
             "add_sound", [&](const std::string& soundFXName, const std::string& filepath) {
                 return assetManager->AddSoundFX(soundFXName, filepath);
+            },
+            "add_font", [&](const std::string& fontName, const std::string& fontPath, float fontSize) {
+            
+                return assetManager->AddFont(fontName, fontPath, fontSize);
             }
         
         );

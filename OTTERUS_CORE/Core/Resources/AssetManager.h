@@ -33,7 +33,8 @@ namespace otterus_resources {
 		bool AddShader(const std::string & shaderName, const std::string & vertexPath, const std::string & fragmentPath);
 		otterus_rendering::Shader& GetShader(const std::string& shaderName);
 
-		bool AddFont(const std::string& fontName, const std::string& fontPath, float fontSize = 32.f, int width = 512, int height = 512);
+		bool AddFont(const std::string& fontName, const std::string& fontPath, float fontSize = 32.f);
+		bool AddFontFromMemory(const std::string& fontName, unsigned char* fontData, float fontSize = 32.f);
 		std::shared_ptr<otterus_rendering::Font> GetFont(const std::string& fontName);
 
 		bool AddMusic(const std::string& musicName, const std::string& filePath);

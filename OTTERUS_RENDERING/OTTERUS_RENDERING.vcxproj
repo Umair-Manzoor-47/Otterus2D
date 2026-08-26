@@ -160,6 +160,7 @@
     <ClInclude Include="Rendering\Core\LineBatchRenderer.h" />
     <ClInclude Include="Rendering\Core\RectBatchRenderer.h" />
     <ClInclude Include="Rendering\Core\Renderer.h" />
+    <ClInclude Include="Rendering\Core\TextBatchRenderer.h" />
     <ClInclude Include="Rendering\Essentials\BatchTypes.h" />
     <ClInclude Include="Rendering\Essentials\Font.h" />
     <ClInclude Include="Rendering\Essentials\FontLoader.h" />
@@ -177,6 +178,7 @@
     <ClCompile Include="Rendering\Core\LineBatchRenderer.cpp" />
     <ClCompile Include="Rendering\Core\RectBatchRenderer.cpp" />
     <ClCompile Include="Rendering\Core\Renderer.cpp" />
+    <ClCompile Include="Rendering\Core\TextBatchRenderer.cpp" />
     <ClCompile Include="Rendering\Essentials\Font.cpp" />
     <ClCompile Include="Rendering\Essentials\FontLoader.cpp" />
     <ClCompile Include="Rendering\Essentials\Shader.cpp" />
