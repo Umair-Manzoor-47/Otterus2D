@@ -5,6 +5,8 @@ run_script("assets/scripts/tilemap/test_map.lua")
 run_script("assets/scripts/utilities.lua")
 
 
+AssetManager.add_font("Minecraft", "assets/fonts/Minecraft.ttf", 32.0)
+
 
 local tilemap = CreateTestMap()
 assert(tilemap)

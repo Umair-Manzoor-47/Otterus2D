@@ -1,5 +1,7 @@
 #pragma once
 #include "Vertex.h"
+#include <string>
+#include "Font.h"
 
 namespace otterus_rendering {
 	struct Batch
@@ -39,5 +41,21 @@ namespace otterus_rendering {
 	{
 		Vertex p1, p2;
 		float lineWidth;
+	};
+
+	struct TextBatch
+	{
+		GLuint offset{ 0 }, numVertices{ 0 }, fontAtlasID{ 0 };
+	};
+
+	struct TextGlyph
+	{
+		std::string textStr{""};
+		glm::vec2 position{0.f};
+		Color color{ 255, 255, 255, 255 };
+		glm::vec4 model;
+		std::shared_ptr<Font> font{ nullptr };
+		float wrap{ 0.f };
+		int padding{ 0 };
 	};
 }
