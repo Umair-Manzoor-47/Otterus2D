@@ -53,7 +53,7 @@ namespace otterus_rendering {
 		std::string textStr{""};
 		glm::vec2 position{0.f};
 		Color color{ 255, 255, 255, 255 };
-		glm::vec4 model;
+		glm::mat4 model;
 		std::shared_ptr<Font> font{ nullptr };
 		float wrap{ 0.f };
 		int padding{ 0 };
