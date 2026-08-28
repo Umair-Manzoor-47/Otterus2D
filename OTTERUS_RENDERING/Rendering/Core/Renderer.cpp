@@ -5,10 +5,11 @@
 
 namespace otterus_rendering {
 	Renderer::Renderer()
-		: m_LineBatch{ nullptr }, m_SpriteBatch{nullptr}
+		: m_LineBatch{ nullptr }, m_SpriteBatch{ nullptr }, m_TextBatch{ nullptr }
 	{
 		m_LineBatch = std::make_unique<LineBatchRenderer>();
 		m_SpriteBatch = std::make_unique<SpriteBatchRenderer>();
+		m_TextBatch = std::make_unique<TextBatchRenderer>();
 
 	}
 
@@ -140,8 +141,16 @@ namespace otterus_rendering {
 	{
 	}
 
+	void Renderer::DrawText2D(const Text& text)
+	{
+		m_Text.push_back(text);
+	}
+
 	void Renderer::DrawLines(Shader& shader, Camera2D& camera)
 	{
+		if (m_Lines.empty()) 
+			return;
+
 		auto cam_mat = camera.GetCameraMatrix();
 		shader.Enable();
 		shader.SetUniformMat4("projection", cam_mat);
@@ -167,10 +176,32 @@ namespace otterus_rendering {
 	{
 	}
 
+	void Renderer::DrawAllText(Shader& shader, Camera2D& camera)
+	{
+		if (m_Text.empty())
+			return;
+
+		auto cam_mat = camera.GetCameraMatrix();
+		shader.Enable();
+		shader.SetUniformMat4("uProjection", cam_mat);
+
+		m_TextBatch->Begin();
+
+		for (const auto& text : m_Text)
+		{
+			m_TextBatch->AddText(text.textStr, text.font, text.position, 4, text.wrap,text.color);
+		}
+
+		m_TextBatch->End();
+		m_TextBatch->Render();
+		shader.Disable();
+	}
+
 	void Renderer::ClearPrimitives()
 	{
 		m_Lines.clear();
 		m_Rects.clear();
 		m_Circles.clear();
+		m_Text.clear();
 	}
 }

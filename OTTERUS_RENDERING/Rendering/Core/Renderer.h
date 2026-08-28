@@ -3,6 +3,7 @@
 #include "../Essentials/Primitives.h"
 #include "BatchRenderer.h"
 #include "LineBatchRenderer.h"
+#include "TextBatchRenderer.h"
 
 namespace otterus_rendering {
 
@@ -25,10 +26,13 @@ namespace otterus_rendering {
 		std::vector<Line> m_Lines;
 		std::vector<Circle> m_Circles;
 		std::vector<Rect> m_Rects;
+		std::vector<otterus_rendering::Text> m_Text;
+
 
 		std::unique_ptr<LineBatchRenderer> m_LineBatch;
 		//std::unique_ptr<CircleBatchRenderer> m_CircleBatch;
 		std::unique_ptr<SpriteBatchRenderer> m_SpriteBatch;
+		std::unique_ptr<TextBatchRenderer> m_TextBatch;
 
 	public:
 		Renderer();
@@ -56,9 +60,13 @@ namespace otterus_rendering {
 		void DrawCircle(const Circle& circle);
 		void DrawCircle(const glm::vec2& position, float radius, const Color& color, float thickness = 1.f);
 
+		// DrawText is macro already in WINDOWS API
+		void DrawText2D(const Text& text);
+
 		void DrawLines(class Shader& shader, class Camera2D& camera);
 		void DrawFilledRects(class Shader& shader, class Camera2D& camera);
 		void DrawCircles(class Shader& shader, class Camera2D& camera);
+		void DrawAllText(class Shader& shader, class Camera2D& camera);
 
 		void ClearPrimitives();
 

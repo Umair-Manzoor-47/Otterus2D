@@ -38,6 +38,8 @@
     <None Include="assets\scripts\asset_defs.lua" />
     <None Include="assets\shaders\color_shader.vert" />
     <None Include="assets\shaders\color_shader.frag" />
+    <None Include="assets\shaders\font_shader.vert" />
+    <None Include="assets\shaders\font_shader.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h">

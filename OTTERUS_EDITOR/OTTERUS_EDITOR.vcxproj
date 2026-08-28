@@ -177,6 +177,8 @@
     <None Include="assets\shaders\basic_shader.vert" />
     <None Include="assets\shaders\color_shader.frag" />
     <None Include="assets\shaders\color_shader.vert" />
+    <None Include="assets\shaders\font_shader.frag" />
+    <None Include="assets\shaders\font_shader.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h" />
