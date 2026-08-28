@@ -47,4 +47,8 @@ asset loading — while keeping the code clean and well-structured.
 - [x] Lua Scripting support
 - [x] Renderer System
 - [x] Input system
-- [ ] Audio
+- [x] Audio
+- [ ] Primitives
+- [ ] Text
+- [ ] UI
+- [ ] Editor Interface
