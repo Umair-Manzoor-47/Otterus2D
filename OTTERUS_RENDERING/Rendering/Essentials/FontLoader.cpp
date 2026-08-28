@@ -34,6 +34,7 @@ namespace otterus_rendering {
 
         GLuint fontID;
         glGenTextures(1, &fontID);
+        glBindTexture(GL_TEXTURE_2D, fontID);
         
         
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap.data());

@@ -210,6 +210,19 @@ namespace otterus_editor {
 			return false;
 		}
 
+		if (!assetManager->AddFont("pixel", "./assets/fonts/Minecraft.ttf")) {
+			OTTERUS_ERROR("Failed to load pixel font.");
+			return false;
+		}
+
+		auto font = assetManager->GetFont("pixel");
+		renderer->DrawText2D(otterus_rendering::Text{
+				.position = glm::vec2{100.f, 100.f},
+				.textStr  = "Grandfall Claudi -- The Black Dragon.",
+				.wrap	  = 1.f,
+				.font	  =	font,
+				.color	  = otterus_rendering::Color{255, 255, 0, 255}
+			});
 
 		return true;
     }
@@ -228,6 +241,13 @@ namespace otterus_editor {
 			OTTERUS_ERROR("Failed to add Color Shader to AssetManager.");
 			return false;
 		}
+
+		if (!assetManager->AddShader("font", "assets/shaders/font_shader.vert", "assets/shaders/font_shader.frag")) {
+
+			OTTERUS_ERROR("Failed to add Font Shader to AssetManager.");
+			return false;
+		}
+
 		auto& shader = assetManager->GetShader("basic");
 		if(shader.GetProgramID() == 0) {
 			OTTERUS_ERROR("Failed to Get Basic Shader from AssetManager.");
@@ -321,6 +341,8 @@ namespace otterus_editor {
 		auto& assetManager = m_registry->GetContext<std::shared_ptr<otterus_resources::AssetManager>>();
 
 		auto& shader = assetManager->GetShader("color");
+		auto& fontShader = assetManager->GetShader("font");
+
 
 		renderer->SetViewport(0, 0, m_window->GetWidth(), m_window->GetHeight());
 
@@ -331,6 +353,7 @@ namespace otterus_editor {
 		scriptSystem->Render();
 		renderSystem->Upate();
 		renderer->DrawLines(shader, *camera);
+		renderer->DrawAllText(fontShader, *camera);
 
 		SDL_GL_SwapWindow(m_window->GetWindow().get());
 

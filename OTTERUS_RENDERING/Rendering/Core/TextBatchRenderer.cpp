@@ -156,7 +156,7 @@ namespace otterus_rendering {
 		DisableVAO();
 	}
 
-	void TextBatchRenderer::AddText(std::string& text, const std::shared_ptr<Font>& font, const glm::vec2 position, int padding, float wrap, Color color, glm::mat4 model)
+	void TextBatchRenderer::AddText(const std::string& text, const std::shared_ptr<Font>& font, const glm::vec2 position, int padding, float wrap, Color color, glm::mat4 model)
 	{
 		if (!font) 
 			return;
