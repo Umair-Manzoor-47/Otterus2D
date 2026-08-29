@@ -1,4 +1,5 @@
 #include "TextBatchRenderer.h"
+#include <Logger/Logger.h>
 
 namespace otterus_rendering {
 	void TextBatchRenderer::Initialize()
@@ -29,10 +30,63 @@ namespace otterus_rendering {
 			std::vector<std::string> textChunks;
 			std::string text_holder{""};
 			glm::vec2 temp_pos = textGlyph->position;
-		
+			auto fontSize = textGlyph->font->GetFontSize();
+
 			if (textGlyph->wrap > 1.f)
 			{
 				// wrapping happens here
+				for (int i = 0; i < textGlyph->textStr.size(); i++)
+				{
+					auto character = textGlyph->textStr[i];
+					text_holder += character;
+					bool isNewLine = character == '\n';
+					size_t text_size = text_holder.size();
+
+					// Moving temp position with each character
+					textGlyph->font->GetNextCharPos(character, temp_pos);
+					if (text_size > 0 && (temp_pos.x > ( textGlyph->wrap + textGlyph->position.x ) || character == '\0' || isNewLine))
+					{
+						if (!isNewLine) {
+
+							while (textGlyph->textStr[i] != ' ' && textGlyph->textStr[i] != '!' && textGlyph->textStr[i] != '?'
+								&& textGlyph->textStr[i] != '.' && text_size > 0) {
+								i--;
+								if (i < 0)
+								{
+									OTTERUS_ERROR("Failed to draw text [{}] -- Wrap [{}] is too small for the text to wrap successfully.",
+										textGlyph->textStr, textGlyph->wrap);
+									return;
+								}
+
+								if (!text_holder.empty()) {
+									text_holder.pop_back();
+									text_size = text_holder.size();
+									temp_pos.x -= fontSize;
+								}
+							}
+
+							if (!text_holder.empty())
+							{
+								textChunks.push_back(text_holder);
+								text_holder.clear();
+							}
+						}
+						else {
+							text_holder.pop_back();
+						}
+
+						if (!text_holder.empty())
+						{
+							textChunks.push_back(text_holder);
+						}
+						temp_pos = textGlyph->position;
+						text_holder.clear();
+					}
+				}
+				if (!text_holder.empty())
+				{
+					textChunks.push_back(text_holder);
+				}
 			}
 			else
 			{
@@ -113,7 +167,7 @@ namespace otterus_rendering {
 
 				// Moving to next line
 				temp_pos.x = textGlyph->position.x;
-				temp_pos.y = textGlyph->font->GetFontSize() + textGlyph->padding;
+				temp_pos.y += textGlyph->font->GetFontSize() + textGlyph->padding;
 			}
 
 		}
