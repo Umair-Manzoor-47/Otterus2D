@@ -25,6 +25,7 @@ namespace otterus_rendering {
 		~Font();
 
 		FontGlyph GetGlyph(char c, glm::vec2& pos);
+		void GetNextCharPos(char c, glm::vec2& pos);
 
 		inline const GLuint GetFontAtlasID() const { return m_FontAtlasID; }
 		inline const float GetFontSize() const { return m_FontSize; }

@@ -4,11 +4,14 @@
 #include <Rendering/Core/Renderer.h>
 #include "../ECS/Registry.h"
 #include <Logger/Logger.h>
+#include "../Resources/AssetManager.h"
 
 using namespace otterus_rendering;
 
 void otterus_core::Scripting::RendererBinder::CreateRendererBind(sol::state& lua, otterus_core::ECS::Registry& registry)
 {
+	auto& assetManager = registry.GetContext<std::shared_ptr<otterus_resources::AssetManager>>();
+
 	lua.new_usertype<Line>(
 		"Line",
 		sol::call_constructor,
@@ -67,6 +70,34 @@ void otterus_core::Scripting::RendererBinder::CreateRendererBind(sol::state& lua
 		"color",	&Circle::color
 	);
 
+	lua.new_usertype<Text>(
+		"Text",
+		sol::call_constructor,
+		sol::factories(
+			[&](const glm::vec2& position, const std::string& textStr, const std::string& fontName, float wrap, const Color& color)
+			{
+				auto font = assetManager->GetFont(fontName);
+				if (!font)
+				{
+					OTTERUS_ERROR("Failed to get font [{}] in Asset Manager.", fontName);
+					return Text{};
+				}
+				return Text{
+					.position = position,
+					.textStr = textStr,
+					.wrap = wrap,
+					.font = font,
+					.color = color
+				};
+
+			}
+		),
+		"position", &Text::position,
+		"textStr", &Text::textStr,
+		"wrap", &Text::wrap,
+		"color", &Text::color
+	);
+
 	auto& renderer = registry.GetContext<std::shared_ptr<Renderer>>();
 
 	if (!renderer) {
@@ -108,6 +139,12 @@ void otterus_core::Scripting::RendererBinder::CreateRendererBind(sol::state& lua
 			}
 
 		)
+	);
+
+	lua.set_function(
+		"DrawText",	[&](const Text& text) {
+				renderer->DrawText2D(text);
+			}
 	);
 
 	auto& camera = registry.GetContext<std::shared_ptr<Camera2D>>();

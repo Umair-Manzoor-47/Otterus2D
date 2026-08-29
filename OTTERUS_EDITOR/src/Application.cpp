@@ -210,19 +210,6 @@ namespace otterus_editor {
 			return false;
 		}
 
-		if (!assetManager->AddFont("pixel", "./assets/fonts/Minecraft.ttf")) {
-			OTTERUS_ERROR("Failed to load pixel font.");
-			return false;
-		}
-
-		auto font = assetManager->GetFont("pixel");
-		renderer->DrawText2D(otterus_rendering::Text{
-				.position = glm::vec2{100.f, 100.f},
-				.textStr  = "Grandfall Claudi -- The Black Dragon.",
-				.wrap	  = 1.f,
-				.font	  =	font,
-				.color	  = otterus_rendering::Color{255, 255, 0, 255}
-			});
 
 		return true;
     }
