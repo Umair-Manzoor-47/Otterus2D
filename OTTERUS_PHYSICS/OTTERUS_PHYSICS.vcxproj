@@ -21,19 +21,19 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{a7c25e7e-66af-438a-8ca1-3388df279267}</ProjectGuid>
-    <RootNamespace>OTTERUSCORE</RootNamespace>
+    <ProjectGuid>{0a15d12b-fb42-4975-a741-dcaef6e07ab1}</ProjectGuid>
+    <RootNamespace>OTTERUSPHYSICS</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -46,7 +46,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -70,13 +70,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\OTTERUS_WINDOW\;$(SolutionDir).\OTTERUS_UTILITIES;$(SolutionDir).\OTTERUS_SOUND\src;$(SolutionDir).\OTTERUS_PHYSICS;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir).\Dependencies\lua53\lib;$(SolutionDir).\Dependencies\SDL\lib;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);;$(SolutionDir).\OTTERUS_WINDOW\Windowing</IncludePath>
-  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -126,9 +119,6 @@
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
     </Manifest>
-    <Lib>
-      <AdditionalDependencies>lua53.lib;SDL2.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -149,73 +139,10 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GLAD\GLAD.vcxproj">
-      <Project>{a39d7b3e-ef4f-47de-97c6-31ae24127242}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\OTTERUS_LOGGER\OTTERUS_LOGGER.vcxproj">
-      <Project>{9806fa5d-7887-4de2-8222-a101ea980a72}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\OTTERUS_PHYSICS\OTTERUS_PHYSICS.vcxproj">
-      <Project>{0a15d12b-fb42-4975-a741-dcaef6e07ab1}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\OTTERUS_RENDERING\OTTERUS_RENDERING.vcxproj">
-      <Project>{b468db63-1d5d-4e0d-9f98-cf66d0f7f3ca}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\OTTERUS_SOUND\OTTERUS_SOUND.vcxproj">
-      <Project>{a91ebba8-54b7-4cb2-801f-30d01e08e587}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\OTTERUS_UTILITIES\OTTERUS_UTILITIES.vcxproj">
-      <Project>{3826c018-264c-407a-ae67-2106f556dc48}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\OTTERUS_WINDOW\OTTERUS_WINDOW.vcxproj">
-      <Project>{0c38259d-0941-46a3-a4ac-e9bee9dc3c11}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\SOIL\SOIL.vcxproj">
-      <Project>{666dfff4-a1b6-4b2a-8b15-d0efc8db8794}</Project>
-    </ProjectReference>
+    <ClInclude Include="Physics\Box2Dwrappers.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Core\ECS\Components\AnimationComponent.h" />
-    <ClInclude Include="Core\ECS\Components\BoxColliderComponent.h" />
-    <ClInclude Include="Core\ECS\Components\CircleColliderComponent.h" />
-    <ClInclude Include="Core\ECS\Components\Identification.h" />
-    <ClInclude Include="Core\ECS\Components\PhysicsComponent.h" />
-    <ClInclude Include="Core\ECS\Components\ScriptComponent.h" />
-    <ClInclude Include="Core\ECS\Components\SpriteComponent.h" />
-    <ClInclude Include="Core\ECS\Components\TransformComponent.h" />
-    <ClInclude Include="Core\ECS\Entity.h" />
-    <ClInclude Include="Core\ECS\MetaUtilities.h" />
-    <ClInclude Include="Core\ECS\Registry.h" />
-    <ClInclude Include="Core\Scripting\GlmLuaBindings.h" />
-    <ClInclude Include="Core\Scripting\InputManager.h" />
-    <ClInclude Include="Core\Scripting\RendererBindings.h" />
-    <ClInclude Include="Core\Scripting\SoundBindings.h" />
-    <ClInclude Include="Core\Systems\AnimationSystem.h" />
-    <ClInclude Include="Core\Systems\RenderSystem.h" />
-    <ClInclude Include="Core\Systems\ScriptingSystem.h" />
-    <ClInclude Include="Core\Resources\AssetManager.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Core\ECS\Components\AnimationComponent.cpp" />
-    <ClCompile Include="Core\ECS\Components\BoxColliderComponent.cpp" />
-    <ClCompile Include="Core\ECS\Components\CircleColliderComponent.cpp" />
-    <ClCompile Include="Core\ECS\Components\SpriteComponent.cpp" />
-    <ClCompile Include="Core\ECS\Components\TransformComponent.cpp" />
-    <ClCompile Include="Core\ECS\Entity.cpp" />
-    <ClCompile Include="Core\ECS\MetaUtilities.cpp" />
-    <ClCompile Include="Core\ECS\Registry.cpp" />
-    <ClCompile Include="Core\Scripting\GlmLuaBindings.cpp" />
-    <ClCompile Include="Core\Scripting\InputManager.cpp" />
-    <ClCompile Include="Core\Scripting\RendererBindings.cpp" />
-    <ClCompile Include="Core\Scripting\SoundBindings.cpp" />
-    <ClCompile Include="Core\Systems\AnimationSystem.cpp" />
-    <ClCompile Include="Core\Systems\RenderSystem.cpp" />
-    <ClCompile Include="Core\Systems\ScriptingSystem.cpp" />
-    <ClCompile Include="Core\Resources\AssetManager.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Core\ECS\Entity.inl" />
-    <None Include="Core\ECS\Registry.inl" />
+    <ClCompile Include="Physics\Box2Dwrappers.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
