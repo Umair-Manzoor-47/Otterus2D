@@ -11,10 +11,7 @@ namespace otterus_core::Systems {
 		PhysicsSystem(otterus_core::ECS::Registry& registry);
 		~PhysicsSystem() = default;
 
-		void Update();
+		void Update(entt::registry& registry);
 	};
-
-
-
 
 }
