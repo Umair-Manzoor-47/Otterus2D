@@ -46,12 +46,13 @@ namespace otterus_editor {
 
 		// Create Window
 		m_window = std::make_unique<otterus_windowing::Window>(
-			"Test Window", 
+			"OTTERUS2D", 
 			640, 480, 
 			SDL_WINDOWPOS_CENTERED, 
 			SDL_WINDOWPOS_CENTERED, 
 			true, 
-			SDL_WINDOW_OPENGL);
+			SDL_WINDOW_OPENGL,
+			SDL_WINDOW_RESIZABLE);
 
 		if (!m_window->GetWindow()) {
 			std::cout << "Failed to create widow.\n" << std::endl;
