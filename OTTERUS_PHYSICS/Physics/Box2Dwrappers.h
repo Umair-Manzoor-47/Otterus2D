@@ -4,13 +4,13 @@
 
 namespace otterus_physics {
 
-	using PhysicsWorld = std::shared_ptr<b2World>;
-	struct BodyDestroyer {
+    using PhysicsWorld = std::shared_ptr<b2World>;
 
-		void operator()(b2Body* body) const;
-	};
+    struct BodyDestroyer {
+        void operator()(b2Body* body) const;
+    };
 
-	static std::shared_ptr<b2Body> MakeSharedBody(b2Body* body) {
-		return std::make_shared<b2Body>(body, BodyDestroyer{});
-	}
+    static std::shared_ptr<b2Body> MakeSharedBody(b2Body* body) {
+        return std::shared_ptr<b2Body>(body, BodyDestroyer{});
+    }
 }
