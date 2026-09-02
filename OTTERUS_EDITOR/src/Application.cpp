@@ -1,10 +1,42 @@
 #include "Application.h"
+#include <SDL.h>
+#include <iostream>
+#include <SOIL/SOIL.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include <Rendering/Essentials/ShaderLoader.h>
+#include <Rendering/Essentials/TextureLoader.h>
+#include <Rendering/Core/Camera2D.h>
+#include <Rendering/Core/Renderer.h>
+#include <Rendering/Essentials/Vertex.h>
+
+#include <entt.hpp>
+#include <Core/ECS/Entity.h>
+#include <Core/ECS/Components/TransformComponent.h>
+#include <Core/ECS/Components/SpriteComponent.h>
+#include <Core/ECS/Components/Identification.h>
+#include <Core/ECS/Components/PhysicsComponent.h>
+#include <Core/ECS/Components/BoxColliderComponent.h>
+#include <Core/ECS/Components/CircleColliderComponent.h>
+
+
+#include <Core/Systems/ScriptingSystem.h>
+#include <Core/Systems/RenderSystem.h>
+#include <Core/Systems/AnimationSystem.h>
+#include <Core/Systems/PhysicsSystem.h>
+
+#include <Core/Resources/AssetManager.h>
+
 #include <Windowing/Inputs/Keyboard.h>
 #include <Windowing/Inputs/Mouse.h>
+
 #include <Core/Scripting/InputManager.h>
+
 #include <Sounds/MusicPlayer/MusicPlayer.h>
 #include <Sounds/SoundPlayer/SoundFxPlayer.h>
 
+#include <Logger/Logger.h>
 
 namespace otterus_editor {
 
@@ -51,8 +83,9 @@ namespace otterus_editor {
 			SDL_WINDOWPOS_CENTERED, 
 			SDL_WINDOWPOS_CENTERED, 
 			true, 
-			SDL_WINDOW_OPENGL,
-			SDL_WINDOW_RESIZABLE);
+			SDL_WINDOW_OPENGL |
+			SDL_WINDOW_RESIZABLE
+		);
 
 		if (!m_window->GetWindow()) {
 			std::cout << "Failed to create widow.\n" << std::endl;
@@ -198,6 +231,19 @@ namespace otterus_editor {
 			return false;
 		}
 
+		// Create Physics World
+		otterus_physics::PhysicsWorld physicsWorld = std::make_shared<b2World>(b2Vec2{0.f, 9.8f});
+		if (!m_registry->AddToContext<otterus_physics::PhysicsWorld>(physicsWorld)) {
+			OTTERUS_ERROR("Failed to add PhysicsWorld into registry context.");
+			return false;
+		}
+
+		auto physicsSystem = std::make_shared <otterus_core::Systems::PhysicsSystem>(*m_registry);
+		if (!m_registry->AddToContext<std::shared_ptr<otterus_core::Systems::PhysicsSystem>>(physicsSystem)) {
+			OTTERUS_ERROR("Failed to add PhysicsSystem into registry context.");
+			return false;
+		}
+
 		if (!LoadShaders()) {
 			OTTERUS_ERROR("Failed to load Shaders.");
 			return false;
@@ -210,6 +256,106 @@ namespace otterus_editor {
 			OTTERUS_ERROR("Failed to load the main lua script.");
 			return false;
 		}
+		///
+		// Test texture
+		assetManager->AddTexture("ball", "./assets/textures/ball.png", true);
+		auto ballTexture = assetManager->GetTexture("ball");
+		// Test bodies
+		using namespace otterus_core::ECS;
+
+		auto& reg = m_registry->GetRegistry();
+
+		auto ent1 = reg.create();
+
+		auto& transform1 = reg.emplace<TransformComponent>(
+			ent1,
+			TransformComponent{
+				.position = glm::vec2{320.0f, 0.0f},
+				.scale = glm::vec2{1.f},
+				.rotation = 0
+			}
+		);
+		auto& circleCollider = reg.emplace<CircleColliderComponent>(
+			ent1,
+			CircleColliderComponent{
+				.radius = 64.0f
+			}
+		);
+
+		auto& physicsComp = reg.emplace<PhysicsComponent>(
+			ent1,
+			PhysicsComponent{
+				physicsWorld,
+				PhysicsAttributes{
+					.type = RigidbodyType::DYNAMIC,
+					.density = 100.f,
+					.friction = 0.5f,
+					.restitution = 0.9f,
+					.radius = circleCollider.radius * PIXELS_TO_METERS,
+					.gravityScale = 5.f,
+					.position = transform1.position,
+					.scale = transform1.scale,
+					.circle = true,
+					.fixedRotation = false
+				}
+			}
+		);
+
+		physicsComp.Init(640, 480);
+
+		auto& sprite = reg.emplace<SpriteComponent>(
+			ent1,
+			SpriteComponent{
+				.width = 32.f,
+				.height = 32.f,
+				.start_x = 0,
+				.start_y = 0,
+				.texture_name = "ball"
+
+
+			}
+		);
+
+		sprite.generate_uvs(32.f, 32.f);
+
+		auto ent2 = reg.create();
+
+		auto& transform2 = reg.emplace<TransformComponent>(
+			ent2,
+			TransformComponent{
+				.position = glm::vec2{0.f, 400.0f},
+				.scale = glm::vec2{1.f},
+				.rotation = 0
+			}
+		);
+		auto& boxCollider = reg.emplace<BoxColliderComponent>(
+			ent2,
+			BoxColliderComponent{
+				.width = 480,
+				.height = 48
+			}
+		);
+
+		auto& physicsComp2 = reg.emplace<PhysicsComponent>(
+			ent2,
+			PhysicsComponent{
+				physicsWorld,
+				PhysicsAttributes{
+					.type = RigidbodyType::STATIC,
+					.density = 1000.f,
+					.friction = 0.5f,
+					.restitution = 0.2f,
+					.gravityScale = 0.f,
+					.position = transform2.position,
+					.scale = transform2.scale,
+					.boxSize = glm::vec2{boxCollider.width, boxCollider.height},
+					.boxShape = true,
+					.fixedRotation = true
+				}
+			}
+		);
+
+		physicsComp2.Init(640, 480);
 
 
 		return true;
@@ -308,7 +454,18 @@ namespace otterus_editor {
 
 		auto& scriptSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>();
 		scriptSystem->Update();
-	
+
+		auto& physicsWorld = m_registry->GetContext<otterus_physics::PhysicsWorld>();
+		physicsWorld->Step(
+			1.f/60.f,
+			10,
+			8
+		);
+
+
+		auto& physicsSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::PhysicsSystem>>();
+		physicsSystem->Update(m_registry->GetRegistry());
+
 		auto& animationSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::AnimationSystem>>();
 		animationSystem->Update();
 
