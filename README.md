@@ -49,6 +49,7 @@ asset loading — while keeping the code clean and well-structured.
 - [x] Input system
 - [x] Audio
 - [ ] Primitives
-- [ ] Text
+- [x] Text
+- [] Box2D
 - [ ] UI
 - [ ] Editor Interface
