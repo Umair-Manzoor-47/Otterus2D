@@ -192,6 +192,7 @@
     <ClInclude Include="Core\Scripting\SoundBindings.h" />
     <ClInclude Include="Core\Systems\AnimationSystem.h" />
     <ClInclude Include="Core\Systems\PhysicsSystem.h" />
+    <ClInclude Include="Core\Systems\RenderShapeSystem.h" />
     <ClInclude Include="Core\Systems\RenderSystem.h" />
     <ClInclude Include="Core\Systems\ScriptingSystem.h" />
     <ClInclude Include="Core\Resources\AssetManager.h" />
@@ -212,6 +213,7 @@
     <ClCompile Include="Core\Scripting\SoundBindings.cpp" />
     <ClCompile Include="Core\Systems\AnimationSystem.cpp" />
     <ClCompile Include="Core\Systems\PhysicsSystem.cpp" />
+    <ClCompile Include="Core\Systems\RenderShapeSystem.cpp" />
     <ClCompile Include="Core\Systems\RenderSystem.cpp" />
     <ClCompile Include="Core\Systems\ScriptingSystem.cpp" />
     <ClCompile Include="Core\Resources\AssetManager.cpp" />

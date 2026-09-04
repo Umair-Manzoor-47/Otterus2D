@@ -32,16 +32,16 @@ namespace otterus_core::ECS {
 	class PhysicsComponent
 	{
 	private:
-		otterus_physics::PhysicsWorld m_PhysicsWorld;
 		std::shared_ptr<b2Body> m_RigidBody;
 
 		PhysicsAttributes m_InitialAttribs;
 
 	public:
-		PhysicsComponent(otterus_physics::PhysicsWorld physicsWorld, const PhysicsAttributes& attribs);
+		PhysicsComponent();
+		PhysicsComponent(const PhysicsAttributes& attribs);
 		~PhysicsComponent() = default;
 
-		void Init(int windowWidth, int windowHeight);
+		void Init(otterus_physics::PhysicsWorld physicsWorld, int windowWidth, int windowHeight);
 		b2Body* GetBody() { return m_RigidBody.get(); };
 
 		static void CreatePhysicsLuaBind(sol::state& lua, entt::registry& registry);

@@ -285,7 +285,6 @@ namespace otterus_editor {
 		auto& physicsComp = reg.emplace<PhysicsComponent>(
 			ent1,
 			PhysicsComponent{
-				physicsWorld,
 				PhysicsAttributes{
 					.type = RigidbodyType::DYNAMIC,
 					.density = 100.f,
@@ -301,7 +300,7 @@ namespace otterus_editor {
 			}
 		);
 
-		physicsComp.Init(640, 480);
+		physicsComp.Init(physicsWorld, 640, 480);
 
 		auto& sprite = reg.emplace<SpriteComponent>(
 			ent1,
@@ -339,7 +338,6 @@ namespace otterus_editor {
 		auto& physicsComp2 = reg.emplace<PhysicsComponent>(
 			ent2,
 			PhysicsComponent{
-				physicsWorld,
 				PhysicsAttributes{
 					.type = RigidbodyType::STATIC,
 					.density = 1000.f,
@@ -355,7 +353,7 @@ namespace otterus_editor {
 			}
 		);
 
-		physicsComp2.Init(640, 480);
+		physicsComp2.Init(physicsWorld, 640, 480);
 
 
 		return true;
