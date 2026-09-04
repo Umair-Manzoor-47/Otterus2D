@@ -2,13 +2,16 @@
 #include <Logger/Logger.h>
 
 namespace otterus_core::ECS {
-	PhysicsComponent::PhysicsComponent(otterus_physics::PhysicsWorld physicsWorld, const PhysicsAttributes& attribs)
-		: m_PhysicsWorld{ physicsWorld}, m_RigidBody { nullptr }, m_InitialAttribs { attribs }
+	PhysicsComponent::PhysicsComponent()
+		: PhysicsComponent(PhysicsAttributes{})
+	{}
+	PhysicsComponent::PhysicsComponent(const PhysicsAttributes& attribs)
+		: m_RigidBody { nullptr }, m_InitialAttribs { attribs }
 	{}
 
-	void PhysicsComponent::Init(int windowWidth, int windowHeight)
+	void PhysicsComponent::Init(otterus_physics::PhysicsWorld physicsWorld, int windowWidth, int windowHeight)
 	{
-		if (!m_PhysicsWorld) {
+		if (!physicsWorld) {
 			OTTERUS_ERROR("Failed to create Physics component -- Physics world is nullptr");
 			return;
 		}
@@ -32,7 +35,7 @@ namespace otterus_core::ECS {
 		bodyDef.fixedRotation = m_InitialAttribs.fixedRotation;
 
 		// Rigidbody Creation
-		m_RigidBody = otterus_physics::MakeSharedBody(m_PhysicsWorld->CreateBody(&bodyDef));
+		m_RigidBody = otterus_physics::MakeSharedBody(physicsWorld->CreateBody(&bodyDef));
 	
 		if (!m_RigidBody)
 		{
@@ -46,7 +49,7 @@ namespace otterus_core::ECS {
 		b2CircleShape circleShape;
 
 		if(Circle){
-			circleShape.m_radius = m_InitialAttribs.radius;
+			circleShape.m_radius = m_InitialAttribs.radius * (m_InitialAttribs.scale.x > m_InitialAttribs.scale.y ? m_InitialAttribs.scale.x : m_InitialAttribs.scale.y);
 		}
 		else if (m_InitialAttribs.boxShape)
 		{
