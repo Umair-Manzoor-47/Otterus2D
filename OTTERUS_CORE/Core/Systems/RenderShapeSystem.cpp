@@ -32,6 +32,47 @@ namespace otterus_core::Systems {
 		}
 
 		colorShader.Enable();
-		colorShader.SetUniformMat4("uProjection", cameraMatrix);
+		colorShader.SetUniformMat4("projection", cameraMatrix);
+		m_RectBatchRenderer->Begin();
+
+		auto boxView = m_registry.GetRegistry().view<TransformComponent, BoxColliderComponent>();
+		for (auto entity : boxView)
+		{
+			auto& transform = boxView.get<TransformComponent>(entity);
+			auto& boxCollider = boxView.get<BoxColliderComponent>(entity);
+
+			glm::mat4 model{ 1.f };
+
+			if (transform.rotation > 0.f || transform.rotation < 0.f ||
+				transform.scale.x > 1.f || transform.scale.x < 1.f ||
+				transform.scale.y > 1.f || transform.scale.y < 1.f)
+			{
+				model = glm::translate(model, glm::vec3{ transform.position, 0.f });
+				model = glm::translate(model, glm::vec3{ boxCollider.width * 0.5f, boxCollider.height * 0.5f, 0.f });
+
+
+				model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3{ 0.f, 0.f, 1.f });
+
+				model = glm::translate(model, glm::vec3{ boxCollider.width * -0.5f, boxCollider.height * -0.5f, 0.f });
+				model = glm::scale(model, glm::vec3{ transform.scale, 1.f });
+				model = glm::translate(model, glm::vec3{ -transform.position, 0.f });
+
+			}
+
+			Rect rect{
+				.position = glm::vec2{ 
+					transform.position.x + boxCollider.offset.x,
+					transform.position.y + boxCollider.offset.y
+				},
+				.width = transform.scale.x * boxCollider.width,
+				.height = transform.scale.y * boxCollider.height,
+				.color = Color{255, 0, 0, 135}
+			};
+
+			m_RectBatchRenderer->AddRect(rect, model);
+		}
+		m_RectBatchRenderer->End();
+		m_RectBatchRenderer->Render();
+		colorShader.Disable();
 	}
 }
