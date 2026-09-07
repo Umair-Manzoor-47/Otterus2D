@@ -23,12 +23,19 @@ namespace otterus_core::ECS {
 		bodyDef.type = static_cast<b2BodyType>(m_InitialAttribs.type);
 
 		// Initial Position
+		// transform.position is the top-left of the bounding box; the Box2D body
+		// origin is its center. Half the bounding box is radius for a circle
+		// (bounding box is 2*radius wide) and boxSize * 0.5 for a box.
+		const float halfExtentX = Circle
+			? m_InitialAttribs.radius * m_InitialAttribs.scale.x
+			: m_InitialAttribs.boxSize.x * m_InitialAttribs.scale.x * 0.5f;
+		const float halfExtentY = Circle
+			? m_InitialAttribs.radius * m_InitialAttribs.scale.y
+			: m_InitialAttribs.boxSize.y * m_InitialAttribs.scale.y * 0.5f;
+
 		bodyDef.position.Set(
-			(m_InitialAttribs.position.x + m_InitialAttribs.offset.x - (windowWidth * 0.5f ) + 
-				((Circle ? m_InitialAttribs.radius: m_InitialAttribs.boxSize.x) * m_InitialAttribs.scale.x) * 0.5f) * PIXELS_TO_METERS,
-			(m_InitialAttribs.position.y + m_InitialAttribs.offset.y - (windowHeight * 0.5f) +
-				((Circle ? m_InitialAttribs.radius : m_InitialAttribs.boxSize.y) * m_InitialAttribs.scale.y) * 0.5f) * PIXELS_TO_METERS
-		
+			(m_InitialAttribs.position.x + m_InitialAttribs.offset.x - (windowWidth * 0.5f) + halfExtentX) * PIXELS_TO_METERS,
+			(m_InitialAttribs.position.y + m_InitialAttribs.offset.y - (windowHeight * 0.5f) + halfExtentY) * PIXELS_TO_METERS
 		);
 
 		bodyDef.gravityScale = m_InitialAttribs.gravityScale;
@@ -49,7 +56,7 @@ namespace otterus_core::ECS {
 		b2CircleShape circleShape;
 
 		if(Circle){
-			circleShape.m_radius = m_InitialAttribs.radius * (m_InitialAttribs.scale.x > m_InitialAttribs.scale.y ? m_InitialAttribs.scale.x : m_InitialAttribs.scale.y);
+			circleShape.m_radius = PIXELS_TO_METERS * m_InitialAttribs.radius * (m_InitialAttribs.scale.x > m_InitialAttribs.scale.y ? m_InitialAttribs.scale.x : m_InitialAttribs.scale.y);
 		}
 		else if (m_InitialAttribs.boxShape)
 		{
