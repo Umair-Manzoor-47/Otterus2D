@@ -290,7 +290,7 @@ namespace otterus_editor {
 		auto& circleCollider = reg.emplace<CircleColliderComponent>(
 			ent1,
 			CircleColliderComponent{
-				.radius = 64.0f
+				.radius = 32.0f
 			}
 		);
 
