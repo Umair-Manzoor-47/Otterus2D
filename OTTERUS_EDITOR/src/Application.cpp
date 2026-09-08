@@ -290,7 +290,7 @@ namespace otterus_editor {
 		auto& circleCollider = reg.emplace<CircleColliderComponent>(
 			ent1,
 			CircleColliderComponent{
-				.radius = 32.0f
+				.radius = 16.0f
 			}
 		);
 
@@ -302,7 +302,7 @@ namespace otterus_editor {
 					.density = 100.f,
 					.friction = 0.5f,
 					.restitution = 0.9f,
-					.radius = circleCollider.radius * PIXELS_TO_METERS,
+					.radius = circleCollider.radius,
 					.gravityScale = 5.f,
 					.position = transform1.position,
 					.scale = transform1.scale,
@@ -508,6 +508,7 @@ namespace otterus_editor {
 
 		auto& shader = assetManager->GetShader("color");
 		auto& fontShader = assetManager->GetShader("font");
+		auto& circleShader = assetManager->GetShader("circle");
 
 
 		renderer->SetViewport(0, 0, m_window->GetWidth(), m_window->GetHeight());
@@ -521,9 +522,11 @@ namespace otterus_editor {
 		renderShapeSystem->Upate();
 		renderer->DrawLines(shader, *camera);
 		renderer->DrawAllText(fontShader, *camera);
+		renderer->DrawCircles(circleShader, *camera);
 
 		SDL_GL_SwapWindow(m_window->GetWindow().get());
 
+		renderer->ClearPrimitives();
 	}
 
     void Application::CleanUp()

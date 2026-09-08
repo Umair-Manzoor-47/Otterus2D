@@ -5,13 +5,11 @@
 
 namespace otterus_rendering {
 	Renderer::Renderer()
-		: m_LineBatch{ nullptr }, m_SpriteBatch{ nullptr }, m_TextBatch{ nullptr }
-	{
-		m_LineBatch = std::make_unique<LineBatchRenderer>();
-		m_SpriteBatch = std::make_unique<SpriteBatchRenderer>();
-		m_TextBatch = std::make_unique<TextBatchRenderer>();
-
-	}
+		: m_LineBatch{ std::make_unique<LineBatchRenderer>() }, 
+		m_SpriteBatch{ std::make_unique<SpriteBatchRenderer>() },
+		m_TextBatch{ std::make_unique<TextBatchRenderer>() },
+		m_CircleBatch{ std::make_unique<CircleBatchRenderer>() }
+	{}
 
 	void Renderer::SetClearColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat aplha)
 	{
@@ -139,6 +137,7 @@ namespace otterus_rendering {
 
 	void Renderer::DrawCircle(const glm::vec2& position, float radius, const Color& color, float thickness)
 	{
+		m_Circles.push_back(Circle{ .position = position, .lineThickness = thickness, .radius = radius, .color = color });
 	}
 
 	void Renderer::DrawText2D(const Text& text)
@@ -174,6 +173,23 @@ namespace otterus_rendering {
 
 	void Renderer::DrawCircles(Shader& shader, Camera2D& camera)
 	{
+		if (m_Circles.empty())
+			return;
+
+		auto cam_mat = camera.GetCameraMatrix();
+		shader.Enable();
+		shader.SetUniformMat4("uProjection", cam_mat);
+
+		m_CircleBatch->Begin();
+
+		for (const auto& circle : m_Circles)
+		{
+			m_CircleBatch->AddCircle(circle);
+		}
+
+		m_CircleBatch->End();
+		m_CircleBatch->Render();
+		shader.Disable();
 	}
 
 	void Renderer::DrawAllText(Shader& shader, Camera2D& camera)
