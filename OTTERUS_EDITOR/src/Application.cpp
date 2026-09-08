@@ -282,7 +282,7 @@ namespace otterus_editor {
 		auto& transform1 = reg.emplace<TransformComponent>(
 			ent1,
 			TransformComponent{
-				.position = glm::vec2{320.0f, 0.0f},
+				.position = glm::vec2{380.0f, 0.0f},
 				.scale = glm::vec2{1.f},
 				.rotation = 0
 			}
@@ -351,7 +351,7 @@ namespace otterus_editor {
 			ent2,
 			PhysicsComponent{
 				PhysicsAttributes{
-					.type = RigidbodyType::STATIC,
+					.type = RigidbodyType::DYNAMIC,
 					.density = 1000.f,
 					.friction = 0.5f,
 					.restitution = 0.2f,
@@ -360,7 +360,7 @@ namespace otterus_editor {
 					.scale = transform2.scale,
 					.boxSize = glm::vec2{boxCollider.width, boxCollider.height},
 					.boxShape = true,
-					.fixedRotation = true
+					.fixedRotation = false
 				}
 			}
 		);
@@ -385,6 +385,11 @@ namespace otterus_editor {
 			OTTERUS_ERROR("Failed to add Color Shader to AssetManager.");
 			return false;
 		}
+		if (!assetManager->AddShader("circle", "assets/shaders/circle_shader.vert", "assets/shaders/circle_shader.frag")) {
+
+			OTTERUS_ERROR("Failed to add Circle Shader to AssetManager.");
+			return false;
+		}
 
 		if (!assetManager->AddShader("font", "assets/shaders/font_shader.vert", "assets/shaders/font_shader.frag")) {
 
@@ -403,6 +408,11 @@ namespace otterus_editor {
 			return false;
 		}
 
+		auto& circleShader = assetManager->GetShader("circle");
+		if (circleShader.GetProgramID() == 0) {
+			OTTERUS_ERROR("Failed to Get Circle Shader from AssetManager.");
+			return false;
+		}
 
 		OTTERUS_LOG("Shader Log {0}", shader.GetProgramID());
 		OTTERUS_LOG("Shader Log {0}", colorShader.GetProgramID());

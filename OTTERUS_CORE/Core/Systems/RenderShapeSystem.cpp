@@ -25,12 +25,6 @@ namespace otterus_core::Systems {
 		auto& colorShader = assetManager->GetShader("color");
 		auto cameraMatrix = camera->GetCameraMatrix();
 
-		if (colorShader.GetProgramID() == 0) {
-
-			OTTERUS_LOG("Color shader program id has not been set correctly");
-			return;
-		}
-
 		colorShader.Enable();
 		colorShader.SetUniformMat4("projection", cameraMatrix);
 		m_RectBatchRenderer->Begin();
@@ -74,5 +68,32 @@ namespace otterus_core::Systems {
 		m_RectBatchRenderer->End();
 		m_RectBatchRenderer->Render();
 		colorShader.Disable();
+
+
+		// Circle
+		auto& circleShader = assetManager->GetShader("circle");
+
+		circleShader.Enable();
+		circleShader.SetUniformMat4("projection", cameraMatrix);
+		m_CircleBatchRenderer->Begin();
+
+		auto circleView = m_registry.GetRegistry().view<TransformComponent, CircleColliderComponent>();
+		for (auto entity : circleView)
+		{
+			auto& transform = circleView.get<TransformComponent>(entity);
+			auto& circleCollider = circleView.get<CircleColliderComponent>(entity);
+
+			glm::vec4 circle{
+				transform.position.x + circleCollider.offset.x,
+				transform.position.y + circleCollider.offset.y,
+				circleCollider.radius * transform.scale.x * 2,
+				circleCollider.radius* transform.scale.y * 2
+			};
+
+			m_CircleBatchRenderer->AddCircle(circle, Color{0, 255, 0, 135}, 1.f);
+		}
+		m_RectBatchRenderer->End();
+		m_RectBatchRenderer->Render();
+		circleShader.Disable();
 	}
 }
