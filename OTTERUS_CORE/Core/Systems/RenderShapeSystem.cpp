@@ -92,8 +92,8 @@ namespace otterus_core::Systems {
 
 			m_CircleBatchRenderer->AddCircle(circle, Color{0, 255, 0, 135}, 1.f);
 		}
-		m_RectBatchRenderer->End();
-		m_RectBatchRenderer->Render();
+		m_CircleBatchRenderer->End();
+		m_CircleBatchRenderer->Render();
 		circleShader.Disable();
 	}
 }
