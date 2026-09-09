@@ -4,6 +4,7 @@
 #include "BatchRenderer.h"
 #include "LineBatchRenderer.h"
 #include "TextBatchRenderer.h"
+#include "CircleBatchRenderer.h"
 
 namespace otterus_rendering {
 
@@ -30,7 +31,7 @@ namespace otterus_rendering {
 
 
 		std::unique_ptr<LineBatchRenderer> m_LineBatch;
-		//std::unique_ptr<CircleBatchRenderer> m_CircleBatch;
+		std::unique_ptr<CircleBatchRenderer> m_CircleBatch;
 		std::unique_ptr<SpriteBatchRenderer> m_SpriteBatch;
 		std::unique_ptr<TextBatchRenderer> m_TextBatch;
 
