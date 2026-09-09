@@ -74,7 +74,7 @@ namespace otterus_core::Systems {
 		auto& circleShader = assetManager->GetShader("circle");
 
 		circleShader.Enable();
-		circleShader.SetUniformMat4("projection", cameraMatrix);
+		circleShader.SetUniformMat4("uProjection", cameraMatrix);
 		m_CircleBatchRenderer->Begin();
 
 		auto circleView = m_registry.GetRegistry().view<TransformComponent, CircleColliderComponent>();
