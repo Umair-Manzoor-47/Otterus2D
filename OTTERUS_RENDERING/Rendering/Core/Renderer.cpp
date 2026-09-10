@@ -8,7 +8,8 @@ namespace otterus_rendering {
 		: m_LineBatch{ std::make_unique<LineBatchRenderer>() }, 
 		m_SpriteBatch{ std::make_unique<SpriteBatchRenderer>() },
 		m_TextBatch{ std::make_unique<TextBatchRenderer>() },
-		m_CircleBatch{ std::make_unique<CircleBatchRenderer>() }
+		m_CircleBatch{ std::make_unique<CircleBatchRenderer>() },
+		m_RectBatch { std::make_unique<RectBatchRenderer>() }
 	{}
 
 	void Renderer::SetClearColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat aplha)
@@ -71,6 +72,11 @@ namespace otterus_rendering {
 		return glIsEnabled(static_cast<GLenum>(capability));;
 	}
 
+	void Renderer::SetLineWidth(GLfloat lineWidth)
+	{
+		glLineWidth(lineWidth);
+	}
+
 	void Renderer::DrawLine(const Line& line)
 	{
 		m_Lines.push_back(line);
@@ -78,12 +84,7 @@ namespace otterus_rendering {
 
 	void Renderer::DrawLine(const glm::vec2& p1, const glm::vec2& p2, const Color& color, float lineWidth)
 	{
-		m_Lines.push_back(Line{
-			.p1 = p1,
-			.p2 = p2,
-			.lineWidth = lineWidth,
-			.color = color,
-			});
+		m_Lines.emplace_back(Line{ .p1 = p1, .p2 = p2, .lineWidth = lineWidth, .color = color });
 	}
 
 	void Renderer::DrawRect(const Rect& rect)
@@ -129,10 +130,13 @@ namespace otterus_rendering {
 
 	void Renderer::DrawFillRect(const Rect& rect)
 	{
+		m_Rects.push_back(rect);
 	}
 
 	void Renderer::DrawCircle(const Circle& circle)
 	{
+
+		m_Circles.push_back(circle);
 	}
 
 	void Renderer::DrawCircle(const glm::vec2& position, float radius, const Color& color, float thickness)
@@ -169,6 +173,24 @@ namespace otterus_rendering {
 
 	void Renderer::DrawFilledRects(Shader& shader, Camera2D& camera)
 	{
+		if (m_Rects.empty()) 
+			return;
+
+		auto cam_mat = camera.GetCameraMatrix();
+		shader.Enable();
+		shader.SetUniformMat4("projection", cam_mat);
+
+		m_RectBatch->Begin();
+
+		for (const auto& rect : m_Rects)
+		{
+			m_RectBatch->AddRect(rect);
+		}
+
+		m_RectBatch->End();
+		m_RectBatch->Render();
+		shader.Disable();
+
 	}
 
 	void Renderer::DrawCircles(Shader& shader, Camera2D& camera)
