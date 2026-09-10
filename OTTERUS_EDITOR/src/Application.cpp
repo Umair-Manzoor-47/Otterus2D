@@ -521,6 +521,7 @@ namespace otterus_editor {
 		renderSystem->Upate();
 		renderShapeSystem->Upate();
 		renderer->DrawLines(shader, *camera);
+		renderer->DrawFilledRects(shader, *camera);
 		renderer->DrawAllText(fontShader, *camera);
 		renderer->DrawCircles(circleShader, *camera);
 
