@@ -155,17 +155,78 @@ namespace otterus_core::ECS {
 					return pc;
 				}
 			),
-			"linear_impulse", sol::overload(
-				[](PhysicsComponent& pc, const glm::vec2& impulse) {
-					auto body = pc.GetBody();
+			"linear_impulse", [](PhysicsComponent& pc, const glm::vec2& impulse) {
+				
+				auto body = pc.GetBody();
 
-					if (!body) {
-						return;
-					}
-					body->ApplyLinearImpulse(b2Vec2{ impulse.x, impulse.y }, body->GetPosition(), true);
-
+				if (!body) {
+					return;
 				}
-			)
+				body->ApplyLinearImpulse(b2Vec2{ impulse.x, impulse.y }, body->GetPosition(), true);
+
+			},
+			"angular_impulse", [](PhysicsComponent& pc, float impulse) {
+				
+				auto body = pc.GetBody();
+
+				if (!body) {
+					return;
+				}
+
+				body->ApplyAngularImpulse(impulse, true);
+
+			},
+			"set_linear_velocity", [](PhysicsComponent& pc, const glm::vec2 velocity) {
+
+				auto body = pc.GetBody();
+
+				if (!body) {
+					return;
+				}
+
+				body->SetLinearVelocity(b2Vec2{velocity.x, velocity.y});
+
+			},
+			"get_linear_velocity", [](PhysicsComponent& pc) {
+
+				auto body = pc.GetBody();
+
+				if (!body) {
+					return glm::vec2{0.f};
+				}
+
+				const auto& linearVelocity = body->GetLinearVelocity();
+				return glm::vec2{linearVelocity.x, linearVelocity.y};
+			},
+			"set_angular_velocity", [](PhysicsComponent& pc, float angularVelocity) {
+
+				auto body = pc.GetBody();
+
+				if (!body) {
+					return;
+				}
+
+				body->SetAngularVelocity(angularVelocity);
+
+			},
+			"get_angular_velocity", [](PhysicsComponent& pc) {
+
+				auto body = pc.GetBody();
+
+				if (!body) {
+					return 0.f;
+				}
+
+				return body->GetAngularVelocity();
+			},
+			"set_gravity_scale", [](PhysicsComponent& pc, float gravityScale) {
+				auto body = pc.GetBody();
+
+				if (!body) {
+					return;
+				}
+				body->SetGravityScale(gravityScale);
+			}
 		);
 
 	}
