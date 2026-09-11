@@ -48,8 +48,8 @@ asset loading — while keeping the code clean and well-structured.
 - [x] Renderer System
 - [x] Input system
 - [x] Audio
-- [ ] Primitives
+- [x] Primitives
 - [x] Text
-- [] Box2D
+- [x] Box2D
 - [ ] UI
 - [ ] Editor Interface
