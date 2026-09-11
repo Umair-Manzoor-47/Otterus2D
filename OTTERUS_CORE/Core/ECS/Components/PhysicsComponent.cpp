@@ -97,10 +97,76 @@ namespace otterus_core::ECS {
 
 	void PhysicsComponent::CreatePhysicsLuaBind(sol::state& lua, entt::registry& registry)
 	{
-		// TODO: CREATE BINDINGS
-		// 1. Physics Attributes		
-		// 2. Bind Component
 
+
+		lua.new_enum<RigidbodyType>(
+			"BodyType", {
+				{ "STATIC", RigidbodyType::STATIC },
+				{ "KINEMATIC", RigidbodyType::KINEMATIC },
+				{ "DYNAMIC", RigidbodyType::DYNAMIC }
+			}
+		);
+		
+		lua.new_usertype<PhysicsAttributes>(
+			"PhysicsAttributes",
+			sol::call_constructor,
+			sol::factories(
+				[] {
+					return PhysicsAttributes{};
+				}
+				// TODO: More specific ctors
+			),
+			"type", &PhysicsAttributes::type,
+			"density", &PhysicsAttributes::density,
+			"friction", &PhysicsAttributes::friction,
+			"restitution", &PhysicsAttributes::restitution,
+			"restitution_threshold", &PhysicsAttributes::restitutionThreshold,
+			"radius", &PhysicsAttributes::radius,
+			"gravity_scale", &PhysicsAttributes::gravityScale,
+			"position", &PhysicsAttributes::position,
+			"scale", &PhysicsAttributes::scale,
+			"box_size", &PhysicsAttributes::boxSize,
+			"offset", &PhysicsAttributes::offset,
+			"circle", &PhysicsAttributes::circle,
+			"box_shape", &PhysicsAttributes::boxShape,
+			"fixed_rotation", &PhysicsAttributes::fixedRotation,
+			"filter_category", &PhysicsAttributes::filterCategory,
+			"filter_mask", &PhysicsAttributes::filterMask,
+			"group_index", &PhysicsAttributes::groupIndex
+		);
+
+		auto& physicsWorld = registry.ctx().get<otterus_physics::PhysicsWorld>();
+
+		if (!physicsWorld)
+		{
+			return;
+		}
+
+		// THIS is BLUEPRINT that can be expanded as per functionality needed from Box2D
+
+		lua.new_usertype<PhysicsComponent>(
+			"PhysicsComp",
+			"type_id", &entt::type_hash<PhysicsComponent>::value,
+			sol::call_constructor,
+			sol::factories(
+				[&](const PhysicsAttributes& attribs) {
+					PhysicsComponent pc{ attribs };
+					pc.Init(physicsWorld, 640, 480); // TODO: Add real window values that could be dynamic and responsive
+					return pc;
+				}
+			),
+			"linear_impulse", sol::overload(
+				[](PhysicsComponent& pc, const glm::vec2& impulse) {
+					auto body = pc.GetBody();
+
+					if (!body) {
+						return;
+					}
+					body->ApplyLinearImpulse(b2Vec2{ impulse.x, impulse.y }, body->GetPosition(), true);
+
+				}
+			)
+		);
 
 	}
 }
