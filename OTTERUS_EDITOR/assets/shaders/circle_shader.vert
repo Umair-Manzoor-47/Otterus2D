@@ -9,11 +9,11 @@ out vec2 fragUVs;
 out vec4 fragColor;
 out float fragLineThickness;
 
-uniform mat4 projection;
+uniform mat4 uProjection;
 
 void main()
 {
-    gl_Position = projection * vec4(aPosition, 0.0, 1.0);
+    gl_Position = uProjection * vec4(aPosition, 0.0, 1.0);
     fragUVs = aUVs;
     fragColor = aColor;
     fragLineThickness = aLineThickness;

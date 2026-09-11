@@ -56,18 +56,15 @@ void otterus_core::Scripting::RendererBinder::CreateRendererBind(sol::state& lua
 		"Circle",
 		sol::call_constructor,
 		sol::factories(
-			[](const glm::vec2& position, float thickness, float radius, const Color color) {
-
-				return Circle{
-					.position = position,
-					.radius = radius,
-					.color = color,
-				};
+			[](const glm::vec2& position, float lineThickness, float radius, const Color& color)
+			{
+				return Circle{ .position = position, .lineThickness = lineThickness, .radius = radius, .color = color };
 			}
 		),
 		"position", &Circle::position,
-		"radius",	&Circle::radius,
-		"color",	&Circle::color
+		"lineThickness", &Circle::lineThickness,
+		"radius", &Circle::radius,
+		"color", &Circle::color
 	);
 
 	lua.new_usertype<Text>(
@@ -104,6 +101,26 @@ void otterus_core::Scripting::RendererBinder::CreateRendererBind(sol::state& lua
 		OTTERUS_ERROR("Failed to get the Renderer from Registry.");
 		return;
 	}
+
+	lua.set_function(
+		"DrawCircle", sol::overload(
+			[&](const Circle& circle){
+			
+				renderer->DrawCircle(circle);
+			},
+			[&](const glm::vec2& position, float lineThickness, float radius, const Color& color) {
+
+				renderer->DrawCircle(position, radius, color, lineThickness);
+			}
+		)
+	);
+
+	lua.set_function(
+		"DrawFilledRect", [&](const Rect& rect) {
+			renderer->DrawFillRect(rect);
+		}
+	);
+
 
 	lua.set_function(
 		"DrawRect", sol::overload(

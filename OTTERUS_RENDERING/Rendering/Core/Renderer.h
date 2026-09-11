@@ -5,6 +5,7 @@
 #include "LineBatchRenderer.h"
 #include "TextBatchRenderer.h"
 #include "CircleBatchRenderer.h"
+#include "RectBatchRenderer.h"
 
 namespace otterus_rendering {
 
@@ -34,6 +35,7 @@ namespace otterus_rendering {
 		std::unique_ptr<CircleBatchRenderer> m_CircleBatch;
 		std::unique_ptr<SpriteBatchRenderer> m_SpriteBatch;
 		std::unique_ptr<TextBatchRenderer> m_TextBatch;
+		std::unique_ptr<RectBatchRenderer> m_RectBatch;
 
 	public:
 		Renderer();
@@ -48,6 +50,7 @@ namespace otterus_rendering {
 
 		void SetCapability(GLCapabilities capability, bool enabled);
 		bool IsCapabilityEnabled(GLCapabilities capability) const;
+		void SetLineWidth(GLfloat lineWidth);
 
 		// Primitve Draw calls
 		void DrawLine(const Line& line);
