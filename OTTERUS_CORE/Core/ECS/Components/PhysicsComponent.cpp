@@ -120,19 +120,19 @@ namespace otterus_core::ECS {
 			"density", &PhysicsAttributes::density,
 			"friction", &PhysicsAttributes::friction,
 			"restitution", &PhysicsAttributes::restitution,
-			"restitution_threshold", &PhysicsAttributes::restitutionThreshold,
+			"restitutionThreshold", &PhysicsAttributes::restitutionThreshold,
 			"radius", &PhysicsAttributes::radius,
-			"gravity_scale", &PhysicsAttributes::gravityScale,
+			"gravityScale", &PhysicsAttributes::gravityScale,
 			"position", &PhysicsAttributes::position,
 			"scale", &PhysicsAttributes::scale,
-			"box_size", &PhysicsAttributes::boxSize,
+			"boxSize", &PhysicsAttributes::boxSize,
 			"offset", &PhysicsAttributes::offset,
 			"circle", &PhysicsAttributes::circle,
-			"box_shape", &PhysicsAttributes::boxShape,
-			"fixed_rotation", &PhysicsAttributes::fixedRotation,
-			"filter_category", &PhysicsAttributes::filterCategory,
-			"filter_mask", &PhysicsAttributes::filterMask,
-			"group_index", &PhysicsAttributes::groupIndex
+			"boxShape", &PhysicsAttributes::boxShape,
+			"fixedRotation", &PhysicsAttributes::fixedRotation,
+			"filterCategory", &PhysicsAttributes::filterCategory,
+			"filterMask", &PhysicsAttributes::filterMask,
+			"groupIndex", &PhysicsAttributes::groupIndex
 		);
 
 		auto& physicsWorld = registry.ctx().get<otterus_physics::PhysicsWorld>();
@@ -145,7 +145,7 @@ namespace otterus_core::ECS {
 		// THIS is BLUEPRINT that can be expanded as per functionality needed from Box2D
 
 		lua.new_usertype<PhysicsComponent>(
-			"PhysicsComp",
+			"PhysicsComponent",
 			"type_id", &entt::type_hash<PhysicsComponent>::value,
 			sol::call_constructor,
 			sol::factories(
