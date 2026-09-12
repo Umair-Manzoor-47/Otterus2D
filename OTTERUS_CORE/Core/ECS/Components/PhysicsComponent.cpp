@@ -97,10 +97,137 @@ namespace otterus_core::ECS {
 
 	void PhysicsComponent::CreatePhysicsLuaBind(sol::state& lua, entt::registry& registry)
 	{
-		// TODO: CREATE BINDINGS
-		// 1. Physics Attributes		
-		// 2. Bind Component
 
+
+		lua.new_enum<RigidbodyType>(
+			"BodyType", {
+				{ "STATIC", RigidbodyType::STATIC },
+				{ "KINEMATIC", RigidbodyType::KINEMATIC },
+				{ "DYNAMIC", RigidbodyType::DYNAMIC }
+			}
+		);
+		
+		lua.new_usertype<PhysicsAttributes>(
+			"PhysicsAttributes",
+			sol::call_constructor,
+			sol::factories(
+				[] {
+					return PhysicsAttributes{};
+				}
+				// TODO: More specific ctors
+			),
+			"type", &PhysicsAttributes::type,
+			"density", &PhysicsAttributes::density,
+			"friction", &PhysicsAttributes::friction,
+			"restitution", &PhysicsAttributes::restitution,
+			"restitutionThreshold", &PhysicsAttributes::restitutionThreshold,
+			"radius", &PhysicsAttributes::radius,
+			"gravityScale", &PhysicsAttributes::gravityScale,
+			"position", &PhysicsAttributes::position,
+			"scale", &PhysicsAttributes::scale,
+			"boxSize", &PhysicsAttributes::boxSize,
+			"offset", &PhysicsAttributes::offset,
+			"circle", &PhysicsAttributes::circle,
+			"boxShape", &PhysicsAttributes::boxShape,
+			"fixedRotation", &PhysicsAttributes::fixedRotation,
+			"filterCategory", &PhysicsAttributes::filterCategory,
+			"filterMask", &PhysicsAttributes::filterMask,
+			"groupIndex", &PhysicsAttributes::groupIndex
+		);
+
+		auto& physicsWorld = registry.ctx().get<otterus_physics::PhysicsWorld>();
+
+		if (!physicsWorld)
+		{
+			return;
+		}
+
+		// THIS is BLUEPRINT that can be expanded as per functionality needed from Box2D
+
+		lua.new_usertype<PhysicsComponent>(
+			"PhysicsComponent",
+			"type_id", &entt::type_hash<PhysicsComponent>::value,
+			sol::call_constructor,
+			sol::factories(
+				[&](const PhysicsAttributes& attribs) {
+					PhysicsComponent pc{ attribs };
+					pc.Init(physicsWorld, 640, 480); // TODO: Add real window values that could be dynamic and responsive
+					return pc;
+				}
+			),
+			"linear_impulse", [](PhysicsComponent& pc, const glm::vec2& impulse) {
+				
+				auto body = pc.GetBody();
+
+				if (!body) {
+					return;
+				}
+				body->ApplyLinearImpulse(b2Vec2{ impulse.x, impulse.y }, body->GetPosition(), true);
+
+			},
+			"angular_impulse", [](PhysicsComponent& pc, float impulse) {
+				
+				auto body = pc.GetBody();
+
+				if (!body) {
+					return;
+				}
+
+				body->ApplyAngularImpulse(impulse, true);
+
+			},
+			"set_linear_velocity", [](PhysicsComponent& pc, const glm::vec2 velocity) {
+
+				auto body = pc.GetBody();
+
+				if (!body) {
+					return;
+				}
+
+				body->SetLinearVelocity(b2Vec2{velocity.x, velocity.y});
+
+			},
+			"get_linear_velocity", [](PhysicsComponent& pc) {
+
+				auto body = pc.GetBody();
+
+				if (!body) {
+					return glm::vec2{0.f};
+				}
+
+				const auto& linearVelocity = body->GetLinearVelocity();
+				return glm::vec2{linearVelocity.x, linearVelocity.y};
+			},
+			"set_angular_velocity", [](PhysicsComponent& pc, float angularVelocity) {
+
+				auto body = pc.GetBody();
+
+				if (!body) {
+					return;
+				}
+
+				body->SetAngularVelocity(angularVelocity);
+
+			},
+			"get_angular_velocity", [](PhysicsComponent& pc) {
+
+				auto body = pc.GetBody();
+
+				if (!body) {
+					return 0.f;
+				}
+
+				return body->GetAngularVelocity();
+			},
+			"set_gravity_scale", [](PhysicsComponent& pc, float gravityScale) {
+				auto body = pc.GetBody();
+
+				if (!body) {
+					return;
+				}
+				body->SetGravityScale(gravityScale);
+			}
+		);
 
 	}
 }
