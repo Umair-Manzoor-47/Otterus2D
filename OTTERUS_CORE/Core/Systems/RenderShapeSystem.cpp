@@ -42,12 +42,12 @@ namespace otterus_core::Systems {
 				transform.scale.y > 1.f || transform.scale.y < 1.f)
 			{
 				model = glm::translate(model, glm::vec3{ transform.position, 0.f });
-				model = glm::translate(model, glm::vec3{ boxCollider.width * 0.5f, boxCollider.height * 0.5f, 0.f });
+				model = glm::translate(model, glm::vec3{ (boxCollider.width * transform.scale.x) * 0.5f, (boxCollider.height * transform.scale.y) * 0.5f, 0.f });
 
 
 				model = glm::rotate(model, glm::radians(transform.rotation), glm::vec3{ 0.f, 0.f, 1.f });
 
-				model = glm::translate(model, glm::vec3{ boxCollider.width * -0.5f, boxCollider.height * -0.5f, 0.f });
+				model = glm::translate(model, glm::vec3{ (boxCollider.width * transform.scale.x) * -0.5f, (boxCollider.height * transform.scale.y) * -0.5f, 0.f });
 				model = glm::scale(model, glm::vec3{ transform.scale, 1.f });
 				model = glm::translate(model, glm::vec3{ -transform.position, 0.f });
 
