@@ -39,6 +39,17 @@
 
 #include <Logger/Logger.h>
 
+#ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
+extern "C" {
+	__declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
+#endif
+
 namespace otterus_editor {
 
     bool Application::Initialize()
@@ -114,6 +125,11 @@ namespace otterus_editor {
 			std::cout << "Failed to load openGL --> GLAD" << std::endl;
 			return false;
 		}
+
+		// GPU logging
+		OTTERUS_LOG("OpenGL Vendor:   {0}", (const char*)glGetString(GL_VENDOR));
+		OTTERUS_LOG("OpenGL Renderer: {0}", (const char*)glGetString(GL_RENDERER));
+		OTTERUS_LOG("OpenGL Version:  {0}", (const char*)glGetString(GL_VERSION));
 
 		auto renderer = std::make_shared<otterus_rendering::Renderer>();
 

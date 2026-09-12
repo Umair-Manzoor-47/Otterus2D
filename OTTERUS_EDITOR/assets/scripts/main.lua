@@ -125,7 +125,7 @@ function update_entity( entity )
 
     if Keyboard.pressed(KEY_S) then
         physics:set_linear_velocity(vec2(25, velocity.y))
-        physics:linear_impulse(vec2(0, -30000))
+        physics:linear_impulse(vec2(0, -3000))
     end
 
 end
