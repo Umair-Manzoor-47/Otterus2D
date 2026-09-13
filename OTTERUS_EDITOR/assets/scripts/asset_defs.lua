@@ -13,7 +13,8 @@ AssetDefs = {
 	},
 
 	music = {{ name = "bgm", path = "assets/music/bgm.mp3" }},
-	sfx = {}
+	sfx = {},
+	fonts = {{name = "pixel", path = "assets/fonts/Minecraft.ttf", size = 32.0}}
 
 }
 

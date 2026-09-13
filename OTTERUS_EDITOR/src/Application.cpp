@@ -26,6 +26,7 @@
 #include <Core/Systems/AnimationSystem.h>
 #include <Core/Systems/PhysicsSystem.h>
 #include <core/Systems/RenderShapeSystem.h>
+#include <core/Systems/RenderUISystem.h>
 
 #include <Core/Resources/AssetManager.h>
 
@@ -212,6 +213,18 @@ namespace otterus_editor {
 			return false;
 		}
 		
+
+		auto renderUISystem = std::make_shared<otterus_core::Systems::RenderUISystem>(*m_registry);
+		if (!renderUISystem) {
+
+			OTTERUS_ERROR("Failed to create the Render UI System.");
+			return false;
+		}
+		if (!m_registry->AddToContext<std::shared_ptr<otterus_core::Systems::RenderUISystem>>(renderUISystem)) {
+			OTTERUS_ERROR("Failed to add Render UI System into registry context.");
+			return false;
+		}
+
 		auto animationSystem = std::make_shared<otterus_core::Systems::AnimationSystem>(*m_registry);
 		if (!animationSystem) {
 
@@ -419,6 +432,7 @@ namespace otterus_editor {
     void Application::Render()
     {	
 		auto& renderSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::RenderSystem>>();
+		auto& renderUISystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::RenderUISystem>>();
 		auto& renderShapeSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::RenderShapeSystem>>();
 		auto& renderer = m_registry->GetContext<std::shared_ptr<otterus_rendering::Renderer>>();
 		auto& camera = m_registry->GetContext<std::shared_ptr<otterus_rendering::Camera2D>>();
@@ -438,6 +452,8 @@ namespace otterus_editor {
 		scriptSystem->Render();
 		renderSystem->Upate();
 		renderShapeSystem->Upate();
+		renderUISystem->Upate(m_registry->GetRegistry());
+
 		renderer->DrawLines(shader, *camera);
 		renderer->DrawFilledRects(shader, *camera);
 		renderer->DrawAllText(fontShader, *camera);
