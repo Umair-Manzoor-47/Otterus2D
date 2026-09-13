@@ -240,4 +240,13 @@ function LoadAssets(assets)
 		end
 	end
 
+	for k, v in pairs(assets.fonts) do
+		if not AssetManager.add_font(v.name, v.path, v.size) then
+			print("Failed to add font [" ..v.name .."] at path [" ..v.path .."]")
+		else
+			print("Added font [" ..v.name .."]")
+		end
+	end
+
+
 end

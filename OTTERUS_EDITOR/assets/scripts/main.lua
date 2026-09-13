@@ -9,6 +9,8 @@ local WINDOW_WIDTH = 640
 local WINDOW_HEIGHT = 480
 local WALL_THICKNESS = 16
 
+local ballCount = 0
+
 function createWall(name, width, height, x, y)
     local wall = Entity(name, "")
     local collider = wall:add_component(BoxCollider(width, height, vec2(0, 0)))
@@ -51,6 +53,8 @@ function createBall(pos_x, pos_y, scale_x, scale_y)
     local physics = ball:add_component(PhysicsComponent(physAttribs))
     local sprite = ball:add_component(Sprite("ball", 32, 32, 0, 0, 0))
     sprite:generate_uvs()
+
+    ballCount = ballCount + 1
     return ball
 end
 
@@ -76,12 +80,23 @@ local wallTop = createWall("WallTop", WINDOW_WIDTH - WALL_THICKNESS, WALL_THICKN
 local wallLeft = createWall("WallLeft", WALL_THICKNESS, WINDOW_HEIGHT, 0, 0)
 local wallRight = createWall("WallRight", WALL_THICKNESS, WINDOW_HEIGHT, WINDOW_WIDTH - WALL_THICKNESS, 0)
 
+------------------------------------------------------
+
+local countEnt = Entity("", "")
+countEnt:add_component(Transform(vec2(10, 48), vec2(1, 1), 0))
+countEnt:add_component(TextComponent( "Ball Count: ", "pixel", 4, -1.0, Color(0, 0, 0, 255)))
+
+local valEnt = Entity("", "")
+valEnt:add_component(Transform(vec2(352, 48), vec2(1, 1), 0))
+local valText = valEnt:add_component(TextComponent( "0", "pixel",  4, -1.0, Color(0, 0, 0, 255)))
+
+
 main = {
     [1] = {
         update = function()
             update_entity( ball )
             input()
-            
+            valText.textStr = tostring(ballCount)
         end
     },
 
@@ -90,7 +105,7 @@ main = {
             --DrawLine(Line(vec2(50, 50), vec2(200, 200), Color(255, 0, 0, 255)))
             --DrawLine(Line(vec2(200, 50), vec2(50, 200), Color(0, 0, 255, 255)))
             --DrawFilledRect(Rect(vec2(300, 300), 100, 100, Color(255, 0, 0, 255)))
-            --DrawText(Text(vec2(164.0, 156.0), "Otterus2D.", "Minecraft", 320.0, Color(255, 255, 0, 255)))
+            --DrawText(Text(vec2(164.0, 156.0), "Otterus2D.", "pixel", 320.0, Color(255, 255, 0, 255)))
             --DrawCircle(Circle(vec2(100, 100), 1.0, 32 , Color(255, 0, 0, 255)))
         end
     }

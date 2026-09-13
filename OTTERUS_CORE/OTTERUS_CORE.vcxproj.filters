@@ -81,6 +81,9 @@
     <ClInclude Include="Core\ECS\Components\TextComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Systems\RenderUISystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\ECS\Registry.cpp">
@@ -141,6 +144,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\ECS\Components\TextComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Systems\RenderUISystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
