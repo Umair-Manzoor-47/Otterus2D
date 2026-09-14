@@ -188,6 +188,18 @@ void otterus_core::Scripting::RendererBinder::CreateRendererBind(sol::state& lua
 		},
 		"set_scale", [&] (float newScale) {
 			return camera->SetScale(newScale);
+		},
+		"get_world_coords", [&](glm::vec2 screenCoords) {
+			return camera->ScreenCoordToWorld(screenCoords);
+		},
+		"get_screen_coords", [&](glm::vec2 worldCoords) {
+			return camera->WorldCoordToScreen(worldCoords);
+		},
+		"width", [&] {
+			return camera->GetWidth();
+		},
+		"height", [&] {
+			return camera->GetHeight();
 		}
 	
 	);

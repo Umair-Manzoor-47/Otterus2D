@@ -2,7 +2,7 @@ AssetDefs = {
 
 	textures = {
 	
-		{ name = "collider", path = "assets/textures/tilemap_test/collider.png", pixel_art = true },
+		--{ name = "collider", path = "assets/textures/tilemap_test/collider.png", pixel_art = true },
 		{ name = "ground_tiles", path = "assets/textures/tilemap_test/tiles/tiles.png", pixel_art = true },
 		{ name = "bunny_baby", path = "assets/textures/tilemap_test/tiles/bunny_baby animation.png", pixel_art = true },
 		{ name = "bunny_baby_grey", path = "assets/textures/tilemap_test/tiles/bunny_baby_grey animation.png", pixel_art = true },

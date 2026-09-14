@@ -42,6 +42,7 @@
     <None Include="assets\shaders\font_shader.frag" />
     <None Include="assets\shaders\circle_shader.vert" />
     <None Include="assets\shaders\circle_shader.frag" />
+    <None Include="assets\scripts\follow_cam.lua" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h">

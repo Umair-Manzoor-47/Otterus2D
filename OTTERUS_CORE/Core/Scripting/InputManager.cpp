@@ -1,4 +1,6 @@
 #include "InputManager.h"
+#include <glm/glm.hpp>
+#include <Rendering/Core/Camera2D.h>
 
 namespace otterus_core {
 
@@ -115,14 +117,15 @@ namespace otterus_core {
 		return instance;
 	}
 
-	void InputManager::CreateLuaBindings(sol::state& lua)
+	void InputManager::CreateLuaBindings(sol::state& lua, otterus_core::ECS::Registry& registry)
 	{
         RegisterLuaKeyNames(lua);
         RegisterLuaBtnNames(lua);
 
         auto& inputManager = InputManager::GetInstance();
         auto& keyboard = inputManager.GetKeyboard();
-    
+        auto& camera = registry.GetContext<std::shared_ptr<otterus_rendering::Camera2D>>();
+
         lua.new_usertype<Keyboard>(
             "Keyboard",
             sol::no_constructor,
@@ -139,7 +142,14 @@ namespace otterus_core {
             "just_pressed", [&](int btn) { return mouse.IsBtnJustPressed(btn); },
             "just_released", [&](int btn) { return mouse.IsBtnJustReleased(btn); },
             "pressed", [&](int btn) { return mouse.IsBtnPressed(btn); },
-            "screen_position", [&]() { return mouse.GetMouseScreenPosition(); },
+            "screen_position", [&]() { 
+                auto [x, y] = mouse.GetMouseScreenPosition(); 
+                return glm::vec2{x, y};
+            },
+            "world_position", [&]() {
+                auto [x, y] = mouse.GetMouseScreenPosition();
+                return camera->ScreenCoordToWorld(glm::vec2{ x, y });
+            },
             "is_moving", [&]() { return mouse.GetMouseMoving(); },
             "wheel_x", [&]() { return mouse.GetMouseWheelX(); },
             "wheel_y", [&]() { return mouse.GetMouseWheelY(); }

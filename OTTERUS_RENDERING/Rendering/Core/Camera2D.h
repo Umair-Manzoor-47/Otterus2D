@@ -10,7 +10,7 @@ namespace otterus_rendering {
 		int m_width, m_height;
 		float m_scale;
 
-		glm::vec2 m_position;
+		glm::vec2 m_position, m_screenOffset;
 		glm::mat4 m_cameraMatrix, m_orthoProjection;
 
 		bool m_needsUpdate;
@@ -18,12 +18,17 @@ namespace otterus_rendering {
 		Camera2D();
 		Camera2D(int width, int height);
 
+		glm::vec2 ScreenCoordToWorld(const glm::vec2& screenCoords);
+		glm::vec2 WorldCoordToScreen(const glm::vec2& worldCoords);
+
 		inline void SetPosition(glm::vec2 newPosition) { m_position = newPosition; m_needsUpdate = true; }
 		inline void SetScale(float scale) { m_scale = scale; m_needsUpdate = true; }
 		
 		inline glm::mat4 GetCameraMatrix() { return m_cameraMatrix; }
 		inline const glm::vec2 GetPosition() const { return m_position; }
 		inline const float GetScale() const { return m_scale; }
+		inline const int GetWidth() const { return m_width; }
+		inline const int GetHeight() const { return m_height; }
 
 		void Update();
 
