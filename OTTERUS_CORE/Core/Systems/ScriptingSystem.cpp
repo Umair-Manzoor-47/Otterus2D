@@ -6,6 +6,7 @@
 #include "../ECS/Components/BoxColliderComponent.h"
 #include "../ECS/Components/CircleColliderComponent.h"
 #include "../ECS/Components/PhysicsComponent.h"
+#include "../ECS/Components/TextComponent.h"
 
 #include "../ECS/Entity.h"
 #include <logger/Logger.h>
@@ -171,6 +172,7 @@ namespace otterus_core::Systems {
 		BoxColliderComponent::CreateBoxColliderLuaBind(lua);
 		CircleColliderComponent::CreateLuaCircleColliderBind(lua);
 		PhysicsComponent::CreatePhysicsLuaBind(lua, registry.GetRegistry());
+		TextComponent::CreateLuaTextBindings(lua);
 
 		Entity::RegisterMetaComponent<TransformComponent>();
 		Entity::RegisterMetaComponent<SpriteComponent>();
@@ -178,6 +180,7 @@ namespace otterus_core::Systems {
 		Entity::RegisterMetaComponent<BoxColliderComponent>();
 		Entity::RegisterMetaComponent<CircleColliderComponent>();
 		Entity::RegisterMetaComponent<PhysicsComponent>();
+		Entity::RegisterMetaComponent<TextComponent>();
 
 		Registry::RegisterMetaComponent<TransformComponent>();
 		Registry::RegisterMetaComponent<SpriteComponent>();
@@ -185,6 +188,7 @@ namespace otterus_core::Systems {
 		Registry::RegisterMetaComponent<BoxColliderComponent>();
 		Registry::RegisterMetaComponent<CircleColliderComponent>();
 		Registry::RegisterMetaComponent<PhysicsComponent>();
+		Registry::RegisterMetaComponent<TextComponent>();
 	}
 	void ScriptingSystem::RegisterLuaFunctions(sol::state& lua)
 	{
