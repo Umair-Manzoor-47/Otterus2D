@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <sol/sol.hpp>
+#include "../ECS/Registry.h"
 #include <Windowing/Inputs/Keyboard.h>
 #include <Windowing/Inputs/Mouse.h>
 
@@ -26,7 +27,7 @@ namespace otterus_core {
 
 	public:
 		static InputManager& GetInstance();
-		static void CreateLuaBindings(sol::state& lua);
+		static void CreateLuaBindings(sol::state& lua, otterus_core::ECS::Registry& registry);
 
 		inline Keyboard& GetKeyboard() { return *m_Keyboard; }
 		inline Mouse& GetMouse() { return *m_Mouse; }

@@ -157,7 +157,7 @@ namespace otterus_core::Systems {
 	void ScriptingSystem::RegisterLuaBindings(sol::state& lua, otterus_core::ECS::Registry& registry)
 	{
 		otterus_core::Scripting::GLMBindings::CreateGLMBindings(lua);
-		otterus_core::InputManager::CreateLuaBindings(lua);
+		otterus_core::InputManager::CreateLuaBindings(lua, registry);
 		otterus_resources::AssetManager::CreateLuaAssetManager(lua, registry);
 		otterus_core::Scripting::SoundBinder::CreateSoundBind(lua, registry);
 		otterus_core::Scripting::RendererBinder::CreateRendererBind(lua, registry);

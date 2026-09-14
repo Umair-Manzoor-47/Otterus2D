@@ -3,6 +3,7 @@ math.randomseed(os.time())
 run_script("assets/scripts/asset_defs.lua")
 run_script("assets/scripts/tilemap/test_map.lua")
 run_script("assets/scripts/utilities.lua")
+run_script("assets/scripts/follow_cam.lua")
 
 -- Window bounds
 local WINDOW_WIDTH = 640
@@ -19,7 +20,7 @@ function createWall(name, width, height, x, y)
     local physAttrs = PhysicsAttributes()
     physAttrs.type = BodyType.STATIC
     physAttrs.density = 1000.0
-    physAttrs.friction = 0.0
+    physAttrs.friction = 0.5
     physAttrs.restitution = 0.0
     physAttrs.gravityScale = 1.0
     physAttrs.position = transform.position
@@ -74,11 +75,25 @@ LoadAssets(AssetDefs)
 -- Create Test Entities
 ball = createBall(320, 64, 2, 2)
 
+-- Create Follow Camera
+gCam = Camera.get()
+gFollowCam = FollowCam:CreateCam(
+    gCam,
+    {
+        scale = 1,
+        max_x = 20000,
+        max_y = 2000,
+        springback = 2.0
+    
+    }
+)
+
+
 -- Walls
-local wallBottom = createWall("WallBottom", WINDOW_WIDTH - WALL_THICKNESS, WALL_THICKNESS, 0, 464)
-local wallTop = createWall("WallTop", WINDOW_WIDTH - WALL_THICKNESS, WALL_THICKNESS, 0, 0)
-local wallLeft = createWall("WallLeft", WALL_THICKNESS, WINDOW_HEIGHT, 0, 0)
-local wallRight = createWall("WallRight", WALL_THICKNESS, WINDOW_HEIGHT, WINDOW_WIDTH - WALL_THICKNESS, 0)
+local wallBottom = createWall("WallBottom", 10000, WALL_THICKNESS, 0, 464)
+--local wallTop = createWall("WallTop", WINDOW_WIDTH - WALL_THICKNESS, WALL_THICKNESS, 0, 0)
+--local wallLeft = createWall("WallLeft", WALL_THICKNESS, WINDOW_HEIGHT, 0, 0)
+--local wallRight = createWall("WallRight", WALL_THICKNESS, WINDOW_HEIGHT, WINDOW_WIDTH - WALL_THICKNESS, 0)
 
 ------------------------------------------------------
 
@@ -96,6 +111,7 @@ main = {
         update = function()
             update_entity( ball )
             input()
+            gFollowCam:Update(ball:id())
             valText.textStr = tostring(ballCount)
         end
     },
@@ -115,8 +131,8 @@ main = {
 
 function input()
 	if Mouse.just_released(LEFT_BTN) then
-        local pos_x, pos_y = Mouse:screen_position()
-        createBall(pos_x, pos_y, 1, 1)
+        local pos = Mouse:world_position()
+        createBall(pos.x, pos.y, 1, 1)
     end
 end
 
@@ -138,8 +154,8 @@ function update_entity( entity )
         physics:set_linear_velocity(vec2(-25, velocity.y))
     end
 
-    if Keyboard.pressed(KEY_S) then
-        physics:set_linear_velocity(vec2(25, velocity.y))
+    if Keyboard.pressed(KEY_W) then
+        physics:set_linear_velocity(vec2(velocity.x, velocity.y))
         physics:linear_impulse(vec2(0, -3000))
     end
 
