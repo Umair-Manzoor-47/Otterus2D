@@ -1,7 +1,6 @@
 #pragma once
 #include "Batcher.h"
 #include "../Essentials/BatchTypes.h"
-#include "../Essentials/BatchTypes.h"
 
 
 namespace otterus_rendering {
