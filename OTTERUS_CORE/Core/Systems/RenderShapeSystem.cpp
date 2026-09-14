@@ -5,6 +5,7 @@
 #include "../Resources/AssetManager.h"
 #include <Rendering/Core/Camera2D.h>
 #include <Rendering/Essentials/Primitives.h>
+#include "../CoreUtilities/CoreEngineData.h"
 #include <Logger/Logger.h>
 
 using namespace otterus_core::ECS;
@@ -19,6 +20,9 @@ namespace otterus_core::Systems {
 
 	void RenderShapeSystem::Upate()
 	{
+		if (!CoreEngineData::GetInstance().RenderCollidersEnabled())
+			return;
+
 		auto& camera = m_registry.GetContext<std::shared_ptr<Camera2D>>();
 		auto& assetManager = m_registry.GetContext<std::shared_ptr<otterus_resources::AssetManager>>();
 

@@ -7,6 +7,7 @@
 #include "../ECS/Components/CircleColliderComponent.h"
 #include "../ECS/Components/PhysicsComponent.h"
 #include "../ECS/Components/TextComponent.h"
+#include "../ECS/Components/RigidBodyComponent.h"
 
 #include "../ECS/Entity.h"
 #include <logger/Logger.h>
@@ -16,12 +17,15 @@
 #include "../Scripting/SoundBindings.h"
 #include "../Scripting/RendererBindings.h"
 #include <OtterusUtilities/Timer.h>
+#include <OtterusUtilities/RandomGenerator.h>
 
 #include "../CoreUtilities/CoreEngineData.h"
 #include "../CoreUtilities/FollowCamera.h"
 
 
+
 using namespace otterus_core::ECS;
+using namespace otterus_resources;
 
 namespace otterus_core::Systems {
 	ScriptingSystem::ScriptingSystem(otterus_core::ECS::Registry& registry)
@@ -162,7 +166,7 @@ namespace otterus_core::Systems {
 	{
 		otterus_core::Scripting::GLMBindings::CreateGLMBindings(lua);
 		otterus_core::InputManager::CreateLuaBindings(lua, registry);
-		otterus_resources::AssetManager::CreateLuaAssetManager(lua, registry);
+		AssetManager::CreateLuaAssetManager(lua, registry);
 		otterus_core::Scripting::SoundBinder::CreateSoundBind(lua, registry);
 		otterus_core::Scripting::RendererBinder::CreateRendererBind(lua, registry);
 		otterus_core::FollowCamera::CreateLuaFollowCamera(lua, registry);
@@ -178,6 +182,7 @@ namespace otterus_core::Systems {
 		CircleColliderComponent::CreateLuaCircleColliderBind(lua);
 		PhysicsComponent::CreatePhysicsLuaBind(lua, registry.GetRegistry());
 		TextComponent::CreateLuaTextBindings(lua);
+		RigidBodyComponent::CreateRigidBodyBind(lua);
 
 		Entity::RegisterMetaComponent<TransformComponent>();
 		Entity::RegisterMetaComponent<SpriteComponent>();
@@ -186,6 +191,7 @@ namespace otterus_core::Systems {
 		Entity::RegisterMetaComponent<CircleColliderComponent>();
 		Entity::RegisterMetaComponent<PhysicsComponent>();
 		Entity::RegisterMetaComponent<TextComponent>();
+		Entity::RegisterMetaComponent<RigidBodyComponent>();
 
 		Registry::RegisterMetaComponent<TransformComponent>();
 		Registry::RegisterMetaComponent<SpriteComponent>();
@@ -194,8 +200,9 @@ namespace otterus_core::Systems {
 		Registry::RegisterMetaComponent<CircleColliderComponent>();
 		Registry::RegisterMetaComponent<PhysicsComponent>();
 		Registry::RegisterMetaComponent<TextComponent>();
+		Registry::RegisterMetaComponent<RigidBodyComponent>();
 	}
-	void ScriptingSystem::RegisterLuaFunctions(sol::state& lua)
+	void ScriptingSystem::RegisterLuaFunctions(sol::state& lua, otterus_core::ECS::Registry& registry)
 	{
 		lua.set_function(
 			"run_script", [&](const std::string& path) {
@@ -212,6 +219,43 @@ namespace otterus_core::Systems {
 				}
 				return true;
 			}
+		);
+		lua.set_function("get_ticks", [] {
+			return SDL_GetTicks();
+			}
+		);
+
+		auto& assetManager = registry.GetContext<std::shared_ptr<AssetManager>>();
+		lua.set_function("measure_text", [&](const std::string& text, const std::string& fontName) {
+			const auto& pFont = assetManager->GetFont(fontName);
+			if (!pFont)
+			{
+				OTTERUS_ERROR("Failed to get font [{}] - Does not exist in asset manager!", fontName);
+				return -1.f;
+			}
+
+			glm::vec2 position{ 0.f }, temp_pos{ position };
+			for (const auto& character : text)
+				pFont->GetNextCharPos(character, temp_pos);
+
+			return std::abs((position - temp_pos).x);
+			}
+		);
+
+		auto& engine = CoreEngineData::GetInstance();
+		lua.set_function("GetDeltaTime", [&] { return engine.GetDeltaTime(); });
+		lua.set_function("WindowWidth", [&] { return engine.WindowWidth(); });
+		lua.set_function("WindowHeight", [&] { return engine.WindowHeight(); });
+		lua.set_function("DisablePhysics", [&] { engine.DisablePhysics(); });
+		lua.set_function("EnablePhysics", [&] { engine.EnablePhysics(); });
+		lua.set_function("IsPhysicsEnabled", [&] { return engine.IsPhysicsEnabled(); });
+
+		lua.new_usertype<otterus_utils::RandomGenerator>(
+			"Random",
+			sol::call_constructor,
+			sol::constructors<otterus_utils::RandomGenerator(uint32_t, uint32_t), otterus_utils::RandomGenerator()>(),
+			"get_float", &otterus_utils::RandomGenerator::GetFloat,
+			"get_int", &otterus_utils::RandomGenerator::GetInt
 		);
 	
 	}

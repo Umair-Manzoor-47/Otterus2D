@@ -38,6 +38,10 @@ namespace otterus_core {
 		inline const int32_t GetVelocityIterations() const { return m_VelocityIterations; }
 		inline const int32_t GetPositionIterations() const { return m_PositionIterations; }
 
+		inline void EnableColliderRender() { m_RenderColliders = true; }
+		inline void DisableColliderRender() { m_RenderColliders = false; }
+		inline const bool RenderCollidersEnabled() { return m_RenderColliders; }
+
 		inline void EnablePhysics() { m_PhysicsEnabled = true; }
 		inline void DisablePhysics() { m_PhysicsEnabled = false; }
 		inline void PausePhysics() { m_PhysicsPaused = true; }

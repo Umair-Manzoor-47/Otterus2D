@@ -134,10 +134,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="OtterusUtilities\RandomGenerator.h" />
     <ClInclude Include="OtterusUtilities\SDL_wrappers.h" />
     <ClInclude Include="OtterusUtilities\Timer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="OtterusUtilities\RandomGenerator.cpp" />
     <ClCompile Include="OtterusUtilities\SDL_wrappers.cpp" />
     <ClCompile Include="OtterusUtilities\Timer.cpp" />
   </ItemGroup>

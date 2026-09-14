@@ -24,7 +24,7 @@ namespace otterus_core::Systems {
 
 		static void RegisterLuaBindings(sol::state& lua, otterus_core::ECS::Registry& registry);
 
-		static void RegisterLuaFunctions(sol::state& lua);
+		static void RegisterLuaFunctions(sol::state& lua, otterus_core::ECS::Registry& registry);
 	};
 
 	
