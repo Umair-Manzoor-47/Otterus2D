@@ -26,9 +26,10 @@ namespace otterus_core {
 
 		void Update();
 
-		inline void SetCameraParameters(const FollowCamParams& params) { m_Params = params; };
 		inline void SetEntity(const ECS::Entity& entity) { m_Entity = entity; };
-		inline void SetSpringback(float springback) { m_Params.springback = springback; };
+		void SetSpringback(float springback);
+		void SetCameraParameters(const FollowCamParams& params);
+
 		inline const FollowCamParams& GetParams() const { return m_Params; }
 
 		static void CreateLuaFollowCamera(sol::state& lua, ECS::Registry& registry);
