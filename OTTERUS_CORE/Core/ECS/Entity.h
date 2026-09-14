@@ -14,6 +14,14 @@ namespace otterus_core::ECS {
 	public:
 		Entity(Registry& registry);
 		Entity(Registry& registry, const std::string name = "", const std::string group = "");
+		Entity& operator=(const Entity& other)
+		{
+			this->m_entity = other.m_entity;
+			this->m_name = other.m_name;
+			this->m_group = other.m_group;
+
+			return *this;
+		}
 		~Entity() =  default;
 
 		Entity(Registry& registry, const entt::entity& entity);

@@ -3,6 +3,7 @@
 #include "../ECS/Components/CircleColliderComponent.h"
 #include "../ECS/Components/TransformComponent.h"
 #include "../ECS/Components/PhysicsComponent.h"
+#include "../CoreUtilities/CoreEngineData.h"
 #include <Logger/Logger.h>
 
 using namespace otterus_core::ECS;
@@ -16,8 +17,10 @@ namespace otterus_core::Systems {
 	{
 		auto boxView = registry.view<PhysicsComponent, TransformComponent, BoxColliderComponent>();
 
-		auto scaledWidth = 640.f / METERS_TO_PIXELS;
-		auto scaledHeight = 480.f / METERS_TO_PIXELS;
+		auto& coreEngine = CoreEngineData::GetInstance();
+
+		auto scaledWidth = coreEngine.ScaledWidth();
+		auto scaledHeight = coreEngine.ScaledHeight();
 	
 		for (auto entity: boxView)
 		{
@@ -32,9 +35,9 @@ namespace otterus_core::Systems {
 
 			const auto& bodyPosition = rigidBody->GetPosition();
 
-			transform.position.x = ((scaledWidth / 2.f) + bodyPosition.x) * METERS_TO_PIXELS -
+			transform.position.x = ((scaledWidth / 2.f) + bodyPosition.x) * coreEngine.MetersToPixels() -
 				(boxCollider.width * transform.scale.x) / 2.f - boxCollider.offset.x;
-			transform.position.y = ((scaledHeight / 2.f) + bodyPosition.y) * METERS_TO_PIXELS -
+			transform.position.y = ((scaledHeight / 2.f) + bodyPosition.y) * coreEngine.MetersToPixels() -
 				(boxCollider.height * transform.scale.y) / 2.f - boxCollider.offset.y;
 
 		
@@ -59,9 +62,9 @@ namespace otterus_core::Systems {
 
 			const auto& bodyPosition = rigidBody->GetPosition();
 
-			transform.position.x = ((scaledWidth / 2.f) + bodyPosition.x) * METERS_TO_PIXELS -
+			transform.position.x = ((scaledWidth / 2.f) + bodyPosition.x) * coreEngine.MetersToPixels() -
 				(circleCollider.radius * transform.scale.x) - circleCollider.offset.x;
-			transform.position.y = ((scaledHeight / 2.f) + bodyPosition.y) * METERS_TO_PIXELS -
+			transform.position.y = ((scaledHeight / 2.f) + bodyPosition.y) * coreEngine.MetersToPixels() -
 				(circleCollider.radius * transform.scale.y)- circleCollider.offset.y;
 
 
