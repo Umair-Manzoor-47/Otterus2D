@@ -1,4 +1,5 @@
 #include "PhysicsComponent.h"
+#include "../../CoreUtilities/CoreEngineData.h"
 #include <Logger/Logger.h>
 
 namespace otterus_core::ECS {
@@ -11,6 +12,7 @@ namespace otterus_core::ECS {
 
 	void PhysicsComponent::Init(otterus_physics::PhysicsWorld physicsWorld, int windowWidth, int windowHeight)
 	{
+		auto PIXELS_TO_METERS = CoreEngineData::GetInstance().PixelsToMeters();
 		if (!physicsWorld) {
 			OTTERUS_ERROR("Failed to create Physics component -- Physics world is nullptr");
 			return;

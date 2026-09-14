@@ -3,7 +3,7 @@ math.randomseed(os.time())
 run_script("assets/scripts/asset_defs.lua")
 run_script("assets/scripts/tilemap/test_map.lua")
 run_script("assets/scripts/utilities.lua")
-run_script("assets/scripts/follow_cam.lua")
+--run_script("assets/scripts/follow_cam.lua")
 
 -- Window bounds
 local WINDOW_WIDTH = 640
@@ -76,16 +76,16 @@ LoadAssets(AssetDefs)
 ball = createBall(320, 64, 2, 2)
 
 -- Create Follow Camera
-gCam = Camera.get()
-gFollowCam = FollowCam:CreateCam(
-    gCam,
-    {
+
+gFollowCam = FollowCamera(
+    FollowCamParams({
         scale = 1,
         max_x = 20000,
         max_y = 2000,
         springback = 2.0
     
-    }
+    }),
+    ball
 )
 
 
@@ -111,7 +111,7 @@ main = {
         update = function()
             update_entity( ball )
             input()
-            gFollowCam:Update(ball:id())
+            gFollowCam:update()
             valText.textStr = tostring(ballCount)
         end
     },

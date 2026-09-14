@@ -17,6 +17,10 @@
 #include "../Scripting/RendererBindings.h"
 #include <OtterusUtilities/Timer.h>
 
+#include "../CoreUtilities/CoreEngineData.h"
+#include "../CoreUtilities/FollowCamera.h"
+
+
 using namespace otterus_core::ECS;
 
 namespace otterus_core::Systems {
@@ -161,6 +165,7 @@ namespace otterus_core::Systems {
 		otterus_resources::AssetManager::CreateLuaAssetManager(lua, registry);
 		otterus_core::Scripting::SoundBinder::CreateSoundBind(lua, registry);
 		otterus_core::Scripting::RendererBinder::CreateRendererBind(lua, registry);
+		otterus_core::FollowCamera::CreateLuaFollowCamera(lua, registry);
 
 		create_timer(lua);
 

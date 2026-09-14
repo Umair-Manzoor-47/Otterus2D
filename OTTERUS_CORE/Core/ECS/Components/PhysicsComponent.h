@@ -6,9 +6,6 @@
 
 namespace otterus_core::ECS {
 	
-	constexpr float METERS_TO_PIXELS = 12.f;
-	constexpr float PIXELS_TO_METERS = 1.f / METERS_TO_PIXELS;
-
 	enum class RigidbodyType {
 		STATIC = 0,
 		KINEMATIC,
