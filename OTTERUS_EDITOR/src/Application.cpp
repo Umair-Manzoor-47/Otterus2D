@@ -385,6 +385,17 @@ namespace otterus_editor {
 				break;
 			case SDL_MOUSEMOTION:
 				mouse.SetMouseMoving(true);
+				break;
+			case SDL_WINDOWEVENT:
+				switch (m_event.window.event)
+				{
+				case SDL_WINDOWEVENT_SIZE_CHANGED:
+					m_window->SetWidth(m_event.window.data1);
+					m_window->SetHeight(m_event.window.data2);
+					break;
+				default:
+					break;
+				}
 			default:
 				break;
 
