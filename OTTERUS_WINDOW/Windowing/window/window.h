@@ -24,6 +24,8 @@ namespace otterus_windowing {
 		inline const int GetYPos() const { return m_xPos; }
 		inline const int SetYPos(int yPos) { m_yPos = yPos; }
 
+		inline void SetWidth(int width) { m_width = width; }
+		inline void SetHeight(int height) { m_height = height; }
 		inline const int GetWidth() const { return m_width; }
 		inline const int GetHeight() const { return m_height; }
 
