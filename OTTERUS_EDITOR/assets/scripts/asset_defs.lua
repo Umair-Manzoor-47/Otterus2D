@@ -6,6 +6,7 @@ AssetDefs = {
 		{ name = "ground_tiles", path = "assets/textures/tilemap_test/tiles/tiles.png", pixel_art = true },
 		{ name = "bunny_baby", path = "assets/textures/tilemap_test/tiles/bunny_baby animation.png", pixel_art = true },
 		{ name = "bunny_baby_grey", path = "assets/textures/tilemap_test/tiles/bunny_baby_grey animation.png", pixel_art = true },
+		{ name = "rain", path = "assets/textures/rain.png", pixel_art = true},
 		{ name = "ball", path = "assets/textures/ball.png", pixel_art = true },
 
 		
@@ -41,7 +42,8 @@ AnimalsDefs = {
 				numFrames = 4, 
 				frameRate = 5,
 				frameOffset = 0,
-				isVertical = false
+				isVertical = false,
+				looped = true
 			}
 		
 		}
@@ -66,7 +68,8 @@ AnimalsDefs = {
 				numFrames = 4, 
 				frameRate = 5,
 				frameOffset = 0,
-				isVertical = false
+				isVertical = false,
+				looped = true
 			}
 		
 		}
