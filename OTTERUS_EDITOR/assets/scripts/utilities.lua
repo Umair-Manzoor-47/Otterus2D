@@ -50,7 +50,8 @@ function LoadEntity(def)
 				def.components.animation.numFrames,
 				def.components.animation.frameRate,
 				def.components.animation.frameOffset,
-				def.components.animation.isVertical
+				def.components.animation.isVertical,
+				def.components.animation.looped
 			)
 		)
 	end

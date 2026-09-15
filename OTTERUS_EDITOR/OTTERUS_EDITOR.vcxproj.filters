@@ -43,6 +43,7 @@
     <None Include="assets\shaders\circle_shader.vert" />
     <None Include="assets\shaders\circle_shader.frag" />
     <None Include="assets\scripts\follow_cam.lua" />
+    <None Include="assets\scripts\rain_generator.lua" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h">

@@ -176,6 +176,7 @@
     <None Include="assets\scripts\asteroids\utilities.lua" />
     <None Include="assets\scripts\follow_cam.lua" />
     <None Include="assets\scripts\main.lua" />
+    <None Include="assets\scripts\rain_generator.lua" />
     <None Include="assets\scripts\utilities.lua" />
     <None Include="assets\shaders\basic_shader.frag" />
     <None Include="assets\shaders\basic_shader.vert" />
