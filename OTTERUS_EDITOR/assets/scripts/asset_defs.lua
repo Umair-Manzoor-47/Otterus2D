@@ -36,7 +36,7 @@ AnimalsDefs = {
 				width = 16,
 				height = 16,
 				start_x = 0, start_y = 0,
-				layer = 4
+				layer = 1
 			},
 			animation = {
 				numFrames = 4, 
@@ -62,7 +62,7 @@ AnimalsDefs = {
 				width = 16,
 				height = 16,
 				start_x = 0, start_y = 2,
-				layer = 4
+				layer = 1
 			},
 			animation = {
 				numFrames = 4, 

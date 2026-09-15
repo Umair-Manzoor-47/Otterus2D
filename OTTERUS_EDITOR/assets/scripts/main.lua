@@ -21,16 +21,33 @@ animalManager:Add(bunny1, {
     speed = 35.0,
     radius = 60,
     wait_min = 1.0,
-    wait_max = 3.0,
-    flip_sprite = true
+    wait_max = 3.0
 })
 animalManager:Add(bunny2, {
     speed = 40.0,
     radius = 70,
     wait_min = 0.5,
-    wait_max = 2.5,
-    flip_sprite = true
+    wait_max = 2.5
 })
+
+-- Top-right region bunnies (strictly maintains >=16px margin: min_y = 16, max_x = 640 - 16 = 624)
+local topRightWanderBounds = {
+    min_x = 440,
+    max_x = 600,
+    min_y = 32,
+    max_y = 160,
+    speed = 35.0,
+    wait_min = 0.5,
+    wait_max = 2.5
+}
+
+local trBunny1 = SpawnAnimal(AnimalsDefs.baby_bunny, 520, 48)
+local trBunny2 = SpawnAnimal(AnimalsDefs.baby_bunny_grey, 570, 96)
+local trBunny3 = SpawnAnimal(AnimalsDefs.baby_bunny, 480, 130)
+
+animalManager:Add(trBunny1, topRightWanderBounds)
+animalManager:Add(trBunny2, topRightWanderBounds)
+animalManager:Add(trBunny3, topRightWanderBounds)
 
 local rainGen = RainGenerator:Create()
 

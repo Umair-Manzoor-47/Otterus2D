@@ -68,6 +68,25 @@ function LoadEntity(def)
 
 end
 
+function SpawnAnimal(def, x, y)
+	assert(def, "Animal definition does not exist.")
+	local customDef = {
+		tag = def.tag,
+		group = def.group,
+		components = {
+			transform = {
+				position = { x = x or def.components.transform.position.x, y = y or def.components.transform.position.y },
+				scale = { x = def.components.transform.scale.x, y = def.components.transform.scale.y },
+				rotation = def.components.transform.rotation
+			},
+			sprite = def.components.sprite,
+			animation = def.components.animation,
+			circle_collider = def.components.circle_collider
+		}
+	}
+	return LoadEntity(customDef)
+end
+
 function GetRandomPosition()
 	return vec2(
 		math.random(SCREEN_WIDTH) + SCREEN_WIDTH,
