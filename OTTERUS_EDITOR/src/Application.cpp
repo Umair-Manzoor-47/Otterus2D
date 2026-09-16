@@ -40,6 +40,14 @@
 
 #include <Logger/Logger.h>
 
+// TODO: Remove to ImGUI class
+#include <imgui.h>
+#include <backends/imgui_impl_sdl2.h>
+#include <backends/imgui_impl_opengl3.h>
+#include <SDL_opengl.h>
+// ===========================
+
+
 #ifdef _WIN32
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -285,6 +293,11 @@ namespace otterus_editor {
 			return false;
 		}
 
+		if (!InitImGui()) {
+			OTTERUS_ERROR("Failed to initialize ImGUI.");
+			return false;
+		}
+
 		if (!LoadShaders()) {
 			OTTERUS_ERROR("Failed to load Shaders.");
 			return false;
@@ -358,6 +371,7 @@ namespace otterus_editor {
 		auto& mouse = inputManager.GetMouse();
 
 		while (SDL_PollEvent(&m_event)) {
+			ImGui_ImplSDL2_ProcessEvent(&m_event);
 			switch (m_event.type) {
 			case SDL_QUIT:
 				m_isRunning = false;
@@ -465,6 +479,10 @@ namespace otterus_editor {
 		renderShapeSystem->Upate();
 		renderUISystem->Upate(m_registry->GetRegistry());
 
+		Begin();
+		RenderImGui();
+		End();
+
 		renderer->DrawLines(shader, *camera);
 		renderer->DrawFilledRects(shader, *camera);
 		renderer->DrawAllText(fontShader, *camera);
@@ -478,6 +496,72 @@ namespace otterus_editor {
     void Application::CleanUp()
     {
 		SDL_Quit();
+	}
+
+	bool Application::InitImGui()
+	{
+		const char* glslVersion = "#version 450";
+		IMGUI_CHECKVERSION();
+
+		if (!ImGui::CreateContext())
+		{
+			OTTERUS_ERROR("Failed to create ImGui context.");
+			return false;
+		}
+
+		ImGuiIO& io = ImGui::GetIO();
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+		io.ConfigWindowsMoveFromTitleBarOnly = true;
+
+		if (!ImGui_ImplSDL2_InitForOpenGL(
+			m_window->GetWindow().get(),
+			m_window->GetGLContext()
+		))
+		{
+			OTTERUS_ERROR("Failed to initialize ImGUI SDL2 impl for OpenGL (ImGui_ImplSDL2_InitForOpenGL).");
+			return false;
+		}
+		if (!ImGui_ImplOpenGL3_Init(glslVersion))
+		{
+			OTTERUS_ERROR("Failed to initialize ImGUI OpenGL3 impl (ImGui_ImplOpenGL3_Init).");
+			return false;
+		}
+
+		return true;
+	}
+
+	void Application::Begin()
+	{
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplSDL2_NewFrame();
+		ImGui::NewFrame();
+	}
+
+	void Application::End()
+	{
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		ImGuiIO& io = ImGui::GetIO();
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+
+			SDL_GLContext backupContext = SDL_GL_GetCurrentContext();
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+
+			SDL_GL_MakeCurrent(
+				m_window->GetWindow().get(),
+				backupContext
+			);
+		}
+	}
+
+	void Application::RenderImGui()
+	{
+		ImGui::ShowDemoWindow();
 	}
 
     Application::Application():

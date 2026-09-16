@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{3f536871-64a4-4fe4-a7dc-7ab84eb01dc4}</ProjectGuid>
-    <RootNamespace>OTTERUSEDITOR</RootNamespace>
+    <ProjectGuid>{0cbd11ca-8bde-4d6c-b829-36bf773321c3}</ProjectGuid>
+    <RootNamespace>ImGui</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -40,13 +40,13 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\OTTERUS_UTILITIES;$(SolutionDir).\OTTERUS_WINDOW;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\OTTERUS_CORE;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(SolutionDir).\OTTERUS_SOUND\src;$(SolutionDir).\OTTERUS_PHYSICS;$(SolutionDir).\ImGui\src;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir).\Dependencies\SDL\lib;$(SolutionDir).\Dependencies\lua53\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)src;$(SolutionDir)Dependencies\SDL\include;$(ProjectDir)..\Dependencies\SDL\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Dependencies\SDL\lib;$(ProjectDir)..\Dependencies\SDL\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\OTTERUS_UTILITIES;$(SolutionDir).\OTTERUS_WINDOW;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\OTTERUS_CORE;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(SolutionDir).\OTTERUS_SOUND\src;$(SolutionDir).\OTTERUS_PHYSICS;$(SolutionDir).\ImGui\src;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir).\Dependencies\SDL\lib;$(SolutionDir).\Dependencies\lua53\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)src;$(SolutionDir)Dependencies\SDL\include;$(ProjectDir)..\Dependencies\SDL\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Dependencies\SDL\lib;$(ProjectDir)..\Dependencies\SDL\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -113,16 +113,15 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;opengl32.lib;lua53.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PostBuildEvent>
-      <Command>xcopy /y /d "$(SolutionDir)Dependencies\SDL\lib\*.dll" "$(OutDir)"
-if exist "$(SolutionDir)Dependencies\SDL\lib\optional\*.dll" xcopy /y /d "$(SolutionDir)Dependencies\SDL\lib\optional\*.dll" "$(OutDir)"</Command>
-    </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -133,78 +132,35 @@ if exist "$(SolutionDir)Dependencies\SDL\lib\optional\*.dll" xcopy /y /d "$(Solu
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;opengl32.lib;lua53.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PostBuildEvent>
-      <Command>xcopy /y /d "$(SolutionDir)Dependencies\SDL\lib\*.dll" "$(OutDir)"
-if exist "$(SolutionDir)Dependencies\SDL\lib\optional\*.dll" xcopy /y /d "$(SolutionDir)Dependencies\SDL\lib\optional\*.dll" "$(OutDir)"</Command>
-    </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Application.cpp" />
-    <ClCompile Include="src\main.cpp" />
+    <ClInclude Include="src\backends\imgui_impl_opengl3.h" />
+    <ClInclude Include="src\backends\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="src\backends\imgui_impl_sdl2.h" />
+    <ClInclude Include="src\imconfig.h" />
+    <ClInclude Include="src\imgui.h" />
+    <ClInclude Include="src\imgui_internal.h" />
+    <ClInclude Include="src\imstb_rectpack.h" />
+    <ClInclude Include="src\imstb_textedit.h" />
+    <ClInclude Include="src\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GLAD\GLAD.vcxproj">
-      <Project>{a39d7b3e-ef4f-47de-97c6-31ae24127242}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\ImGui\ImGui.vcxproj">
-      <Project>{0cbd11ca-8bde-4d6c-b829-36bf773321c3}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\OTTERUS_CORE\OTTERUS_CORE.vcxproj">
-      <Project>{a7c25e7e-66af-438a-8ca1-3388df279267}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\OTTERUS_LOGGER\OTTERUS_LOGGER.vcxproj">
-      <Project>{9806fa5d-7887-4de2-8222-a101ea980a72}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\OTTERUS_PHYSICS\OTTERUS_PHYSICS.vcxproj">
-      <Project>{0a15d12b-fb42-4975-a741-dcaef6e07ab1}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\OTTERUS_RENDERING\OTTERUS_RENDERING.vcxproj">
-      <Project>{b468db63-1d5d-4e0d-9f98-cf66d0f7f3ca}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\OTTERUS_SOUND\OTTERUS_SOUND.vcxproj">
-      <Project>{a91ebba8-54b7-4cb2-801f-30d01e08e587}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\OTTERUS_UTILITIES\OTTERUS_UTILITIES.vcxproj">
-      <Project>{3826c018-264c-407a-ae67-2106f556dc48}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\OTTERUS_WINDOW\OTTERUS_WINDOW.vcxproj">
-      <Project>{0c38259d-0941-46a3-a4ac-e9bee9dc3c11}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\SOIL\SOIL.vcxproj">
-      <Project>{666dfff4-a1b6-4b2a-8b15-d0efc8db8794}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="assets\scripts\asset_defs.lua" />
-    <None Include="assets\scripts\asteroids\asteroid.lua" />
-    <None Include="assets\scripts\asteroids\assetDef.lua" />
-    <None Include="assets\scripts\asteroids\collision_system.lua" />
-    <None Include="assets\scripts\asteroids\entityDefs.lua" />
-    <None Include="assets\scripts\asteroids\game_data.lua" />
-    <None Include="assets\scripts\asteroids\projectile.lua" />
-    <None Include="assets\scripts\asteroids\ship.lua" />
-    <None Include="assets\scripts\asteroids\utilities.lua" />
-    <None Include="assets\scripts\follow_cam.lua" />
-    <None Include="assets\scripts\main.lua" />
-    <None Include="assets\scripts\rain_generator.lua" />
-    <None Include="assets\scripts\utilities.lua" />
-    <None Include="assets\shaders\basic_shader.frag" />
-    <None Include="assets\shaders\basic_shader.vert" />
-    <None Include="assets\shaders\circle_shader.frag" />
-    <None Include="assets\shaders\circle_shader.vert" />
-    <None Include="assets\shaders\color_shader.frag" />
-    <None Include="assets\shaders\color_shader.vert" />
-    <None Include="assets\shaders\font_shader.frag" />
-    <None Include="assets\shaders\font_shader.vert" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\Application.h" />
+    <ClCompile Include="src\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="src\backends\imgui_impl_sdl2.cpp" />
+    <ClCompile Include="src\imgui.cpp" />
+    <ClCompile Include="src\imgui_demo.cpp" />
+    <ClCompile Include="src\imgui_draw.cpp" />
+    <ClCompile Include="src\imgui_tables.cpp" />
+    <ClCompile Include="src\imgui_widgets.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
