@@ -7,6 +7,7 @@
 #include <Rendering/Essentials/Primitives.h>
 #include "../CoreUtilities/CoreEngineData.h"
 #include <Logger/Logger.h>
+#include "../ECS/Components/PhysicsComponent.h"
 
 using namespace otterus_core::ECS;
 using namespace otterus_rendering;
@@ -57,6 +58,15 @@ namespace otterus_core::Systems {
 
 			}
 
+			auto color = Color{ 255, 0, 0, 135 };
+
+			if (m_registry.GetRegistry().all_of<PhysicsComponent>(entity))
+			{
+				auto& physics = m_registry.GetRegistry().get<PhysicsComponent>(entity);
+				if (physics.IsSensor())
+					color = Color{ 0, 255, 0, 135 };
+			}
+
 			Rect rect{
 				.position = glm::vec2{ 
 					transform.position.x + boxCollider.offset.x,
@@ -64,7 +74,7 @@ namespace otterus_core::Systems {
 				},
 				.width = transform.scale.x * boxCollider.width,
 				.height = transform.scale.y * boxCollider.height,
-				.color = Color{255, 0, 0, 135}
+				.color = color
 			};
 
 			m_RectBatchRenderer->AddRect(rect, model);

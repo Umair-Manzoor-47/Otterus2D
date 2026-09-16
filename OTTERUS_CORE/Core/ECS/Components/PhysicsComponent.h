@@ -19,7 +19,7 @@ namespace otterus_core::ECS {
 		float restitutionThreshold{ 1.f }, radius{ 0.f }, gravityScale{ 1.f };
 
 		glm::vec2 position{ 0.f }, scale{ 1.f }, boxSize{ 0.f }, offset{ 0.f };
-		bool circle{ false }, boxShape{ true }, fixedRotation{ true };
+		bool circle{ false }, boxShape{ true }, fixedRotation{ true }, isSensor{ false };
 
 		uint16_t filterCategory{ 0 }, filterMask{ 0 };
 		int16_t groupIndex{ 0 };
@@ -40,6 +40,7 @@ namespace otterus_core::ECS {
 
 		void Init(otterus_physics::PhysicsWorld physicsWorld, int windowWidth, int windowHeight);
 		b2Body* GetBody() { return m_RigidBody.get(); };
+		const bool IsSensor() const;
 
 		static void CreatePhysicsLuaBind(sol::state& lua, entt::registry& registry);
 	};
