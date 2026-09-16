@@ -6,7 +6,7 @@ namespace otterus_rendering {
 
 	class Texture {
 	
-	public: enum class TextureType { PIXEL = 0, BLENDED, NONE };
+	public: enum class TextureType { PIXEL = 0, BLENDED, FRAMEBUFFER, NONE };
 
 	private:
 		GLuint m_texID;

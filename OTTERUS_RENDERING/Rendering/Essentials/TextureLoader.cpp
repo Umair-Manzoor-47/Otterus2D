@@ -53,6 +53,21 @@ namespace otterus_rendering {
 		return true;
 	}
 
+	bool TextureLoader::LoadFBTexture(GLuint& id, int& width, int& height)
+	{
+		glBindTexture(GL_TEXTURE_2D, id);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+
+		return true;
+	}
+
 	std::shared_ptr<Texture> otterus_rendering::TextureLoader::Create(const std::string& path, Texture::TextureType type)
 	{
 		int channels = 0, width{ 0 }, height{ 0 };
@@ -92,6 +107,22 @@ namespace otterus_rendering {
 		UploadToGPU(image, width, height, channels);
 
 		return std::make_shared<Texture>(texID, width, height, type, path);
+	}
+
+	std::shared_ptr<Texture> TextureLoader::Create(const Texture::TextureType type, int width, int height)
+	{
+		OTTERUS_ASSERT(type == Texture::TextureType::FRAMEBUFFER && "Must be FrameBuffer type.");
+
+		if (type != Texture::TextureType::FRAMEBUFFER)
+		{
+			OTTERUS_ERROR("Failed to create FBO Texture, incorrect TextureType passed in.");
+			return nullptr;
+		}
+		GLuint id;
+		glGenTextures(1, &id);
+		LoadFBTexture(id, width, height);
+
+		return std::make_shared<Texture>(id, width, height, type);
 	}
 
 }
