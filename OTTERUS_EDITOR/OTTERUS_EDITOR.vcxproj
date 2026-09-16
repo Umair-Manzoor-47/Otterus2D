@@ -71,11 +71,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\OTTERUS_UTILITIES;$(SolutionDir).\OTTERUS_WINDOW;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\OTTERUS_CORE;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(SolutionDir).\OTTERUS_SOUND\src;$(SolutionDir).\OTTERUS_PHYSICS;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\OTTERUS_UTILITIES;$(SolutionDir).\OTTERUS_WINDOW;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\OTTERUS_CORE;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(SolutionDir).\OTTERUS_SOUND\src;$(SolutionDir).\OTTERUS_PHYSICS;$(SolutionDir).\ImGui\src;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir).\Dependencies\SDL\lib;$(SolutionDir).\Dependencies\lua53\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\OTTERUS_UTILITIES;$(SolutionDir).\OTTERUS_WINDOW;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\OTTERUS_CORE;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(SolutionDir).\OTTERUS_SOUND\src;$(SolutionDir).\OTTERUS_PHYSICS;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\OTTERUS_UTILITIES;$(SolutionDir).\OTTERUS_WINDOW;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\OTTERUS_CORE;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(SolutionDir).\OTTERUS_SOUND\src;$(SolutionDir).\OTTERUS_PHYSICS;$(SolutionDir).\ImGui\src;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir).\Dependencies\SDL\lib;$(SolutionDir).\Dependencies\lua53\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -152,6 +152,9 @@ if exist "$(SolutionDir)Dependencies\SDL\lib\optional\*.dll" xcopy /y /d "$(Solu
     <ProjectReference Include="..\GLAD\GLAD.vcxproj">
       <Project>{a39d7b3e-ef4f-47de-97c6-31ae24127242}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\ImGui\ImGui.vcxproj">
+      <Project>{0cbd11ca-8bde-4d6c-b829-36bf773321c3}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\OTTERUS_CORE\OTTERUS_CORE.vcxproj">
       <Project>{a7c25e7e-66af-438a-8ca1-3388df279267}</Project>
     </ProjectReference>
@@ -203,7 +206,6 @@ if exist "$(SolutionDir)Dependencies\SDL\lib\optional\*.dll" xcopy /y /d "$(Solu
   <ItemGroup>
     <ClInclude Include="src\Application.h" />
   </ItemGroup>
-
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
