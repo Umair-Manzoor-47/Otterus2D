@@ -246,9 +246,16 @@ namespace otterus_core::Systems {
 		lua.set_function("GetDeltaTime", [&] { return engine.GetDeltaTime(); });
 		lua.set_function("WindowWidth", [&] { return engine.WindowWidth(); });
 		lua.set_function("WindowHeight", [&] { return engine.WindowHeight(); });
-		lua.set_function("DisablePhysics", [&] { engine.DisablePhysics(); });
+
+		// Physics Enable functions
 		lua.set_function("EnablePhysics", [&] { engine.EnablePhysics(); });
+		lua.set_function("DisablePhysics", [&] { engine.DisablePhysics(); });
 		lua.set_function("IsPhysicsEnabled", [&] { return engine.IsPhysicsEnabled(); });
+
+		// Render Collider Enable functions
+		lua.set_function("EnableRenderColliders", [&] { engine.EnableColliderRender(); });
+		lua.set_function("DisableRenderColliders", [&] { engine.DisableColliderRender(); });
+		lua.set_function("IsRenderCollidersEnabled", [&] { engine.RenderCollidersEnabled(); });
 
 		lua.new_usertype<otterus_utils::RandomGenerator>(
 			"Random",

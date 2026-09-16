@@ -58,7 +58,7 @@ namespace otterus_core::ECS {
 		b2CircleShape circleShape;
 
 		if(Circle){
-			circleShape.m_radius = PIXELS_TO_METERS * m_InitialAttribs.radius * (m_InitialAttribs.scale.x > m_InitialAttribs.scale.y ? m_InitialAttribs.scale.x : m_InitialAttribs.scale.y);
+			circleShape.m_radius = PIXELS_TO_METERS * m_InitialAttribs.radius * m_InitialAttribs.scale.x;
 		}
 		else if (m_InitialAttribs.boxShape)
 		{
@@ -88,6 +88,7 @@ namespace otterus_core::ECS {
 		fixtureDef.friction				= m_InitialAttribs.friction;
 		fixtureDef.restitution			= m_InitialAttribs.restitution;
 		fixtureDef.restitutionThreshold = m_InitialAttribs.restitutionThreshold;
+		fixtureDef.isSensor				= m_InitialAttribs.isSensor;
 		
 		auto fixutre = m_RigidBody->CreateFixture(&fixtureDef);
 		
@@ -95,6 +96,14 @@ namespace otterus_core::ECS {
 			OTTERUS_ERROR("Failed to create fixture.");
 			return;
 		}
+	}
+	
+	const bool PhysicsComponent::IsSensor() const
+	{
+		if (!m_RigidBody)
+			return false;
+
+		return m_RigidBody->GetFixtureList()->IsSensor();
 	}
 
 	void PhysicsComponent::CreatePhysicsLuaBind(sol::state& lua, entt::registry& registry)
@@ -132,6 +141,7 @@ namespace otterus_core::ECS {
 			"circle", &PhysicsAttributes::circle,
 			"boxShape", &PhysicsAttributes::boxShape,
 			"fixedRotation", &PhysicsAttributes::fixedRotation,
+			"isSensor", &PhysicsAttributes::isSensor,
 			"filterCategory", &PhysicsAttributes::filterCategory,
 			"filterMask", &PhysicsAttributes::filterMask,
 			"groupIndex", &PhysicsAttributes::groupIndex
