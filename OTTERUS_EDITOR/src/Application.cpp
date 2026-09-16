@@ -97,15 +97,20 @@ namespace otterus_editor {
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
+		SDL_DisplayMode displayMode;
+		SDL_GetCurrentDisplayMode(0, &displayMode);
+
 		// Create Window
 		m_window = std::make_unique<otterus_windowing::Window>(
 			"OTTERUS2D", 
-			640, 480, 
+			displayMode.w, displayMode.h, 
 			SDL_WINDOWPOS_CENTERED, 
 			SDL_WINDOWPOS_CENTERED, 
 			true, 
-			SDL_WINDOW_OPENGL |
-			SDL_WINDOW_RESIZABLE
+			SDL_WINDOW_OPENGL		 |
+			SDL_WINDOW_RESIZABLE	 |
+			SDL_WINDOW_MAXIMIZED	 |
+			SDL_WINDOW_MOUSE_CAPTURE
 		);
 
 		if (!m_window->GetWindow()) {
@@ -561,6 +566,10 @@ namespace otterus_editor {
 
 	void Application::RenderImGui()
 	{
+		ImGui::DockSpaceOverViewport();
+
+		//TODO: Add Scene Display
+
 		ImGui::ShowDemoWindow();
 	}
 
