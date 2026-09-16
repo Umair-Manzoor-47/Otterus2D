@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
@@ -38,12 +38,12 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\original\stb_image-1.09.c">
+    <None Include="src\original\stb_image-1.09.c">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\original\stb_image-1.16.c">
+    </None>
+    <None Include="src\original\stb_image-1.16.c">
       <Filter>Source Files</Filter>
-    </ClCompile>
+    </None>
     <ClCompile Include="src\image_dxt.c">
       <Filter>Source Files</Filter>
     </ClCompile>
