@@ -10,6 +10,7 @@
 #include <Rendering/Core/Camera2D.h>
 #include <Rendering/Core/Renderer.h>
 #include <Rendering/Essentials/Vertex.h>
+#include <Rendering/Buffers/Framebuffer.h>
 
 #include <entt.hpp>
 #include <Core/ECS/Entity.h>
@@ -315,6 +316,16 @@ namespace otterus_editor {
 			OTTERUS_ERROR("Failed to load the main lua script.");
 			return false;
 		}
+		auto frameBuffer = std::make_shared<otterus_rendering::Framebuffer>();
+
+		if (!frameBuffer) {
+			OTTERUS_ERROR("Failed to create Framebuffer.");
+			return false;
+		}
+		if (!m_registry->AddToContext<std::shared_ptr<otterus_rendering::Framebuffer>>(frameBuffer)) {
+			OTTERUS_ERROR("Failed to add Framebuffer into registry context.");
+			return false;
+		}
 
 
 		return true;
@@ -471,18 +482,21 @@ namespace otterus_editor {
 		auto& shader = assetManager->GetShader("color");
 		auto& fontShader = assetManager->GetShader("font");
 		auto& circleShader = assetManager->GetShader("circle");
-
-
-		renderer->SetViewport(0, 0, m_window->GetWidth(), m_window->GetHeight());
-
-		renderer->SetClearColor(1.f, 1.f, 1.f, 1.f);
-		renderer->ClearBuffers(true, false, false);
-
 		auto& scriptSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>();
+
+		const auto& fb = m_registry->GetContext<std::shared_ptr<otterus_rendering::Framebuffer>>();
+
+		fb->Bind();
+
+		renderer->SetViewport(0, 0, fb->GetWidth(), fb->GetHeight());
+		renderer->SetClearColor(1.f, 1.f, 1.f, 1.f);
+		renderer->ClearBuffers(true, true, false);
+
 		scriptSystem->Render();
 		renderSystem->Upate();
 		renderShapeSystem->Upate();
 		renderUISystem->Upate(m_registry->GetRegistry());
+		fb->Unbind();
 
 		Begin();
 		RenderImGui();
