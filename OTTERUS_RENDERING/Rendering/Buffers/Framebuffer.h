@@ -15,11 +15,15 @@ namespace otterus_rendering {
 
 
 		bool Initialize();
+		bool CleanUp();
 
 	public:
 		Framebuffer();
 		Framebuffer(int width, int height, bool useRbo);
 		~Framebuffer();
+
+		void Bind();
+		void Unbind();
 
 		// Resizing
 		void Resize(int width, int height);
