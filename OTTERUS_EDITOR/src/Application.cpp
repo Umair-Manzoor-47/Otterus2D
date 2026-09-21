@@ -47,6 +47,7 @@
 #include <backends/imgui_impl_opengl3.h>
 #include <SDL_opengl.h>
 // ===========================
+#include "editor/displays/SceneDisplay.h"
 
 
 #ifdef _WIN32
@@ -327,6 +328,18 @@ namespace otterus_editor {
 			return false;
 		}
 
+		auto sceneDisplay = std::make_shared<SceneDisplay>(*m_registry);
+
+		if (!sceneDisplay) {
+			OTTERUS_ERROR("Failed to create SceneDisplay.");
+			return false;
+		}
+
+		if (!m_registry->AddToContext<std::shared_ptr<SceneDisplay>>(sceneDisplay)) {
+			OTTERUS_ERROR("Failed to add SceneDisplay into registry context.");
+			return false;
+		}
+
 
 		return true;
     }
@@ -507,6 +520,8 @@ namespace otterus_editor {
 		renderer->DrawAllText(fontShader, *camera);
 		renderer->DrawCircles(circleShader, *camera);
 
+		fb->CheckResize();
+
 		SDL_GL_SwapWindow(m_window->GetWindow().get());
 
 		renderer->ClearPrimitives();
@@ -583,6 +598,8 @@ namespace otterus_editor {
 		ImGui::DockSpaceOverViewport();
 
 		//TODO: Add Scene Display
+		auto& sceneDisplay = m_registry->GetContext<std::shared_ptr<SceneDisplay>>();
+		sceneDisplay->Draw();
 
 		ImGui::ShowDemoWindow();
 	}
