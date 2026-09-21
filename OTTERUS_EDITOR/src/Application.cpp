@@ -10,6 +10,7 @@
 #include <Rendering/Core/Camera2D.h>
 #include <Rendering/Core/Renderer.h>
 #include <Rendering/Essentials/Vertex.h>
+#include <Rendering/Buffers/Framebuffer.h>
 
 #include <entt.hpp>
 #include <Core/ECS/Entity.h>
@@ -46,6 +47,7 @@
 #include <backends/imgui_impl_opengl3.h>
 #include <SDL_opengl.h>
 // ===========================
+#include "editor/displays/SceneDisplay.h"
 
 
 #ifdef _WIN32
@@ -97,15 +99,20 @@ namespace otterus_editor {
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
+		SDL_DisplayMode displayMode;
+		SDL_GetCurrentDisplayMode(0, &displayMode);
+
 		// Create Window
 		m_window = std::make_unique<otterus_windowing::Window>(
 			"OTTERUS2D", 
-			640, 480, 
+			displayMode.w, displayMode.h, 
 			SDL_WINDOWPOS_CENTERED, 
 			SDL_WINDOWPOS_CENTERED, 
 			true, 
-			SDL_WINDOW_OPENGL |
-			SDL_WINDOW_RESIZABLE
+			SDL_WINDOW_OPENGL		 |
+			SDL_WINDOW_RESIZABLE	 |
+			SDL_WINDOW_MAXIMIZED	 |
+			SDL_WINDOW_MOUSE_CAPTURE
 		);
 
 		if (!m_window->GetWindow()) {
@@ -310,6 +317,28 @@ namespace otterus_editor {
 			OTTERUS_ERROR("Failed to load the main lua script.");
 			return false;
 		}
+		auto frameBuffer = std::make_shared<otterus_rendering::Framebuffer>();
+
+		if (!frameBuffer) {
+			OTTERUS_ERROR("Failed to create Framebuffer.");
+			return false;
+		}
+		if (!m_registry->AddToContext<std::shared_ptr<otterus_rendering::Framebuffer>>(frameBuffer)) {
+			OTTERUS_ERROR("Failed to add Framebuffer into registry context.");
+			return false;
+		}
+
+		auto sceneDisplay = std::make_shared<SceneDisplay>(*m_registry);
+
+		if (!sceneDisplay) {
+			OTTERUS_ERROR("Failed to create SceneDisplay.");
+			return false;
+		}
+
+		if (!m_registry->AddToContext<std::shared_ptr<SceneDisplay>>(sceneDisplay)) {
+			OTTERUS_ERROR("Failed to add SceneDisplay into registry context.");
+			return false;
+		}
 
 
 		return true;
@@ -466,18 +495,21 @@ namespace otterus_editor {
 		auto& shader = assetManager->GetShader("color");
 		auto& fontShader = assetManager->GetShader("font");
 		auto& circleShader = assetManager->GetShader("circle");
-
-
-		renderer->SetViewport(0, 0, m_window->GetWidth(), m_window->GetHeight());
-
-		renderer->SetClearColor(1.f, 1.f, 1.f, 1.f);
-		renderer->ClearBuffers(true, false, false);
-
 		auto& scriptSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>();
+
+		const auto& fb = m_registry->GetContext<std::shared_ptr<otterus_rendering::Framebuffer>>();
+
+		fb->Bind();
+
+		renderer->SetViewport(0, 0, fb->GetWidth(), fb->GetHeight());
+		renderer->SetClearColor(1.f, 1.f, 1.f, 1.f);
+		renderer->ClearBuffers(true, true, false);
+
 		scriptSystem->Render();
 		renderSystem->Upate();
 		renderShapeSystem->Upate();
 		renderUISystem->Upate(m_registry->GetRegistry());
+		fb->Unbind();
 
 		Begin();
 		RenderImGui();
@@ -487,6 +519,8 @@ namespace otterus_editor {
 		renderer->DrawFilledRects(shader, *camera);
 		renderer->DrawAllText(fontShader, *camera);
 		renderer->DrawCircles(circleShader, *camera);
+
+		fb->CheckResize();
 
 		SDL_GL_SwapWindow(m_window->GetWindow().get());
 
@@ -561,6 +595,12 @@ namespace otterus_editor {
 
 	void Application::RenderImGui()
 	{
+		ImGui::DockSpaceOverViewport();
+
+		//TODO: Add Scene Display
+		auto& sceneDisplay = m_registry->GetContext<std::shared_ptr<SceneDisplay>>();
+		sceneDisplay->Draw();
+
 		ImGui::ShowDemoWindow();
 	}
 
