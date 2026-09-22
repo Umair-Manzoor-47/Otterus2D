@@ -11,10 +11,10 @@ LoadAssets(AssetDefs)
 --run_script("assets/scripts/CozySceneShowcase/cozy_scene.lua")
 --local cozyScene = CozySceneShowcase:Create()
 
+--  =============================================================================
+-- Standby Scene: PlatformerController
 -- =============================================================================
--- Standby Scene: PlatformerController (Uncomment to switch back to platformer)
--- =============================================================================
-run_script("assets/scripts/platformer_controller.lua")
+run_script("assets/scripts/Platformer/platformer_controller.lua")
 local platformer = PlatformerController:Create()
 
 main = {
