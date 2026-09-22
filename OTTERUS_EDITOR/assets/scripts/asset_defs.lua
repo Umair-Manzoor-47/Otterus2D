@@ -13,7 +13,12 @@ AssetDefs = {
 		{ name = "nf_idle", path = "assets/textures/Platformer/Players/Ninja Frog/Idle (32x32).png",  pixel_art = true },
 		{ name = "nf_run",  path = "assets/textures/Platformer/Players/Ninja Frog/Run (32x32).png",   pixel_art = true },
 		{ name = "nf_jump", path = "assets/textures/Platformer/Players/Ninja Frog/Jump (32x32).png",  pixel_art = true },
+		{ name = "nf_double_jump", path = "assets/textures/Platformer/Players/Ninja Frog/Double Jump (32x32).png", pixel_art = true },
 		{ name = "nf_fall", path = "assets/textures/Platformer/Players/Ninja Frog/Fall (32x32).png",  pixel_art = true },
+		{ name = "nf_hit",  path = "assets/textures/Platformer/Players/Ninja Frog/Hit (32x32).png",   pixel_art = true },
+
+		-- Platformer Terrain tileset
+		{ name = "Terrain", path = "assets/textures/platformer/Terrain/Terrain (16x16).png", pixel_art = true },
 
 	},
 
