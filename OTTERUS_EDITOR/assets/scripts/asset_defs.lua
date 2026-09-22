@@ -9,8 +9,12 @@ AssetDefs = {
 		{ name = "rain", path = "assets/textures/rain.png", pixel_art = true},
 		{ name = "ball", path = "assets/textures/ball.png", pixel_art = true },
 
-		
-		
+		-- Ninja Frog player animations
+		{ name = "nf_idle", path = "assets/textures/Platformer/Players/Ninja Frog/Idle (32x32).png",  pixel_art = true },
+		{ name = "nf_run",  path = "assets/textures/Platformer/Players/Ninja Frog/Run (32x32).png",   pixel_art = true },
+		{ name = "nf_jump", path = "assets/textures/Platformer/Players/Ninja Frog/Jump (32x32).png",  pixel_art = true },
+		{ name = "nf_fall", path = "assets/textures/Platformer/Players/Ninja Frog/Fall (32x32).png",  pixel_art = true },
+
 	},
 
 	music = {{ name = "bgm", path = "assets/music/bgm.mp3" }},
