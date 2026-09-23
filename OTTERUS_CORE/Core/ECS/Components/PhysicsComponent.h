@@ -1,5 +1,6 @@
 #pragma once
 #include <Physics/Box2Dwrappers.h>
+#include <Physics/UserData.h>
 #include <sol/sol.hpp>
 #include <glm/glm.hpp>
 #include <entt.hpp>
@@ -23,6 +24,8 @@ namespace otterus_core::ECS {
 
 		uint16_t filterCategory{ 0 }, filterMask{ 0 };
 		int16_t groupIndex{ 0 };
+
+		otterus_physics::ObjectData* objectData{};
 	};
 
 
@@ -30,7 +33,7 @@ namespace otterus_core::ECS {
 	{
 	private:
 		std::shared_ptr<b2Body> m_RigidBody;
-
+		std::shared_ptr<otterus_physics::UserData> m_UserData;
 		PhysicsAttributes m_InitialAttribs;
 
 	public:
@@ -40,6 +43,7 @@ namespace otterus_core::ECS {
 
 		void Init(otterus_physics::PhysicsWorld physicsWorld, int windowWidth, int windowHeight);
 		b2Body* GetBody() { return m_RigidBody.get(); };
+		otterus_physics::UserData* GetUserData() { return m_UserData.get(); };
 		const bool IsSensor() const;
 
 		static void CreatePhysicsLuaBind(sol::state& lua, entt::registry& registry);
