@@ -2,15 +2,16 @@
 #include "../../CoreUtilities/CoreEngineData.h"
 #include <Logger/Logger.h>
 
+using namespace otterus_physics;
 namespace otterus_core::ECS {
 	PhysicsComponent::PhysicsComponent()
 		: PhysicsComponent(PhysicsAttributes{})
 	{}
 	PhysicsComponent::PhysicsComponent(const PhysicsAttributes& attribs)
-		: m_RigidBody { nullptr }, m_InitialAttribs { attribs }
+		: m_RigidBody{ nullptr }, m_UserData{ nullptr }, m_InitialAttribs{ attribs }
 	{}
 
-	void PhysicsComponent::Init(otterus_physics::PhysicsWorld physicsWorld, int windowWidth, int windowHeight)
+	void PhysicsComponent::Init(PhysicsWorld physicsWorld, int windowWidth, int windowHeight)
 	{
 		auto PIXELS_TO_METERS = CoreEngineData::GetInstance().PixelsToMeters();
 		if (!physicsWorld) {
@@ -44,7 +45,7 @@ namespace otterus_core::ECS {
 		bodyDef.fixedRotation = m_InitialAttribs.fixedRotation;
 
 		// Rigidbody Creation
-		m_RigidBody = otterus_physics::MakeSharedBody(physicsWorld->CreateBody(&bodyDef));
+		m_RigidBody = MakeSharedBody(physicsWorld->CreateBody(&bodyDef));
 	
 		if (!m_RigidBody)
 		{
@@ -71,6 +72,10 @@ namespace otterus_core::ECS {
 		{
 			// TODO: Create Polygon shape
 		}
+		// UserData
+		m_UserData = std::make_shared<UserData>();
+		m_UserData->userData = m_InitialAttribs.objectData;
+		m_UserData->typeId = entt::type_hash<ObjectData>::value();
 
 		// Fixture Defs
 		b2FixtureDef fixtureDef{};
@@ -89,6 +94,7 @@ namespace otterus_core::ECS {
 		fixtureDef.restitution			= m_InitialAttribs.restitution;
 		fixtureDef.restitutionThreshold = m_InitialAttribs.restitutionThreshold;
 		fixtureDef.isSensor				= m_InitialAttribs.isSensor;
+		fixtureDef.userData.pointer		= reinterpret_cast<uintptr_t>(m_UserData.get());
 		
 		auto fixutre = m_RigidBody->CreateFixture(&fixtureDef);
 		
@@ -147,7 +153,7 @@ namespace otterus_core::ECS {
 			"groupIndex", &PhysicsAttributes::groupIndex
 		);
 
-		auto& physicsWorld = registry.ctx().get<otterus_physics::PhysicsWorld>();
+		auto& physicsWorld = registry.ctx().get<PhysicsWorld>();
 
 		if (!physicsWorld)
 		{
