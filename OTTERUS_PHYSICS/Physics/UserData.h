@@ -17,7 +17,7 @@ namespace otterus_physics {
 	struct ObjectData
 	{
 		std::string tag{ "" }, group{ "" };
-		bool collider{ false }, trigger{ false };
+		bool isCollider{ false }, isTrigger{ false };
 		std::uint32_t entityId{ 0 };
 
 		[[nodiscard]] std::string to_string() const
@@ -27,8 +27,8 @@ namespace otterus_physics {
 				"==== Object Data ==== \n" << std::boolalpha <<
 				"Tag: " << tag << "\n" <<
 				"Group: " << group << "\n" <<
-				"isCollider: " << collider << "\n" <<
-				"isTrigger: " << trigger << "\n" <<
+				"isCollider: " << isCollider << "\n" <<
+				"isTrigger: " << isTrigger << "\n" <<
 				"EntityID: " << entityId << "\n";
 
 			return ss.str();
