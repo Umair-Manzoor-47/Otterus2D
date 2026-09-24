@@ -16,6 +16,7 @@
 #include "../Resources/AssetManager.h"
 #include "../Scripting/SoundBindings.h"
 #include "../Scripting/RendererBindings.h"
+#include "../Scripting/UserDataBindings.h"
 #include <OtterusUtilities/Timer.h>
 #include <OtterusUtilities/RandomGenerator.h>
 
@@ -169,6 +170,7 @@ namespace otterus_core::Systems {
 		AssetManager::CreateLuaAssetManager(lua, registry);
 		otterus_core::Scripting::SoundBinder::CreateSoundBind(lua, registry);
 		otterus_core::Scripting::RendererBinder::CreateRendererBind(lua, registry);
+		otterus_core::Scripting::UserDataBinder::CreateLuaUserData(lua);
 		otterus_core::FollowCamera::CreateLuaFollowCamera(lua, registry);
 
 		create_timer(lua);
@@ -201,6 +203,9 @@ namespace otterus_core::Systems {
 		Registry::RegisterMetaComponent<PhysicsComponent>();
 		Registry::RegisterMetaComponent<TextComponent>();
 		Registry::RegisterMetaComponent<RigidBodyComponent>();
+
+		// TODO: Register any required UserData types
+		otterus_core::Scripting::UserDataBinder::register_meta_user_data<ObjectData>();
 	}
 	void ScriptingSystem::RegisterLuaFunctions(sol::state& lua, otterus_core::ECS::Registry& registry)
 	{
