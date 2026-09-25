@@ -2,15 +2,16 @@
 #include "../../CoreUtilities/CoreEngineData.h"
 #include <Logger/Logger.h>
 
+using namespace otterus_physics;
 namespace otterus_core::ECS {
 	PhysicsComponent::PhysicsComponent()
 		: PhysicsComponent(PhysicsAttributes{})
 	{}
 	PhysicsComponent::PhysicsComponent(const PhysicsAttributes& attribs)
-		: m_RigidBody { nullptr }, m_InitialAttribs { attribs }
+		: m_RigidBody{ nullptr }, m_UserData{ nullptr }, m_InitialAttribs{ attribs }
 	{}
 
-	void PhysicsComponent::Init(otterus_physics::PhysicsWorld physicsWorld, int windowWidth, int windowHeight)
+	void PhysicsComponent::Init(PhysicsWorld physicsWorld, int windowWidth, int windowHeight)
 	{
 		auto PIXELS_TO_METERS = CoreEngineData::GetInstance().PixelsToMeters();
 		if (!physicsWorld) {
@@ -44,7 +45,7 @@ namespace otterus_core::ECS {
 		bodyDef.fixedRotation = m_InitialAttribs.fixedRotation;
 
 		// Rigidbody Creation
-		m_RigidBody = otterus_physics::MakeSharedBody(physicsWorld->CreateBody(&bodyDef));
+		m_RigidBody = MakeSharedBody(physicsWorld->CreateBody(&bodyDef));
 	
 		if (!m_RigidBody)
 		{
@@ -71,6 +72,10 @@ namespace otterus_core::ECS {
 		{
 			// TODO: Create Polygon shape
 		}
+		// UserData
+		m_UserData = std::make_shared<UserData>();
+		m_UserData->userData = m_InitialAttribs.objectData;
+		m_UserData->typeId = entt::type_hash<ObjectData>::value();
 
 		// Fixture Defs
 		b2FixtureDef fixtureDef{};
@@ -89,6 +94,7 @@ namespace otterus_core::ECS {
 		fixtureDef.restitution			= m_InitialAttribs.restitution;
 		fixtureDef.restitutionThreshold = m_InitialAttribs.restitutionThreshold;
 		fixtureDef.isSensor				= m_InitialAttribs.isSensor;
+		fixtureDef.userData.pointer		= reinterpret_cast<uintptr_t>(m_UserData.get());
 		
 		auto fixutre = m_RigidBody->CreateFixture(&fixtureDef);
 		
@@ -108,7 +114,35 @@ namespace otterus_core::ECS {
 
 	void PhysicsComponent::CreatePhysicsLuaBind(sol::state& lua, entt::registry& registry)
 	{
+		lua.new_usertype<ObjectData>(
+			"ObjectData",
+			"type_id", &entt::type_hash<ObjectData>::value,
+			sol::call_constructor,
+			sol::factories(
+				[](const std::string& tag, const std::string& group, bool isCollider, 
+					bool isTrigger, const std::uint32_t entityID) 
+				{
+					return ObjectData{
+						.tag		= tag,
+						.group		= group,
+						.isCollider   = isCollider,
+						.isTrigger	= isTrigger,
+						.entityId	= entityID
+					};
 
+				},
+				[](const sol::table& params){
+					return ObjectData{
+						.tag		= params["tag"].get_or(std::string{""}),
+						.group		= params["group"].get_or(std::string{""}),
+						.isCollider   = params["isCollider"].get_or(false),
+						.isTrigger	= params["isTrigger"].get_or(false),
+						.entityId	= params["entityID"].get_or((std::uint32_t)entt::null)
+					};
+				}
+			),
+			"to_string", &ObjectData::to_string
+		);
 
 		lua.new_enum<RigidbodyType>(
 			"BodyType", {
@@ -124,8 +158,36 @@ namespace otterus_core::ECS {
 			sol::factories(
 				[] {
 					return PhysicsAttributes{};
+				},
+				[](const sol::table& physicsAttribs) {
+					return PhysicsAttributes{
+						.type					= physicsAttribs["type"].get_or(RigidbodyType::STATIC),
+						.density				= physicsAttribs["density"].get_or(1.f),
+						.friction				= physicsAttribs["friction"].get_or(0.2f),
+						.restitution			= physicsAttribs["restitution"].get_or(0.2f),
+						.restitutionThreshold	= physicsAttribs["restitutionThreshold"].get_or(1.f),
+						.radius					= physicsAttribs["radius"].get_or(0.f),
+						.gravityScale			= physicsAttribs["gravityScale"].get_or(1.f),
+						.position				= glm::vec2{ physicsAttribs["position"]["x"].get_or(0.f), physicsAttribs["position"]["y"].get_or(0.f) },
+						.scale					= glm::vec2{ physicsAttribs["scale"]["x"].get_or(1.f), physicsAttribs["scale"]["y"].get_or(1.f) },
+						.boxSize				= glm::vec2{ physicsAttribs["boxSize"]["x"].get_or(0.f), physicsAttribs["boxSize"]["y"].get_or(0.f) },
+						.offset					= glm::vec2{ physicsAttribs["offset"]["x"].get_or(0.f), physicsAttribs["offset"]["y"].get_or(0.f) },
+						.circle					= physicsAttribs["circle"].get_or(false),
+						.boxShape				= physicsAttribs["boxShape"].get_or(true),
+						.fixedRotation			= physicsAttribs["fixedRotation"].get_or(true),
+						.isSensor				= physicsAttribs["isSensor"].get_or(false),
+						.filterCategory			= physicsAttribs["filterCategory"].get_or((uint16_t)0),
+						.filterMask				= physicsAttribs["filterMask"].get_or((uint16_t)0),
+						.groupIndex				= physicsAttribs["groupIndex"].get_or((int16_t)0),
+						.objectData				= new ObjectData{
+							.tag		= physicsAttribs["ObjectData"]["tag"].get_or(std::string{""}),
+							.group		= physicsAttribs["ObjectData"]["group"].get_or(std::string{""}),
+							.isCollider	= physicsAttribs["ObjectData"]["isCollider"].get_or(false),
+							.isTrigger	= physicsAttribs["ObjectData"]["isTrigger"].get_or(false),
+							.entityId	= physicsAttribs["ObjectData"]["entityID"].get_or((std::uint32_t)entt::null)
+						}
+					};
 				}
-				// TODO: More specific ctors
 			),
 			"type", &PhysicsAttributes::type,
 			"density", &PhysicsAttributes::density,
@@ -144,10 +206,11 @@ namespace otterus_core::ECS {
 			"isSensor", &PhysicsAttributes::isSensor,
 			"filterCategory", &PhysicsAttributes::filterCategory,
 			"filterMask", &PhysicsAttributes::filterMask,
-			"groupIndex", &PhysicsAttributes::groupIndex
+			"groupIndex", &PhysicsAttributes::groupIndex,
+			"objectData", &PhysicsAttributes::objectData
 		);
 
-		auto& physicsWorld = registry.ctx().get<otterus_physics::PhysicsWorld>();
+		auto& physicsWorld = registry.ctx().get<PhysicsWorld>();
 
 		if (!physicsWorld)
 		{
