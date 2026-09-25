@@ -10,6 +10,8 @@ namespace otterus_core::ECS {
 		float rotation{ 0.f };
 
 		static void CreateLuaTransformBind(sol::state& lua);
+
+		[[nodiscard]] std::string to_string() const;
 	};
 
 }

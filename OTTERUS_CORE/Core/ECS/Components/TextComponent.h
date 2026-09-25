@@ -13,6 +13,8 @@ namespace otterus_core::ECS {
 		bool isHidden{ false };
 
 		static void CreateLuaTextBindings(sol::state& lua);
+
+		[[nodiscard]] std::string to_string() const;
 	};
 
 }
