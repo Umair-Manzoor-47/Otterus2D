@@ -10,6 +10,7 @@ namespace otterus_core::ECS {
 		bool vertical{ false }, looped{ false };
 
 		static void CreateAnimationLuaBind(sol::state& lua);
+		[[nodiscard]] std::string to_string() const;
 	};
 
 }

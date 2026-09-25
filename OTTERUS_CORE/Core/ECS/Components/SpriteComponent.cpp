@@ -6,74 +6,110 @@
 
 using namespace otterus_resources;
 
-void otterus_core::ECS::SpriteComponent::CreateStaticLuaBind(sol::state& lua, otterus_core::ECS::Registry& registry)
-{
-	lua.new_usertype<otterus_rendering::Color>(
-		"Color",
-		sol::call_constructor,
-		sol::factories(
-			[](GLubyte r, GLubyte g, GLubyte b, GLubyte a) {
-				
-				return otterus_rendering::Color{ .r = r, .g = g, .b = b, .a = a };
-			}
-		),
-		"r", &otterus_rendering::Color::r,
-		"g", &otterus_rendering::Color::g,
-		"b", &otterus_rendering::Color::b,
-		"a", &otterus_rendering::Color::a
-	);
+namespace otterus_core::ECS {
+	void SpriteComponent::generate_uvs(int textureWidth, int textureHeight)
+	{
+		uvs.uv_width = width / textureWidth;
+		uvs.uv_height = height / textureHeight;
 
-	lua.new_usertype<UVs>(
-		"UVs",
-		sol::call_constructor,
-		sol::factories(
-			[](float u, float v) { return UVs{ .u = u, .v = v }; }
-		),
-		"u", &UVs::u,
-		"v", &UVs::v,
-		"uv_width", &UVs::uv_width,
-		"uv_height", &UVs::uv_height
-	);
+		uvs.u = start_x * uvs.uv_width;
+		uvs.v = start_y * uvs.uv_height;
+	}
+	std::string SpriteComponent::to_string() const
+	{
+		std::stringstream ss;
+		ss <<
+			"==== Sprite Component ==== \n" << std::boolalpha <<
+			"Texture Name: " << texture_name << "\n" <<
+			"Width: " << width << "\n" <<
+			"Height: " << height << "\n" <<
+			"StartX: " << start_x << "\n" <<
+			"StartY: " << start_y << "\n" <<
+			"Layer: " << layer << "\n" <<
+			"UVs: \n\t" <<
+			"U: " << uvs.u << "\n\t" <<
+			"V: " << uvs.v << "\n\t" <<
+			"UvWidth: " << uvs.uv_width << "\n\t" <<
+			"UvHeight: " << uvs.uv_width << "\n" <<
+			"Color: \n\t" <<
+			"Red: " << color.r << "\n\t" <<
+			"Green: " << color.g << "\n\t" <<
+			"Blue: " << color.b << "\n\t" <<
+			"Alpha: " << color.a << "\n";
 
-	lua.new_usertype<SpriteComponent>(
-		"Sprite",
-		"type_id", &entt::type_hash<SpriteComponent>::value,
-		sol::call_constructor,
-		sol::factories(
-			[](const std::string& textureName, float width, float height, int start_x, int start_y, int layer)
-			{
-				return SpriteComponent{
-				.width = width,
-				.height = height,
-				.uvs = UVs{},
-				.color = otterus_rendering::Color{255, 255, 255, 255},
-				.start_x = start_x,
-				.start_y = start_y,
-				.texture_name = textureName,
-				.layer = layer
+		return ss.str();
+	}
 
-				};
-			}
-		
-		),
-		"texture_name", &SpriteComponent::texture_name,
-		"width", &SpriteComponent::width,
-		"height", &SpriteComponent::height,
-		"start_x", &SpriteComponent::start_x,
-		"start_y", &SpriteComponent::start_y,
-		"layer", &SpriteComponent::layer,
-		"color", &SpriteComponent::color,
-		"uvs", &SpriteComponent::uvs,
-		"generate_uvs", [&](SpriteComponent& sprite) {
-			auto& assetManager = registry.GetContext<std::shared_ptr<AssetManager>>();
-			auto& texture = assetManager->GetTexture(sprite.texture_name);
+	void SpriteComponent::CreateStaticLuaBind(sol::state& lua, otterus_core::ECS::Registry& registry)
+	{
+		lua.new_usertype<otterus_rendering::Color>(
+			"Color",
+			sol::call_constructor,
+			sol::factories(
+				[](GLubyte r, GLubyte g, GLubyte b, GLubyte a) {
 
-			if (texture.GetID() == 0) {
-				OTTERUS_ERROR("Failed to generate UVS texture [{0}] does not exists or invalid.", sprite.texture_name);
-				return;
-			}
+					return otterus_rendering::Color{ .r = r, .g = g, .b = b, .a = a };
+				}
+			),
+			"r", &otterus_rendering::Color::r,
+			"g", &otterus_rendering::Color::g,
+			"b", &otterus_rendering::Color::b,
+			"a", &otterus_rendering::Color::a
+		);
 
-			sprite.generate_uvs(texture.GetWidth(), texture.GetHeight());
-		}
-	);
+		lua.new_usertype<UVs>(
+			"UVs",
+			sol::call_constructor,
+			sol::factories(
+				[](float u, float v) { return UVs{ .u = u, .v = v }; }
+			),
+			"u", &UVs::u,
+			"v", &UVs::v,
+			"uv_width", &UVs::uv_width,
+			"uv_height", &UVs::uv_height
+		);
+
+		lua.new_usertype<SpriteComponent>(
+			"Sprite",
+			"type_id", &entt::type_hash<SpriteComponent>::value,
+			sol::call_constructor,
+			sol::factories(
+				[](const std::string& textureName, float width, float height, int start_x, int start_y, int layer)
+				{
+					return SpriteComponent{
+					.width = width,
+					.height = height,
+					.uvs = UVs{},
+					.color = otterus_rendering::Color{255, 255, 255, 255},
+					.start_x = start_x,
+					.start_y = start_y,
+					.texture_name = textureName,
+					.layer = layer
+
+					};
+				}
+
+			),
+			"texture_name", &SpriteComponent::texture_name,
+			"width", &SpriteComponent::width,
+			"height", &SpriteComponent::height,
+			"start_x", &SpriteComponent::start_x,
+			"start_y", &SpriteComponent::start_y,
+			"layer", &SpriteComponent::layer,
+			"color", &SpriteComponent::color,
+			"uvs", &SpriteComponent::uvs,
+			"generate_uvs", [&](SpriteComponent& sprite) {
+				auto& assetManager = registry.GetContext<std::shared_ptr<AssetManager>>();
+				auto& texture = assetManager->GetTexture(sprite.texture_name);
+
+				if (texture.GetID() == 0) {
+					OTTERUS_ERROR("Failed to generate UVS texture [{0}] does not exists or invalid.", sprite.texture_name);
+					return;
+				}
+
+				sprite.generate_uvs(texture.GetWidth(), texture.GetHeight());
+			},
+			"to_string", &SpriteComponent::to_string
+		);
+	}
 }
