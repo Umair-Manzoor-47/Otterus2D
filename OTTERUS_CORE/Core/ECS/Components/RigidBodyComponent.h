@@ -8,5 +8,7 @@ namespace otterus_core::ECS {
 		glm::vec2 velocity{ 0.f };
 
 		static void CreateRigidBodyBind(sol::state& lua);
+
+		[[nodiscard]] std::string to_string() const;
 	};
 }

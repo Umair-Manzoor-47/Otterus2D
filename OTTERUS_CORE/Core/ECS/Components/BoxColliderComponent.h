@@ -11,6 +11,8 @@ namespace otterus_core::ECS {
 		bool colliding{ false };
 
 		static void CreateBoxColliderLuaBind(sol::state& lua);
+
+		[[nodiscard]] std::string to_string() const;
 	};
 
 

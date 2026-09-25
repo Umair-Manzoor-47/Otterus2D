@@ -23,14 +23,8 @@ namespace otterus_core::ECS {
 
 		int layer{0};
 
-		void generate_uvs(float textureWidth, float textureHeight)
-		{
-			uvs.uv_width = width / textureWidth;
-			uvs.uv_height = height / textureHeight;
-
-			uvs.u = start_x * uvs.uv_width;
-			uvs.v = start_y * uvs.uv_height;
-		};
+		void generate_uvs(int textureWidth, int textureHeight);
+		[[nodiscard]] std::string to_string() const;
 
 
 		static void CreateStaticLuaBind(sol::state& lua, otterus_core::ECS::Registry& registry);
