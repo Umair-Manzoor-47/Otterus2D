@@ -119,6 +119,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <DisableSpecificWarnings>4244;4018;4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
@@ -135,6 +136,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <DisableSpecificWarnings>4244;4018;4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>

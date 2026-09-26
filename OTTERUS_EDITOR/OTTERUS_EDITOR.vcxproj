@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\OTTERUS_UTILITIES;$(SolutionDir).\OTTERUS_WINDOW;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\OTTERUS_CORE;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(SolutionDir).\OTTERUS_SOUND\src;$(SolutionDir).\OTTERUS_PHYSICS;$(SolutionDir).\ImGui\src;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir).\Dependencies\SDL\lib;$(SolutionDir).\Dependencies\lua53\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\OTTERUS_UTILITIES;$(SolutionDir).\OTTERUS_WINDOW;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\OTTERUS_CORE;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(SolutionDir).\OTTERUS_SOUND\src;$(SolutionDir).\OTTERUS_PHYSICS;$(SolutionDir).\ImGui\src;$(SolutionDir).\Dependencies\box2d\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir).\Dependencies\SDL\lib;$(SolutionDir).\Dependencies\lua53\lib;$(SolutionDir).\Dependencies\box2d\lib\debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\OTTERUS_UTILITIES;$(SolutionDir).\OTTERUS_WINDOW;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\OTTERUS_CORE;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(SolutionDir).\OTTERUS_SOUND\src;$(SolutionDir).\OTTERUS_PHYSICS;$(SolutionDir).\ImGui\src;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir).\Dependencies\SDL\lib;$(SolutionDir).\Dependencies\lua53\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\OTTERUS_UTILITIES;$(SolutionDir).\OTTERUS_WINDOW;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\OTTERUS_CORE;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(SolutionDir).\OTTERUS_SOUND\src;$(SolutionDir).\OTTERUS_PHYSICS;$(SolutionDir).\ImGui\src;$(SolutionDir).\Dependencies\box2d\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir).\Dependencies\SDL\lib;$(SolutionDir).\Dependencies\lua53\lib;$(SolutionDir).\Dependencies\box2d\lib\release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -113,11 +113,12 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;opengl32.lib;lua53.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;opengl32.lib;lua53.lib;box2d.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y /d "$(SolutionDir)Dependencies\SDL\lib\*.dll" "$(OutDir)"
@@ -133,11 +134,12 @@ if exist "$(SolutionDir)Dependencies\SDL\lib\optional\*.dll" xcopy /y /d "$(Solu
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;opengl32.lib;lua53.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;opengl32.lib;lua53.lib;box2d.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y /d "$(SolutionDir)Dependencies\SDL\lib\*.dll" "$(OutDir)"
