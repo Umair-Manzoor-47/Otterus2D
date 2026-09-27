@@ -196,6 +196,7 @@
     <ClInclude Include="Core\ECS\Entity.h" />
     <ClInclude Include="Core\ECS\MetaUtilities.h" />
     <ClInclude Include="Core\ECS\Registry.h" />
+    <ClInclude Include="Core\Scripting\ContactListenerBind.h" />
     <ClInclude Include="Core\Scripting\GlmLuaBindings.h" />
     <ClInclude Include="Core\Scripting\InputManager.h" />
     <ClInclude Include="Core\Scripting\RendererBindings.h" />
@@ -223,6 +224,7 @@
     <ClCompile Include="Core\ECS\Entity.cpp" />
     <ClCompile Include="Core\ECS\MetaUtilities.cpp" />
     <ClCompile Include="Core\ECS\Registry.cpp" />
+    <ClCompile Include="Core\Scripting\ContactListenerBind.cpp" />
     <ClCompile Include="Core\Scripting\GlmLuaBindings.cpp" />
     <ClCompile Include="Core\Scripting\InputManager.cpp" />
     <ClCompile Include="Core\Scripting\RendererBindings.cpp" />

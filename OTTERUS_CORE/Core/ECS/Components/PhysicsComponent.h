@@ -25,7 +25,7 @@ namespace otterus_core::ECS {
 		uint16_t filterCategory{ 0 }, filterMask{ 0 };
 		int16_t groupIndex{ 0 };
 
-		otterus_physics::ObjectData* objectData{};
+		otterus_physics::ObjectData objectData{};
 	};
 
 

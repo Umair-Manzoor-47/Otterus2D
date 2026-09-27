@@ -9,7 +9,11 @@ namespace otterus_core::ECS {
 	{}
 	PhysicsComponent::PhysicsComponent(const PhysicsAttributes& attribs)
 		: m_RigidBody{ nullptr }, m_UserData{ nullptr }, m_InitialAttribs{ attribs }
-	{}
+	{
+		m_UserData = std::make_shared<UserData>();
+		m_UserData->userData = m_InitialAttribs.objectData;
+		m_UserData->typeId = entt::type_hash<ObjectData>::value();
+	}
 
 	void PhysicsComponent::Init(PhysicsWorld physicsWorld, int windowWidth, int windowHeight)
 	{
@@ -94,7 +98,7 @@ namespace otterus_core::ECS {
 		fixtureDef.restitution			= m_InitialAttribs.restitution;
 		fixtureDef.restitutionThreshold = m_InitialAttribs.restitutionThreshold;
 		fixtureDef.isSensor				= m_InitialAttribs.isSensor;
-		fixtureDef.userData.pointer		= reinterpret_cast<uintptr_t>(m_UserData.get());
+		fixtureDef.userData.pointer = reinterpret_cast<uintptr_t>(m_UserData.get());
 		
 		auto fixutre = m_RigidBody->CreateFixture(&fixtureDef);
 		
@@ -179,7 +183,7 @@ namespace otterus_core::ECS {
 						.filterCategory			= physicsAttribs["filterCategory"].get_or((uint16_t)0),
 						.filterMask				= physicsAttribs["filterMask"].get_or((uint16_t)0),
 						.groupIndex				= physicsAttribs["groupIndex"].get_or((int16_t)0),
-						.objectData				= new ObjectData{
+						.objectData				= ObjectData{
 							.tag		= physicsAttribs["ObjectData"]["tag"].get_or(std::string{""}),
 							.group		= physicsAttribs["ObjectData"]["group"].get_or(std::string{""}),
 							.isCollider	= physicsAttribs["ObjectData"]["isCollider"].get_or(false),
