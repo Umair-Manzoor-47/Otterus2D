@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\OTTERUS_WINDOW\;$(SolutionDir).\OTTERUS_UTILITIES;$(SolutionDir).\OTTERUS_SOUND\src;$(SolutionDir).\OTTERUS_PHYSICS;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir).\Dependencies\lua53\lib;$(SolutionDir).\Dependencies\SDL\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\OTTERUS_WINDOW\;$(SolutionDir).\OTTERUS_UTILITIES;$(SolutionDir).\OTTERUS_SOUND\src;$(SolutionDir).\OTTERUS_PHYSICS;$(SolutionDir).\Dependencies\box2d\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir).\Dependencies\lua53\lib;$(SolutionDir).\Dependencies\SDL\lib;$(SolutionDir).\Dependencies\box2d\lib\debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\OTTERUS_WINDOW\;$(SolutionDir).\OTTERUS_UTILITIES;$(SolutionDir).\OTTERUS_SOUND\src;$(SolutionDir).\OTTERUS_PHYSICS;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir).\Dependencies\lua53\lib;$(SolutionDir).\Dependencies\SDL\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir).\OTTERUS_LOGGER;$(SolutionDir).\OTTERUS_RENDERING;$(SolutionDir).\Dependencies\glm;$(SolutionDir).\Dependencies\entt;$(SolutionDir).\GLAD\glad\include;$(SolutionDir).\SOIL\include;$(SolutionDir).\Dependencies\lua53\include;$(SolutionDir).\Dependencies\sol3;$(SolutionDir).\Dependencies\SDL\include;$(SolutionDir).\OTTERUS_WINDOW\;$(SolutionDir).\OTTERUS_UTILITIES;$(SolutionDir).\OTTERUS_SOUND\src;$(SolutionDir).\OTTERUS_PHYSICS;$(SolutionDir).\Dependencies\box2d\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir).\Dependencies\lua53\lib;$(SolutionDir).\Dependencies\SDL\lib;$(SolutionDir).\Dependencies\box2d\lib\release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -119,6 +119,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,7 +129,7 @@
       <EnableSegmentHeap>true</EnableSegmentHeap>
     </Manifest>
     <Lib>
-      <AdditionalDependencies>lua53.lib;SDL2.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>lua53.lib;SDL2.lib;SDL2_mixer.lib;box2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -140,6 +141,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -149,7 +151,7 @@
       <EnableSegmentHeap>true</EnableSegmentHeap>
     </Manifest>
     <Lib>
-      <AdditionalDependencies>lua53.lib;SDL2.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>lua53.lib;SDL2.lib;SDL2_mixer.lib;box2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
