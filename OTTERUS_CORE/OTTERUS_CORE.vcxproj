@@ -196,10 +196,12 @@
     <ClInclude Include="Core\ECS\Entity.h" />
     <ClInclude Include="Core\ECS\MetaUtilities.h" />
     <ClInclude Include="Core\ECS\Registry.h" />
+    <ClInclude Include="Core\Scripting\ContactListenerBind.h" />
     <ClInclude Include="Core\Scripting\GlmLuaBindings.h" />
     <ClInclude Include="Core\Scripting\InputManager.h" />
     <ClInclude Include="Core\Scripting\RendererBindings.h" />
     <ClInclude Include="Core\Scripting\SoundBindings.h" />
+    <ClInclude Include="Core\Scripting\UserDataBindings.h" />
     <ClInclude Include="Core\Systems\AnimationSystem.h" />
     <ClInclude Include="Core\Systems\PhysicsSystem.h" />
     <ClInclude Include="Core\Systems\RenderShapeSystem.h" />
@@ -222,10 +224,12 @@
     <ClCompile Include="Core\ECS\Entity.cpp" />
     <ClCompile Include="Core\ECS\MetaUtilities.cpp" />
     <ClCompile Include="Core\ECS\Registry.cpp" />
+    <ClCompile Include="Core\Scripting\ContactListenerBind.cpp" />
     <ClCompile Include="Core\Scripting\GlmLuaBindings.cpp" />
     <ClCompile Include="Core\Scripting\InputManager.cpp" />
     <ClCompile Include="Core\Scripting\RendererBindings.cpp" />
     <ClCompile Include="Core\Scripting\SoundBindings.cpp" />
+    <ClCompile Include="Core\Scripting\UserDataBindings.cpp" />
     <ClCompile Include="Core\Systems\AnimationSystem.cpp" />
     <ClCompile Include="Core\Systems\PhysicsSystem.cpp" />
     <ClCompile Include="Core\Systems\RenderShapeSystem.cpp" />
@@ -237,6 +241,7 @@
   <ItemGroup>
     <None Include="Core\ECS\Entity.inl" />
     <None Include="Core\ECS\Registry.inl" />
+    <None Include="Core\Scripting\UserDataBindings.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
