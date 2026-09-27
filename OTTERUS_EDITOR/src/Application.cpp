@@ -48,7 +48,7 @@
 #include <SDL_opengl.h>
 // ===========================
 #include "editor/displays/SceneDisplay.h"
-
+#include <Physics/ContactListener.h>
 
 #ifdef _WIN32
 #ifndef NOMINMAX
@@ -293,6 +293,14 @@ namespace otterus_editor {
 			OTTERUS_ERROR("Failed to add PhysicsWorld into registry context.");
 			return false;
 		}
+
+		auto contactListener = std::make_shared<otterus_physics::ContactListener>();
+		if (!m_registry->AddToContext<std::shared_ptr<otterus_physics::ContactListener>>(contactListener)) {
+			OTTERUS_ERROR("Failed to add Contact Listener into registry context.");
+			return false;
+		}
+
+		physicsWorld->SetContactListener(contactListener.get());
 
 		auto physicsSystem = std::make_shared <otterus_core::Systems::PhysicsSystem>(*m_registry);
 		if (!m_registry->AddToContext<std::shared_ptr<otterus_core::Systems::PhysicsSystem>>(physicsSystem)) {
