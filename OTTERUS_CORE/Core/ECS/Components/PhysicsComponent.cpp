@@ -150,7 +150,10 @@ namespace otterus_core::ECS {
 			"group", &ObjectData::group,
 			"isCollider", &ObjectData::isCollider,
 			"isTrigger", &ObjectData::isTrigger,
-			"entityId", &ObjectData::entityId
+			"bTrigger", &ObjectData::isTrigger,
+			"bCollider", &ObjectData::isCollider,
+			"entityId", &ObjectData::entityId,
+			"entityID", &ObjectData::entityId
 		);
 
 		lua.new_enum<RigidbodyType>(
@@ -310,7 +313,45 @@ namespace otterus_core::ECS {
 					return;
 				}
 				body->SetGravityScale(gravityScale);
-			}
+			},
+			"set_transform", sol::overload(
+				[](PhysicsComponent& pc, const glm::vec2& position) {
+					auto body = pc.GetBody();
+
+					if (!body) {
+						return;
+					}
+
+					auto& engineData = CoreEngineData::GetInstance();
+					const auto p2m = engineData.PixelsToMeters();
+
+					const auto scaledHalfHeight = engineData.ScaledHeight() * 0.5f;
+					const auto scaledHalfWidth	= engineData.ScaledWidth() * 0.5f;
+
+					auto bx = (position.x * p2m) - scaledHalfWidth;
+					auto by = (position.y * p2m) - scaledHalfHeight;
+					
+					body->SetTransform(b2Vec2{bx, by}, 0.f);
+				},
+				[](PhysicsComponent& pc, float x, float y) {
+					auto body = pc.GetBody();
+
+					if (!body) {
+						return;
+					}
+
+					auto& engineData = CoreEngineData::GetInstance();
+					const auto p2m = engineData.PixelsToMeters();
+
+					const auto scaledHalfHeight = engineData.ScaledHeight() * 0.5f;
+					const auto scaledHalfWidth	= engineData.ScaledWidth() * 0.5f;
+
+					auto bx = (x * p2m) - scaledHalfWidth;
+					auto by = (y * p2m) - scaledHalfHeight;
+					
+					body->SetTransform(b2Vec2{bx, by}, 0.f);
+				}
+			)
 		);
 
 	}
