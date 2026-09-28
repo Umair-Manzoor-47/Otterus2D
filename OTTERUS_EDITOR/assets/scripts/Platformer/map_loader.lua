@@ -80,7 +80,7 @@ local function CreatePhysicsBoxes(layerDef, scale, isSensor, tag, group)
                 attrs.boxSize       = vec2(collider.width, collider.height)
                 attrs.fixedRotation = not isSensor and false or true
                 attrs.isSensor      = isSensor
-
+                attrs.objectData    = ObjectData(tag, group, not isSensor, isSensor, ent:id())
                 ent:add_component(PhysicsComponent(attrs))
                 table.insert(entities, ent)
             else
