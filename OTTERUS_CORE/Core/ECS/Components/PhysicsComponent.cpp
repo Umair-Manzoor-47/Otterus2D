@@ -145,7 +145,12 @@ namespace otterus_core::ECS {
 					};
 				}
 			),
-			"to_string", &ObjectData::to_string
+			"to_string", &ObjectData::to_string,
+			"tag", &ObjectData::tag,
+			"group", &ObjectData::group,
+			"isCollider", &ObjectData::isCollider,
+			"isTrigger", &ObjectData::isTrigger,
+			"entityId", &ObjectData::entityId
 		);
 
 		lua.new_enum<RigidbodyType>(
