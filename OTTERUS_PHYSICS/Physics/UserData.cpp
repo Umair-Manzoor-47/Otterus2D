@@ -19,7 +19,18 @@ namespace otterus_physics {
 	}
 	bool ObjectData::RemoveContact(const ObjectData& objectData)
 	{
-		return false;
+		auto contactItr = std::remove_if(
+			contactEntities.begin(), contactEntities.end(),
+			[&](ObjectData& contactInfo) {
+				return contactInfo == objectData;
+			}
+		);
+
+		if (contactItr == contactEntities.end())
+			return false;
+
+		contactEntities.erase(contactItr);
+		return true;
 	}
 	std::string ObjectData::to_string() const
 	{

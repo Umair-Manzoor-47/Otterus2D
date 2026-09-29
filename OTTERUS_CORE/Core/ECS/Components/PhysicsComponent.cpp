@@ -8,7 +8,7 @@ namespace otterus_core::ECS {
 		: PhysicsComponent(PhysicsAttributes{})
 	{}
 	PhysicsComponent::PhysicsComponent(const PhysicsAttributes& attribs)
-		: m_RigidBody{ nullptr }, m_UserData{ nullptr }, m_InitialAttribs{ attribs }
+		: m_UserData{ nullptr }, m_RigidBody{ nullptr }, m_InitialAttribs{ attribs }
 	{
 		m_UserData = std::make_shared<UserData>();
 		m_UserData->userData = m_InitialAttribs.objectData;
@@ -123,25 +123,25 @@ namespace otterus_core::ECS {
 			"type_id", &entt::type_hash<ObjectData>::value,
 			sol::call_constructor,
 			sol::factories(
-				[](const std::string& tag, const std::string& group, bool isCollider, 
-					bool isTrigger, const std::uint32_t entityID) 
+				[](const std::string& tag, const std::string& group, bool isCollider,
+					bool isTrigger, const std::uint32_t entityID)
 				{
 					return ObjectData{
-						.tag		= tag,
-						.group		= group,
-						.isCollider   = isCollider,
-						.isTrigger	= isTrigger,
-						.entityId	= entityID
+						.tag = tag,
+						.group = group,
+						.isCollider = isCollider,
+						.isTrigger = isTrigger,
+						.entityId = entityID
 					};
 
 				},
-				[](const sol::table& params){
+				[](const sol::table& params) {
 					return ObjectData{
-						.tag		= params["tag"].get_or(std::string{""}),
-						.group		= params["group"].get_or(std::string{""}),
-						.isCollider   = params["isCollider"].get_or(false),
-						.isTrigger	= params["isTrigger"].get_or(false),
-						.entityId	= params["entityID"].get_or((std::uint32_t)entt::null)
+						.tag = params["tag"].get_or(std::string{""}),
+						.group = params["group"].get_or(std::string{""}),
+						.isCollider = params["isCollider"].get_or(false),
+						.isTrigger = params["isTrigger"].get_or(false),
+						.entityId = params["entityID"].get_or((std::uint32_t)entt::null)
 					};
 				}
 			),
@@ -152,6 +152,7 @@ namespace otterus_core::ECS {
 			"isTrigger", &ObjectData::isTrigger,
 			"bTrigger", &ObjectData::isTrigger,
 			"bCollider", &ObjectData::isCollider,
+			"contactEntities", &ObjectData::contactEntities,
 			"entityId", &ObjectData::entityId,
 			"entityID", &ObjectData::entityId
 		);
