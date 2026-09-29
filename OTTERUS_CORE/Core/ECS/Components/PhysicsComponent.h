@@ -32,8 +32,8 @@ namespace otterus_core::ECS {
 	class PhysicsComponent
 	{
 	private:
-		std::shared_ptr<b2Body> m_RigidBody;
 		std::shared_ptr<otterus_physics::UserData> m_UserData;
+		std::shared_ptr<b2Body> m_RigidBody;
 		PhysicsAttributes m_InitialAttribs;
 
 	public:
