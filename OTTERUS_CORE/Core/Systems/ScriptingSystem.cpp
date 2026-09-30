@@ -164,6 +164,114 @@ namespace otterus_core::Systems {
 		
 	};
 
+	auto create_lua_logger = [](sol::state& lua) {
+		auto log_handler = [](sol::this_state s, otterus_logger::LogType type, sol::variadic_args va) {
+			if (va.size() == 0) return;
+
+			sol::state_view L = s;
+			std::string message;
+
+			if (va.size() == 1) {
+				sol::object obj = va[0];
+				sol::protected_function to_str = L["tostring"];
+				auto res = to_str(obj);
+				if (res.valid()) {
+					message = res.get<std::string>();
+				} else {
+					message = "<unprintable object>";
+				}
+			} else if (va[0].is<std::string>()) {
+				sol::protected_function str_format = L["string"]["format"];
+				auto result = str_format(va);
+				if (result.valid()) {
+					message = result.get<std::string>();
+				} else {
+					for (auto it = va.begin(); it != va.end(); ++it) {
+						if (!message.empty()) message += "\t";
+						sol::object obj = *it;
+						sol::protected_function to_str = L["tostring"];
+						auto res = to_str(obj);
+						if (res.valid()) message += res.get<std::string>();
+					}
+				}
+			} else {
+				for (auto it = va.begin(); it != va.end(); ++it) {
+					if (!message.empty()) message += "\t";
+					sol::object obj = *it;
+					sol::protected_function to_str = L["tostring"];
+					auto res = to_str(obj);
+					if (res.valid()) message += res.get<std::string>();
+				}
+			}
+
+			auto& logger = otterus_logger::Logger::GetInstance();
+			switch (type) {
+				case otterus_logger::LogType::INFO:
+					logger.LuaLog(message);
+					break;
+				case otterus_logger::LogType::WARN:
+					logger.LuaWarn(message);
+					break;
+				case otterus_logger::LogType::ERR:
+					logger.LuaError(message);
+					break;
+				default:
+					break;
+			}
+		};
+
+		auto ot_log_fn = [log_handler](sol::this_state s, sol::variadic_args va) {
+			log_handler(s, otterus_logger::LogType::INFO, va);
+		};
+		auto ot_warn_fn = [log_handler](sol::this_state s, sol::variadic_args va) {
+			log_handler(s, otterus_logger::LogType::WARN, va);
+		};
+		auto ot_error_fn = [log_handler](sol::this_state s, sol::variadic_args va) {
+			log_handler(s, otterus_logger::LogType::ERR, va);
+		};
+
+		// Direct C++ global functions
+		lua.set_function("OT_log", ot_log_fn);
+		lua.set_function("OT_warn", ot_warn_fn);
+		lua.set_function("OT_error", ot_error_fn);
+
+		lua.set_function("OTWarn", ot_warn_fn);
+		lua.set_function("OTError", ot_error_fn);
+
+		// OTLog table with __call: supports OTLog("...") and OTLog.log / warn / error
+		sol::table otLog = lua.create_named_table("OTLog");
+		otLog["log"] = ot_log_fn;
+		otLog["warn"] = ot_warn_fn;
+		otLog["error"] = ot_error_fn;
+
+		sol::table otLogMeta = lua.create_table();
+		otLogMeta[sol::meta_function::call] = [ot_log_fn](sol::table, sol::this_state s, sol::variadic_args va) {
+			ot_log_fn(s, va);
+		};
+		otLog[sol::metatable_key] = otLogMeta;
+
+		// Backward-compatible Logger table: Logger.log, Logger.warn, Logger.error
+		sol::table loggerTable = lua.create_named_table("Logger");
+		loggerTable["log"] = ot_log_fn;
+		loggerTable["warn"] = ot_warn_fn;
+		loggerTable["error"] = ot_error_fn;
+
+		// Idiomatic Lua assert hook with error logging and original return values
+		lua.safe_script(R"(
+				local orig_assert = assert
+				assert = function(cond, message, ...)
+					if not cond then 
+						if select("#", ...) == 0 then
+							OT_error(tostring(message or "assertion failed!"))
+						else
+							OT_error(string.format(message, ...))
+						end
+					end 
+					return orig_assert(cond, message)
+				end
+			)");
+	};
+
 	void ScriptingSystem::RegisterLuaBindings(sol::state& lua, otterus_core::ECS::Registry& registry)
 	{
 		otterus_core::Scripting::GLMBindings::CreateGLMBindings(lua);
@@ -176,6 +284,7 @@ namespace otterus_core::Systems {
 		otterus_core::FollowCamera::CreateLuaFollowCamera(lua, registry);
 
 		create_timer(lua);
+		create_lua_logger(lua);
 
 		Registry::CreateLuaRegistryBind(lua, registry);
 		Entity::CreateLuaEntityBind(lua, registry);

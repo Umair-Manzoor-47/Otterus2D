@@ -18,18 +18,18 @@ namespace otterus_logger {
 	template <typename... Args>
 	void Logger::Log(const std::string& message, Args&&... args) {
 		
-		assert(m_initialized && "Logger must be initialized before it can be used.");
+		assert(m_Initialized && "Logger must be initialized before it can be used.");
 		
-		if (!m_initialized) {
+		if (!m_Initialized) {
 			
 			std::cout << "Logger must be initialized before it can be used." << std::endl;
 			return;
 		}
 
 		std::stringstream ss;
-		ss << "OTTERUS [INFO]: " << currentDateTime() << "-" << std::vformat(message, std::make_format_args(args...)) << "\n";
+		ss << "OTTERUS [INFO]: " << CurrentDateTime() << "-" << std::vformat(message, std::make_format_args(args...)) << "\n";
 		
-		if (m_consoleLog) {
+		if (m_ConsoleLog) {
 
 			HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 			SetConsoleTextAttribute(hConsole, GREEN);
@@ -37,9 +37,9 @@ namespace otterus_logger {
 			SetConsoleTextAttribute(hConsole, WHITE);
 		}
 
-		if (m_retainLogs) {
-			m_logEntries.emplace_back(LogType::INFO, ss.str());
-			m_logAdded = true;
+		if (m_RetainLogs) {
+			m_LogEntries.emplace_back(LogType::INFO, ss.str());
+			m_LogAdded = true;
 		}
 	}
 
@@ -47,18 +47,18 @@ namespace otterus_logger {
 	template <typename... Args>
 	void Logger::Warn(const std::string& message, Args&&... args) {
 
-		assert(m_initialized && "Logger must be initialized before it can be used.");
+		assert(m_Initialized && "Logger must be initialized before it can be used.");
 
-		if (!m_initialized) {
+		if (!m_Initialized) {
 
 			std::cout << "Logger must be initialized before it can be used." << std::endl;
 			return;
 		}
 
 		std::stringstream ss;
-		ss << "OTTERUS [WARN]: " << currentDateTime() << "-" << std::vformat(message, std::make_format_args(args...)) << "\n";
+		ss << "OTTERUS [WARN]: " << CurrentDateTime() << "-" << std::vformat(message, std::make_format_args(args...)) << "\n";
 
-		if (m_consoleLog) {
+		if (m_ConsoleLog) {
 
 			HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 			SetConsoleTextAttribute(hConsole, YELLOW);
@@ -66,9 +66,9 @@ namespace otterus_logger {
 			SetConsoleTextAttribute(hConsole, WHITE);
 		}
 
-		if (m_retainLogs) {
-			m_logEntries.emplace_back(LogType::WARN, ss.str());
-			m_logAdded = true;
+		if (m_RetainLogs) {
+			m_LogEntries.emplace_back(LogType::WARN, ss.str());
+			m_LogAdded = true;
 		}
 
 	
@@ -78,21 +78,21 @@ namespace otterus_logger {
 	template <typename... Args>
 	void Logger::Error(std::source_location location, const std::string& message, Args&&... args) {
 	
-		assert(m_initialized && "Logger must be initialized before it can be used.");
+		assert(m_Initialized && "Logger must be initialized before it can be used.");
 
-		if (!m_initialized) {
+		if (!m_Initialized) {
 
 			std::cout << "Logger must be initialized before it can be used." << std::endl;
 			return;
 		}
 
 		std::stringstream ss;
-		ss << "OTTERUS [ERROR]: " << currentDateTime() << "-"
+		ss << "OTTERUS [ERROR]: " << CurrentDateTime() << "-"
 			<< std::vformat(message, std::make_format_args(args...))
 			<< "\nFUNC: " << location.function_name()
 			<< "\nLINE: " << location.line() << "\n\n";
 
-		if (m_consoleLog) {
+		if (m_ConsoleLog) {
 
 			HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 			SetConsoleTextAttribute(hConsole, RED);
@@ -100,9 +100,9 @@ namespace otterus_logger {
 			SetConsoleTextAttribute(hConsole, WHITE);
 		}
 
-		if (m_retainLogs) {
-			m_logEntries.emplace_back(LogType::ERR, ss.str());
-			m_logAdded = true;
+		if (m_RetainLogs) {
+			m_LogEntries.emplace_back(LogType::ERR, ss.str());
+			m_LogAdded = true;
 		}
 	}
 

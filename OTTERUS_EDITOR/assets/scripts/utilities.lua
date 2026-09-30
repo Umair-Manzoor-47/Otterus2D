@@ -238,33 +238,33 @@ end
 function LoadAssets(assets)
 	for k, v in pairs(assets.textures) do
 		if not AssetManager.add_texture(v.name, v.path, v.pixel_art) then
-			print("Failed to load texture [" ..v.name .."] at path [" ..v.path .."]")
+			OT_error("Failed to load texture [%s] at path [%s]", v.name, v.path)
 		else
-			print("Loaded texture [" ..v.name .."]")
+			OT_log("Loaded texture [%s]", v.name)
 		end
 	end
 
 	for k, v in pairs(assets.music) do
 		if not AssetManager.add_music(v.name, v.path) then
-			print("Failed to add music [" ..v.name .."] at path [" ..v.path .."]")
+			OT_error("Failed to add music [%s] at path [%s]", v.name, v.path)
 		else
-			print("Added music [" ..v.name .."]")
+			OT_log("Added music [%s]", v.name)
 		end
 	end
 
 	for k, v in pairs(assets.sfx) do
 		if not AssetManager.add_sound(v.name, v.path) then
-			print("Failed to add sfx [" ..v.name .."] at path [" ..v.path .."]")
+			OT_error("Failed to add sfx [%s] at path [%s]", v.name, v.path)
 		else
-			print("Added sfx [" ..v.name .."]")
+			OT_log("Added sfx [%s]", v.name)
 		end
 	end
 
 	for k, v in pairs(assets.fonts) do
 		if not AssetManager.add_font(v.name, v.path, v.size) then
-			print("Failed to add font [" ..v.name .."] at path [" ..v.path .."]")
+			OT_error("Failed to add font [%s] at path [%s]", v.name, v.path)
 		else
-			print("Added font [" ..v.name .."]")
+			OT_log("Added font [%s]", v.name)
 		end
 	end
 

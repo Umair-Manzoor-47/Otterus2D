@@ -35,8 +35,8 @@ namespace otterus_logger {
 	class Logger
 	{
 	private:
-		std::vector<LogEntry> m_logEntries;
-		bool m_logAdded{ false }, m_initialized{ false }, m_consoleLog{ true }, m_retainLogs{true};
+		std::vector<LogEntry> m_LogEntries;
+		bool m_LogAdded{ false }, m_Initialized{ false }, m_ConsoleLog{ true }, m_RetainLogs{true};
 
 		Logger() = default;
 
@@ -46,7 +46,7 @@ namespace otterus_logger {
 			LogTime(const std::string& date);
 		};
 
-		std::string currentDateTime();
+		std::string CurrentDateTime();
 
 	public:
 		// Since Logger is SINGLETON, we return instance here
@@ -71,11 +71,15 @@ namespace otterus_logger {
 		template <typename... Args>
 		void Error(std::source_location location, const std::string& message, Args&&... args);
 
-		inline void ClearLogs() { m_logEntries.clear(); }
+		void LuaLog(const std::string_view message);
+		void LuaWarn(const std::string_view message);
+		void LuaError(const std::string_view message);
 
-		inline const std::vector<LogEntry>& GetLogs() { return m_logEntries; }
-		inline void ResetLogAdded() { m_logAdded = false; }
-		inline const bool LogAdded() const { return m_logAdded; }
+		inline void ClearLogs() { m_LogEntries.clear(); }
+
+		inline const std::vector<LogEntry>& GetLogs() { return m_LogEntries; }
+		inline void ResetLogAdded() { m_LogAdded = false; }
+		inline const bool LogAdded() const { return m_LogAdded; }
 	};
 }
 
