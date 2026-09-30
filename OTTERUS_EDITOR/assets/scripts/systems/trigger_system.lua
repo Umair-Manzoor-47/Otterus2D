@@ -19,7 +19,7 @@ function TriggerSystem:OnCollision(object_a, object_b)
 end
 
 function TriggerSystem:OnPlayerTriggered(trigger, player)
-	print("Trigger [" .. trigger.tag .. "] (" .. trigger.group .. ") has been activated by [" .. player.tag .. "]!")
+	OT_log("Trigger [%s] (%s) has been activated by [%s]!", trigger.tag, trigger.group, player.tag)
 	local id = player.entityId or player.entityID
 	local playerEntity = Entity(id)
 	local physics = playerEntity:get_component(PhysicsComponent)

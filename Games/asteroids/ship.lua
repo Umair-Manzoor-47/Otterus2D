@@ -46,12 +46,12 @@ function Ship:UpdateShip()
     local sprite = ship:get_component(Sprite)
 
     if not transform then
-        print("Ship has no Transform component")
+        OT_error("Ship has no Transform component")
         return
     end
 
     if not sprite then
-        print("Ship has no Sprite component")
+        OT_error("Ship has no Sprite component")
         return
     end
 

@@ -9,6 +9,26 @@ run_script("assets/scripts/systems/trigger_system.lua")
 LoadAssets(AssetDefs)
 
 -- =============================================================================
+-- Logger Tests: Verify all 3 logging types (INFO, WARN, ERROR) & OTLog alias
+-- =============================================================================
+OT_log("=== Logger Test: INFO Log ===")
+OT_log("INFO format test: EntityID=%d, Name='%s', Pos=(%.1f, %.1f)", 1, "Player", 16.0, 416.0)
+
+OT_warn("=== Logger Test: WARN Log ===")
+OT_warn("WARN format test: Asset [%s] took %.2f ms to load", "NinjaFrog", 14.50)
+
+OT_error("=== Logger Test: ERROR Log ===")
+OT_error("ERROR format test: Code %d - Failed to open resource at '%s'", 404, "assets/textures/missing.png")
+
+-- Testing OTLog alias (supports both OTLog("...") and OTLog.warn/error)
+if OTLog then
+    OTLog("=== Logger Test: OTLog callable alias (INFO) ===")
+    if OTLog.warn then OTLog.warn("=== Logger Test: OTLog.warn table method ===") end
+    if OTLog.error then OTLog.error("=== Logger Test: OTLog.error table method ===") end
+end
+
+
+-- =============================================================================
 -- Active Scene: CozySceneShowcase (Tilemap, wandering bunnies, rain generator)
 -- =============================================================================
 --run_script("assets/scripts/CozySceneShowcase/cozy_scene.lua")
