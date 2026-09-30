@@ -43,12 +43,15 @@
 
 // TODO: Remove to ImGUI class
 #include <imgui.h>
+#include <imgui_internal.h>
 #include <backends/imgui_impl_sdl2.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <SDL_opengl.h>
 // ===========================
 #include "editor/displays/SceneDisplay.h"
+#include "editor/displays/LogDisplay.h"
 #include <Physics/ContactListener.h>
+#include <Core/ECS/MainRegistry.h>
 
 #ifdef _WIN32
 #ifndef NOMINMAX
@@ -146,6 +149,8 @@ namespace otterus_editor {
 		OTTERUS_LOG("OpenGL Vendor:   {0}", (const char*)glGetString(GL_VENDOR));
 		OTTERUS_LOG("OpenGL Renderer: {0}", (const char*)glGetString(GL_RENDERER));
 		OTTERUS_LOG("OpenGL Version:  {0}", (const char*)glGetString(GL_VERSION));
+
+		MAIN_REGISTRY().Initialize();
 
 		auto renderer = std::make_shared<otterus_rendering::Renderer>();
 
@@ -335,20 +340,11 @@ namespace otterus_editor {
 			OTTERUS_ERROR("Failed to add Framebuffer into registry context.");
 			return false;
 		}
+		if (!CreateDisplays()) {
+			OTTERUS_ERROR("Failed to create displays.");
 
-		auto sceneDisplay = std::make_shared<SceneDisplay>(*m_registry);
-
-		if (!sceneDisplay) {
-			OTTERUS_ERROR("Failed to create SceneDisplay.");
 			return false;
 		}
-
-		if (!m_registry->AddToContext<std::shared_ptr<SceneDisplay>>(sceneDisplay)) {
-			OTTERUS_ERROR("Failed to add SceneDisplay into registry context.");
-			return false;
-		}
-
-
 		return true;
     }
 
@@ -507,6 +503,7 @@ namespace otterus_editor {
 
 		const auto& fb = m_registry->GetContext<std::shared_ptr<otterus_rendering::Framebuffer>>();
 
+		fb->CheckResize();
 		fb->Bind();
 
 		renderer->SetViewport(0, 0, fb->GetWidth(), fb->GetHeight());
@@ -538,6 +535,40 @@ namespace otterus_editor {
     void Application::CleanUp()
     {
 		SDL_Quit();
+	}
+
+	bool Application::CreateDisplays()
+	{
+		auto& mainRegistry = MAIN_REGISTRY();
+
+		auto displayHolder = std::make_shared<DisplayHolder>();
+
+		if (!mainRegistry.AddToContext<std::shared_ptr<DisplayHolder>>(displayHolder))
+		{
+			OTTERUS_ERROR("Failed to add displayHolder into main registry context.");
+			return false;
+		}
+
+		auto sceneDisplay = std::make_unique<SceneDisplay>(*m_registry);
+
+		if (!sceneDisplay) {
+			OTTERUS_ERROR("Failed to create SceneDisplay.");
+			return false;
+		}
+
+		auto logDisplay = std::make_unique<LogDisplay>();
+
+		if (!logDisplay) {
+			OTTERUS_ERROR("Failed to create LogDisplay.");
+			return false;
+		}
+
+		// TODO: Other displays as needed
+
+		displayHolder->displays.push_back(std::move(sceneDisplay));
+		displayHolder->displays.push_back(std::move(logDisplay));
+
+		return true;
 	}
 
 	bool Application::InitImGui()
@@ -603,11 +634,33 @@ namespace otterus_editor {
 
 	void Application::RenderImGui()
 	{
-		ImGui::DockSpaceOverViewport();
+		const auto dockSpaceId = ImGui::DockSpaceOverViewport(ImGui::GetMainViewport()->ID);
+		if (static auto firstTime = true; firstTime) [[unlikely]]
+		{
+			firstTime = false;
 
-		//TODO: Add Scene Display
-		auto& sceneDisplay = m_registry->GetContext<std::shared_ptr<SceneDisplay>>();
-		sceneDisplay->Draw();
+			ImGui::DockBuilderRemoveNode(dockSpaceId);
+			ImGui::DockBuilderAddNode(dockSpaceId);
+
+			auto centerNodeId = dockSpaceId;
+			const auto leftNodeId =
+				ImGui::DockBuilderSplitNode(centerNodeId, ImGuiDir_Left, 0.2f, nullptr, &centerNodeId);
+
+			const auto LogNodeId = ImGui::DockBuilderSplitNode(centerNodeId, ImGuiDir_Down, 0.25f, nullptr, &centerNodeId);
+			ImGui::DockBuilderDockWindow("Dear ImGui Demo", leftNodeId);
+			ImGui::DockBuilderDockWindow("Scene", centerNodeId);
+			ImGui::DockBuilderDockWindow("Logs", LogNodeId);
+
+			ImGui::DockBuilderFinish(dockSpaceId);
+		}
+
+		auto& mainRegistry = MAIN_REGISTRY();
+		auto& displayHolder = mainRegistry.GetContext<std::shared_ptr<DisplayHolder>>();
+
+		for (const auto& display : displayHolder->displays)
+		{
+			display->Draw();
+		}
 
 		ImGui::ShowDemoWindow();
 	}
