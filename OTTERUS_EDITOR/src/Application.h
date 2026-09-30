@@ -25,6 +25,7 @@ namespace otterus_editor {
 		void CleanUp();
 
 		// TODO: Remove ImGUI to it's own class 
+		bool CreateDisplays();
 		bool InitImGui();
 		void Begin();
 		void End();

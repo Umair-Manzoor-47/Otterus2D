@@ -37,9 +37,10 @@ namespace otterus_logger {
 			SetConsoleTextAttribute(hConsole, WHITE);
 		}
 
-		if (m_retainLogs)
+		if (m_retainLogs) {
 			m_logEntries.emplace_back(LogType::INFO, ss.str());
-	
+			m_logAdded = true;
+		}
 	}
 
 
@@ -65,8 +66,10 @@ namespace otterus_logger {
 			SetConsoleTextAttribute(hConsole, WHITE);
 		}
 
-		if (m_retainLogs)
+		if (m_retainLogs) {
 			m_logEntries.emplace_back(LogType::WARN, ss.str());
+			m_logAdded = true;
+		}
 
 	
 	}
@@ -97,8 +100,10 @@ namespace otterus_logger {
 			SetConsoleTextAttribute(hConsole, WHITE);
 		}
 
-		if (m_retainLogs)
+		if (m_retainLogs) {
 			m_logEntries.emplace_back(LogType::ERR, ss.str());
+			m_logAdded = true;
+		}
 	}
 
 }

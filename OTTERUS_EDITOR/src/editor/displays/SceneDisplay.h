@@ -1,8 +1,9 @@
 #pragma once
 #include <Core/ECS/Registry.h>
+#include "IDisplay.h"
 
 namespace otterus_editor {
-	class SceneDisplay
+	class SceneDisplay : public IDisplay
 	{
 	private:
 		otterus_core::ECS::Registry& m_Registry;
@@ -10,7 +11,7 @@ namespace otterus_editor {
 		SceneDisplay(otterus_core::ECS::Registry& registry);
 		~SceneDisplay() = default;
 
-		void Draw();
+		virtual void Draw() override;
 
 	};
 

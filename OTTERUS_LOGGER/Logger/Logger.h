@@ -7,11 +7,15 @@
 #include <cassert>
 
 
-#define OTTERUS_LOG(x, ...) otterus_logger::Logger::GetInstance().Log(x, __VA_ARGS__);
-#define OTTERUS_WARN(x, ...) otterus_logger::Logger::GetInstance().Warn(x, __VA_ARGS__);
-#define OTTERUS_ERROR(x, ...) otterus_logger::Logger::GetInstance().Error(std::source_location::current(), x, __VA_ARGS__);
-#define OTTERUS_ASSERT(x) assert(x);
-#define OTTERUS_INIT_LOGS(console, retain) otterus_logger::Logger::GetInstance().Init(console, retain);
+#define OTTERUS_LOG(x, ...) otterus_logger::Logger::GetInstance().Log(x, __VA_ARGS__)
+#define OTTERUS_WARN(x, ...) otterus_logger::Logger::GetInstance().Warn(x, __VA_ARGS__)
+#define OTTERUS_ERROR(x, ...) otterus_logger::Logger::GetInstance().Error(std::source_location::current(), x, __VA_ARGS__)
+#define OTTERUS_ASSERT(x) assert(x)
+#define OTTERUS_INIT_LOGS(console, retain) otterus_logger::Logger::GetInstance().Init(console, retain)
+#define OTTERUS_LOG_ADDED() otterus_logger::Logger::GetInstance().LogAdded()
+#define OTTERUS_RESET_ADDED() otterus_logger::Logger::GetInstance().ResetLogAdded()
+#define OTTERUS_GET_LOGS() otterus_logger::Logger::GetInstance().GetLogs()
+#define OTTERUS_CLEAR_LOGS() otterus_logger::Logger::GetInstance().ClearLogs()
 
 namespace otterus_logger {
 
@@ -61,14 +65,17 @@ namespace otterus_logger {
 		template <typename... Args>
 		void Log(const std::string& message, Args&&... args);
 
-
 		template <typename... Args>
 		void Warn(const std::string& message, Args&&... args);
-
 
 		template <typename... Args>
 		void Error(std::source_location location, const std::string& message, Args&&... args);
 
+		inline void ClearLogs() { m_logEntries.clear(); }
+
+		inline const std::vector<LogEntry>& GetLogs() { return m_logEntries; }
+		inline void ResetLogAdded() { m_logAdded = false; }
+		inline const bool LogAdded() const { return m_logAdded; }
 	};
 }
 

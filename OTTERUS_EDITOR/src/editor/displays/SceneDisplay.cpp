@@ -19,13 +19,13 @@ namespace otterus_editor {
 		if (ImGui::BeginChild("##SceneChild", ImVec2{ 0.f, 0.f }, NULL, ImGuiWindowFlags_NoScrollWithMouse))
 		{
 			const auto& fb = m_Registry.GetContext<std::shared_ptr<otterus_rendering::Framebuffer>>();
-						
+
 			ImGui::SetCursorPos( ImVec2{ 0.f, 0.f } );
 			ImGui::Image(
 				(ImTextureID)fb->GetTextureID(),
 				ImVec2{
 					static_cast<float>(fb->GetWidth()), 
-					static_cast<float>(fb->GetWidth())
+					static_cast<float>(fb->GetHeight())
 				},
 				ImVec2{ 0.f, 1.f },
 				ImVec2{ 1.f, 0.f }
