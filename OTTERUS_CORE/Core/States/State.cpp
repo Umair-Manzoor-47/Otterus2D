@@ -1,0 +1,86 @@
+#include "State.h"
+#include <Logger/Logger.h>
+
+void otterus_core::State::CreateLuaStateBind(sol::state& lua)
+{
+	lua.new_usertype<State>(
+		"State",
+		sol::call_constructor,
+		sol::factories(
+			[](const std::string& name) {
+				return State{ .name = name };
+			},
+			[](const std::string& name, sol::protected_function on_render, sol::protected_function on_update,
+				sol::protected_function on_enter, sol::protected_function on_exit, sol::protected_function handle_inputs,
+				sol::object variables)
+			{
+				return State{
+					.name = name,
+					.on_render = on_render,
+					.on_update = on_update,
+					.on_enter = on_enter,
+					.on_exit = on_exit,
+					.handle_inputs = handle_inputs,
+					.variables = variables
+				};
+			}
+		),
+		"set_on_enter", [](State& state, sol::protected_function on_enter) {
+			if (!on_enter.valid())
+			{
+				OTTERUS_ERROR("failed to set on_enter function for state {} -- function not valid.", state.name);
+				return;
+			}
+
+			state.on_enter = on_enter;
+		},
+		"set_on_exit", [](State& state, sol::protected_function on_exit) {
+			if (!on_exit.valid())
+			{
+				OTTERUS_ERROR("failed to set on_exit function for state {} -- function not valid.", state.name);
+				return;
+			}
+
+			state.on_exit = on_exit;
+		},
+		"set_on_update", [](State& state, sol::protected_function on_update) {
+			if (!on_update.valid())
+			{
+				OTTERUS_ERROR("failed to set on_update function for state {} -- function not valid.", state.name);
+				return;
+			}
+
+			state.on_update = on_update;
+		},
+		"set_on_render", [](State& state, sol::protected_function on_render) {
+			if (!on_render.valid())
+			{
+				OTTERUS_ERROR("failed to set on_render function for state {} -- function not valid.", state.name);
+				return;
+			}
+
+			state.on_render = on_render;
+		},
+		"set_handle_inputs", [](State& state, sol::protected_function handle_inputs) {
+			if (!handle_inputs.valid())
+			{
+				OTTERUS_ERROR("failed to set handle_inputs function for state {} -- function not valid.", state.name);
+				return;
+			}
+
+			state.handle_inputs = handle_inputs;
+		},
+		"set_variables", [](State& state, const sol::table& table) {
+			if (!table.valid())
+			{
+				OTTERUS_ERROR("failed to set variables for state {} -- function not valid.", state.name);
+				return;
+			}
+
+			state.variables = table;
+		},
+		"variables", &State::variables,
+		"name", &State::name,
+		"killState", &State::killState
+	);
+}
