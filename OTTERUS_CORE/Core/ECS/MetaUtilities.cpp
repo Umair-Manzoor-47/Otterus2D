@@ -12,7 +12,7 @@ entt::id_type otterus_core::Utils::GetIdType(const sol::table& comp)
     const auto func = comp["type_id"].get<sol::function>();
 
     assert(func.valid() && "[type_id()] - function has not been exposed to lua."
-        "\nPlease ensure all components and types have a type_id function",
+        "\nPlease ensure all components and types have a type_id function,"
         "\nwhen creating a new usertype."
     );
 

@@ -37,7 +37,7 @@ namespace otterus_core::Scripting {
 	}
 
 	template <typename DATA>
-	inline static void UserDataBinder::register_meta_user_data()
+	inline void UserDataBinder::register_meta_user_data()
 	{
 		using namespace entt::literals;
 
