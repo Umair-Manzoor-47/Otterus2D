@@ -17,6 +17,13 @@ namespace otterus_core::ECS {
 						.wrap = wrap,
 						.color = color,
 					};
+				},
+				[](const std::string& fontName, const std::string& textStr)
+				{
+					return TextComponent{
+						.textStr = textStr,
+						.fontName = fontName
+					};
 				}
 			),
 			"textStr", &TextComponent::textStr,

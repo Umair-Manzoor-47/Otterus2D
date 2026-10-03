@@ -18,6 +18,10 @@
 #include "../Scripting/RendererBindings.h"
 #include "../Scripting/UserDataBindings.h"
 #include "../Scripting/ContactListenerBind.h"
+
+#include "../States/StateStack.h"
+#include "../States/State.h"
+
 #include <OtterusUtilities/Timer.h>
 #include <OtterusUtilities/RandomGenerator.h>
 
@@ -281,6 +285,8 @@ namespace otterus_core::Systems {
 		otterus_core::Scripting::RendererBinder::CreateRendererBind(lua, registry);
 		otterus_core::Scripting::UserDataBinder::CreateLuaUserData(lua);
 		otterus_core::Scripting::ContactListenerBinder::CreateLuaContactListener(lua, registry.GetRegistry());
+		otterus_core::State::CreateLuaStateBind(lua);
+		otterus_core::StateStack::CreateLuaStateStackBind(lua);
 		otterus_core::FollowCamera::CreateLuaFollowCamera(lua, registry);
 
 		create_timer(lua);
