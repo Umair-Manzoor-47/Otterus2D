@@ -1,4 +1,5 @@
 #include "UserData.h"
+#include <algorithm>
 
 
 namespace otterus_physics {

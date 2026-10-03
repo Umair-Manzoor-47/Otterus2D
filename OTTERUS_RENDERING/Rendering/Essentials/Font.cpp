@@ -13,7 +13,7 @@ namespace otterus_rendering {
             glDeleteTextures(1, &m_FontAtlasID);
 
         if (m_Data)
-            delete m_Data;
+            delete[] static_cast<stbtt_bakedchar*>(m_Data);
     }
 
     FontGlyph Font::GetGlyph(char c, glm::vec2& pos)
