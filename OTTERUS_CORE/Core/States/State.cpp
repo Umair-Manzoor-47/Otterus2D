@@ -70,7 +70,7 @@ void otterus_core::State::CreateLuaStateBind(sol::state& lua)
 
 			state.handle_inputs = handle_inputs;
 		},
-		"set_variables", [](State& state, const sol::table& table) {
+		"set_variable_table", [](State& state, const sol::table& table) {
 			if (!table.valid())
 			{
 				OTTERUS_ERROR("failed to set variables for state {} -- function not valid.", state.name);

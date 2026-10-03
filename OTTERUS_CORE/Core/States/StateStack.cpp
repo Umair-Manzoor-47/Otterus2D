@@ -34,9 +34,127 @@ namespace otterus_core {
 	}
 	void StateStack::Update(const float dt)
 	{
+		if (m_StateHolder && m_StateHolder->addState)
+		{
+			m_States.push_back(*m_StateHolder);
+			
+			if (m_StateHolder->on_enter.valid())
+			{
+				try
+				{
+					auto result = m_StateHolder->on_enter();
+					if (!result.valid())
+					{
+						sol::error error = result;
+						throw error;
+					}
+				}
+				catch (const sol::error& err) 
+				{
+					OTTERUS_ERROR(err.what());
+				}
+
+				m_StateHolder = nullptr;
+			}
+
+		}
+
+		if (m_States.empty())
+			return;
+
+		auto& topState = m_States.back();
+		if (topState.on_update.valid())
+		{
+			try
+			{
+				auto result = topState.on_update(dt);
+				if (!result.valid())
+				{
+					sol::error error = result;
+					throw error;
+				}
+			}
+			catch (const sol::error& err)
+			{
+				OTTERUS_ERROR("Failed to execute on_update: {}", err.what());
+				return;
+			}
+			catch (const std::exception& ex)
+			{
+				OTTERUS_ERROR("Failed to execute on_update: {}", ex.what());
+				return;
+			}
+			catch (...)
+			{
+				OTTERUS_ERROR("Failed to execute on_update: Error Unknown");
+				return;
+			}
+		}
+
+		if (topState.handle_inputs.valid())
+		{
+			try
+			{
+				auto result = topState.handle_inputs();
+				if (!result.valid())
+				{
+					sol::error error = result;
+					throw error;
+				}
+			}
+			catch (const sol::error& err)
+			{
+				OTTERUS_ERROR("Failed to execute handle_inputs: {}", err.what());
+				return;
+			}
+		}
+
+		if (topState.killState)
+		{
+			if (topState.on_exit.valid())
+			{
+				try
+				{
+					auto result = topState.on_exit();
+					if (!result.valid())
+					{
+						sol::error error = result;
+						throw error;
+					}
+				}
+				catch (const sol::error& err)
+				{
+					OTTERUS_ERROR("Failed to execute on_exit: {}", err.what());
+					return;
+				}
+			}
+
+			m_States.pop_back();
+		}
+
 	}
 	void StateStack::Render()
 	{
+		for(const auto& state : m_States)
+		{
+			if (state.on_render.valid())
+			{
+				try
+				{
+					auto result = state.on_render();
+					if (!result.valid())
+					{
+						sol::error error = result;
+						throw error;
+					}
+				}
+				catch (const sol::error& err)
+				{
+					OTTERUS_ERROR("Failed to execute on_render on state [{}]: {}", state.name,err.what());
+				}
+
+			}
+		}
 	}
 	State& StateStack::Top()
 	{
@@ -49,5 +167,16 @@ namespace otterus_core {
 	}
 	void StateStack::CreateLuaStateStackBind(sol::state& lua)
 	{
+		lua.new_usertype<StateStack>(
+			"StateStack",
+			sol::call_constructor,
+			sol::constructors<StateStack()>(),
+			"change_state", &StateStack::ChangeState,
+			"push", &StateStack::Push,
+			"pop", &StateStack::Pop,
+			"update", &StateStack::Update,
+			"render", &StateStack::Render,
+			"top", &StateStack::Top
+		);
 	}
 }
