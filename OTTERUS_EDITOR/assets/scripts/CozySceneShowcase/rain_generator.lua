@@ -1,8 +1,4 @@
--- =============================================================================
---  Rain Generator
---  Particle system simulating ambient rain drops and splash animations
---  Applied Principles: KISS, DRY, YAGNI
--- =============================================================================
+-- Rain particle generator
 
 Rain = {}
 Rain.__index = Rain
@@ -87,9 +83,6 @@ function Rain:Destroy()
     end
 end
 
--- ---------------------------------------------------------------------------
--- RainGenerator
--- ---------------------------------------------------------------------------
 RainGenerator = {}
 RainGenerator.__index = RainGenerator
 

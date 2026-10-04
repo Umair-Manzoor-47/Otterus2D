@@ -56,12 +56,59 @@ function LoadEntity(def)
 		)
 	end
 
-	if def.components.circle_collider then
+	if def.components.box_collider then
+		local bc = def.components.box_collider
+		local offset = bc.offset and vec2(bc.offset.x, bc.offset.y) or vec2(0, 0)
 		newEntity:add_component(
-			CircleCollider(
-				def.components.circle_collider.radius
+			BoxCollider(
+				bc.width,
+				bc.height,
+				offset
 			)
 		)
+	elseif def.components.circle_collider then
+		local cc = def.components.circle_collider
+		local offset = cc.offset and vec2(cc.offset.x, cc.offset.y) or vec2(0, 0)
+		newEntity:add_component(
+			CircleCollider(
+				cc.radius,
+				offset
+			)
+		)
+	end
+
+	if def.components.physics then
+		local p = def.components.physics
+		local attrs = PhysicsAttributes()
+		attrs.type = p.type or BodyType.STATIC
+		attrs.density = p.density or 1.0
+		attrs.friction = p.friction or 0.2
+		attrs.restitution = p.restitution or 0.0
+		attrs.gravityScale = p.gravityScale or 0.0
+		attrs.fixedRotation = (p.fixedRotation ~= nil) and p.fixedRotation or true
+
+		local t = def.components.transform
+		if t then
+			attrs.position = vec2(t.position.x, t.position.y)
+			attrs.scale = vec2(t.scale.x, t.scale.y)
+		end
+
+		if def.components.box_collider then
+			attrs.boxShape = true
+			attrs.boxSize = vec2(def.components.box_collider.width, def.components.box_collider.height)
+			if def.components.box_collider.offset then
+				attrs.offset = vec2(def.components.box_collider.offset.x, def.components.box_collider.offset.y)
+			end
+		elseif def.components.circle_collider then
+			attrs.circle = true
+			attrs.radius = def.components.circle_collider.radius
+			if def.components.circle_collider.offset then
+				attrs.offset = vec2(def.components.circle_collider.offset.x, def.components.circle_collider.offset.y)
+			end
+		end
+
+		attrs.objectData = ObjectData(tag, group, true, false, newEntity:id())
+		newEntity:add_component(PhysicsComponent(attrs))
 	end
 
 	return newEntity:id()
@@ -77,11 +124,13 @@ function SpawnAnimal(def, x, y)
 			transform = {
 				position = { x = x or def.components.transform.position.x, y = y or def.components.transform.position.y },
 				scale = { x = def.components.transform.scale.x, y = def.components.transform.scale.y },
-				rotation = def.components.transform.rotation
+				rotation = def.components.transform.rotation or 0
 			},
 			sprite = def.components.sprite,
 			animation = def.components.animation,
-			circle_collider = def.components.circle_collider
+			circle_collider = def.components.circle_collider,
+			box_collider = def.components.box_collider,
+			physics = def.components.physics
 		}
 	}
 	return LoadEntity(customDef)
@@ -191,6 +240,10 @@ function LoadMap( mapDef )
 		local rows = v.height - 1
 		local cols = v.width
 		local layer = k - 1
+		local layerName = string.lower(v.name or "")
+		local hasColliders = (v.properties and (v.properties.colliders or v.properties.has_colliders or v.properties.collider))
+			or string.find(layerName, "overgrown") ~= nil
+			or string.find(layerName, "tree") ~= nil
 
 		for row=0, rows do
 			for col=1,cols do
@@ -222,8 +275,23 @@ function LoadMap( mapDef )
 
 				sprite:generate_uvs()
 
+				if hasColliders then
+					local collider = tile:add_component(BoxCollider(tileset.tilewidth, tileset.tileheight, vec2(0, 0)))
 
-
+					local attrs = PhysicsAttributes()
+					attrs.type = BodyType.STATIC
+					attrs.density = 1000.0
+					attrs.friction = 0.5
+					attrs.restitution = 0.0
+					attrs.gravityScale = 0.0
+					attrs.position = position
+					attrs.scale = vec2(scale, scale)
+					attrs.boxShape = true
+					attrs.boxSize = vec2(collider.width, collider.height)
+					attrs.fixedRotation = true
+					attrs.objectData = ObjectData(v.name or "obstacle", "obstacle", true, false, tile:id())
+					tile:add_component(PhysicsComponent(attrs))
+				end
 
 				::continue::
 			end
