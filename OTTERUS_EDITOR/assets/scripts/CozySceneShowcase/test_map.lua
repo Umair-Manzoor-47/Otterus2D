@@ -112,7 +112,9 @@ return {
       offsety = 0,
       parallaxx = 1,
       parallaxy = 1,
-      properties = {},
+      properties = {
+        colliders = true
+      },
       encoding = "lua",
       data = {
         0, 0, 1405, 1406, 1409, 1410, 1407, 1408, 1405, 1406, 1409, 1410, 1405, 1406, 1407, 1408, 0, 0, 0, 0,
@@ -147,7 +149,9 @@ return {
       offsety = 0,
       parallaxx = 1,
       parallaxy = 1,
-      properties = {},
+      properties = {
+        colliders = true
+      },
       encoding = "lua",
       data = {
         1409, 1410, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

@@ -6,8 +6,23 @@ AssetDefs = {
 		{ name = "ground_tiles", path = "assets/textures/tilemap_test/tiles/tiles.png", pixel_art = true },
 		{ name = "bunny_baby", path = "assets/textures/tilemap_test/tiles/bunny_baby animation.png", pixel_art = true },
 		{ name = "bunny_baby_grey", path = "assets/textures/tilemap_test/tiles/bunny_baby_grey animation.png", pixel_art = true },
+		{ name = "chicken_baby", path = "assets/textures/tilemap_test/tiles/chicken_baby animation.png", pixel_art = true },
+		{ name = "chicken_brown", path = "assets/textures/tilemap_test/tiles/chicken_brown animation.png", pixel_art = true },
+		{ name = "cow", path = "assets/textures/tilemap_test/tiles/cow animation.png", pixel_art = true },
 		{ name = "rain", path = "assets/textures/rain.png", pixel_art = true},
 		{ name = "ball", path = "assets/textures/ball.png", pixel_art = true },
+		{ name = "otterus2d_logo", path = "assets/textures/tilemap_test/tiles/otterus2D_word.png", pixel_art = true },
+		{ name = "title_panel", path = "assets/textures/tilemap_test/tiles/panel.png", pixel_art = true },
+		{ name = "leaf_particles", path = "assets/textures/tilemap_test/tiles/leaf_particles.png", pixel_art = true },
+		{ name = "white_flash", path = "assets/textures/white_flash.png", pixel_art = true },
+		{ name = "font_O", path = "assets/textures/tilemap_test/tiles/font/letter_O_upper.png", pixel_art = true },
+		{ name = "font_t", path = "assets/textures/tilemap_test/tiles/font/letter_t.png", pixel_art = true },
+		{ name = "font_e", path = "assets/textures/tilemap_test/tiles/font/letter_e.png", pixel_art = true },
+		{ name = "font_r", path = "assets/textures/tilemap_test/tiles/font/letter_r.png", pixel_art = true },
+		{ name = "font_u", path = "assets/textures/tilemap_test/tiles/font/letter_u.png", pixel_art = true },
+		{ name = "font_s", path = "assets/textures/tilemap_test/tiles/font/letter_s.png", pixel_art = true },
+		{ name = "font_2", path = "assets/textures/tilemap_test/tiles/font/letter_2.png", pixel_art = true },
+		{ name = "font_D", path = "assets/textures/tilemap_test/tiles/font/letter_D_upper.png", pixel_art = true },
 
 		-- Ninja Frog player animations
 		{ name = "nf_idle", path = "assets/textures/Platformer/Players/Ninja Frog/Idle (32x32).png",  pixel_art = true },
@@ -19,11 +34,13 @@ AssetDefs = {
 
 		-- Platformer Terrain tileset
 		{ name = "Terrain", path = "assets/textures/platformer/Terrain/Terrain (16x16).png", pixel_art = true },
-
 	},
 
 	music = {{ name = "bgm", path = "assets/music/bgm.mp3" }},
-	sfx = {},
+	sfx = {
+		{ name = "thunder", path = "assets/sfx/thunder.wav" },
+		{ name = "leaves_rustle", path = "assets/sfx/leaves_rustle.wav" },
+	},
 	fonts = {{name = "pixel", path = "assets/fonts/Minecraft.ttf", size = 32.0}}
 
 }
@@ -53,8 +70,20 @@ AnimalsDefs = {
 				frameOffset = 0,
 				isVertical = false,
 				looped = true
+			},
+			box_collider = {
+				width = 16,
+				height = 16,
+				offset = { x = 0, y = 0 }
+			},
+			physics = {
+				type = BodyType.DYNAMIC,
+				density = 10.0,
+				friction = 0.9,
+				restitution = 0.0,
+				gravityScale = 0.0,
+				fixedRotation = true
 			}
-		
 		}
 	},
 		baby_bunny_grey = {
@@ -70,7 +99,7 @@ AnimalsDefs = {
 				asset_name = "bunny_baby_grey",
 				width = 16,
 				height = 16,
-				start_x = 0, start_y = 2,
+				start_x = 0, start_y = 0,
 				layer = 1
 			},
 			animation = {
@@ -79,8 +108,134 @@ AnimalsDefs = {
 				frameOffset = 0,
 				isVertical = false,
 				looped = true
+			},
+			box_collider = {
+				width = 16,
+				height = 16,
+				offset = { x = 0, y = 0 }
+			},
+			physics = {
+				type = BodyType.DYNAMIC,
+				density = 10.0,
+				friction = 0.9,
+				restitution = 0.0,
+				gravityScale = 0.0,
+				fixedRotation = true
 			}
-		
+		}
+	},
+	chicken_baby = {
+		tag = "chicken_baby",
+		group = "animals",
+		components = {
+			transform = {
+				position = { x = 110, y = 180 },
+				scale = { x = 1, y = 1 },
+				rotation = 0
+			},
+			sprite = {
+				asset_name = "chicken_baby",
+				width = 16,
+				height = 16,
+				start_x = 0, start_y = 0,
+				layer = 1
+			},
+			animation = {
+				numFrames = 4, 
+				frameRate = 5,
+				frameOffset = 0,
+				isVertical = false,
+				looped = true
+			},
+			box_collider = {
+				width = 16,
+				height = 16,
+				offset = { x = 0, y = 0 }
+			},
+			physics = {
+				type = BodyType.DYNAMIC,
+				density = 10.0,
+				friction = 0.9,
+				restitution = 0.0,
+				gravityScale = 0.0,
+				fixedRotation = true
+			}
+		}
+	},
+	chicken_brown = {
+		tag = "chicken_brown",
+		group = "animals",
+		components = {
+			transform = {
+				position = { x = 150, y = 190 },
+				scale = { x = 1, y = 1 },
+				rotation = 0
+			},
+			sprite = {
+				asset_name = "chicken_brown",
+				width = 16,
+				height = 16,
+				start_x = 0, start_y = 0,
+				layer = 1
+			},
+			animation = {
+				numFrames = 4, 
+				frameRate = 5,
+				frameOffset = 0,
+				isVertical = false,
+				looped = true
+			},
+			box_collider = {
+				width = 16,
+				height = 16,
+				offset = { x = 0, y = 0 }
+			},
+			physics = {
+				type = BodyType.DYNAMIC,
+				density = 10.0,
+				friction = 0.9,
+				restitution = 0.0,
+				gravityScale = 0.0,
+				fixedRotation = true
+			}
+		}
+	},
+	cow = {
+		tag = "cow",
+		group = "animals",
+		components = {
+			transform = {
+				position = { x = 260, y = 390 },
+				scale = { x = 1, y = 1 },
+				rotation = 0
+			},
+			sprite = {
+				asset_name = "cow",
+				width = 24,
+				height = 24,
+				start_x = 0, start_y = 0,
+				layer = 1
+			},
+			animation = {
+				numFrames = 4, 
+				frameRate = 4,
+				frameOffset = 0,
+				isVertical = false,
+				looped = true
+			},
+			box_collider = {
+				width = 24,
+				height = 24,
+				offset = { x = 0, y = 0 }
+			},
+			physics = {
+				type = BodyType.DYNAMIC,
+				density = 25.0,
+				friction = 0.9,
+				restitution = 0.0,
+				gravityScale = 0.0,
+				fixedRotation = true
+			}
 		}
 	}
 
