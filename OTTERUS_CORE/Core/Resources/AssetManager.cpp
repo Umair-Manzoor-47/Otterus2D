@@ -36,7 +36,8 @@ namespace otterus_resources {
         if (texItr == m_mapTextures.end()) {
         
             OTTERUS_ERROR("Failed to get texture [{0}] -- Does not exist.", textureName);
-            return otterus_rendering::Texture();
+            static otterus_rendering::Texture s_emptyTexture{};
+            return s_emptyTexture;
         }
 
         return *texItr->second;
@@ -70,8 +71,8 @@ namespace otterus_resources {
         if (shaderItr == m_mapShaders.end()) {
 
             OTTERUS_ERROR("Failed to get shader [{0}] -- Does not exist.", shaderName);
-            otterus_rendering::Shader shader{};
-            return shader;
+            static otterus_rendering::Shader s_emptyShader{};
+            return s_emptyShader;
         }
 
         return *shaderItr->second;
@@ -87,7 +88,7 @@ namespace otterus_resources {
         Mix_Music* music = Mix_LoadMUS(filePath.c_str());
         if (!music) {
             std::string error{ Mix_GetError() };
-            OTTERUS_LOG("Failed to add music [{0}] -- Mix_error {}.", musicName, error);
+            OTTERUS_LOG("Failed to add music [{0}] -- Mix_error {1}.", musicName, error);
             return false;
         }
 
@@ -131,7 +132,7 @@ namespace otterus_resources {
         Mix_Chunk* chunk = Mix_LoadWAV(filePath.c_str());
         if (!chunk) {
             std::string error{ Mix_GetError() };
-            OTTERUS_LOG("Failed to add soundFX [{0}] -- Mix_error {}.", soundFXName, error);
+            OTTERUS_LOG("Failed to add soundFX [{0}] -- Mix_error {1}.", soundFXName, error);
             return false;
         }
 
