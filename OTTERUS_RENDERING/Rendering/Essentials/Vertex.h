@@ -26,7 +26,7 @@ namespace otterus_rendering {
 		*		R          G         B         A
 		* 0b1111 11111 0000 0000 1111 1111 1010 1100
 		*/
-		void set_color(GLubyte newColor) {
+		void set_color(GLuint newColor) {
 			color.r = (newColor >> 24) & 0xFF;
 			color.g = (newColor >> 16) & 0xFF;
 			color.b = (newColor >> 8) & 0xFF;

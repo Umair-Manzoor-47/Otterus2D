@@ -8,7 +8,7 @@ namespace otterus_windowing {
 	{
 	public:
 		Window() :
-			Window("default_window", 640, 480, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, true, NULL) {}
+			Window("default_window", 640, 480, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, true) {}
 
 		Window(const std::string title, int width, int height, int xPos, int yPos, bool vsync = true,
 			Uint32 flags = (SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MOUSE_CAPTURE));
@@ -20,9 +20,9 @@ namespace otterus_windowing {
 		inline const std::string& GetWindowName() const { return m_title; }
 		
 		inline const int GetXPos() const { return m_xPos; }
-		inline const int SetXPos(int xPos) { m_xPos = xPos; }
-		inline const int GetYPos() const { return m_xPos; }
-		inline const int SetYPos(int yPos) { m_yPos = yPos; }
+		inline const void SetXPos(int xPos) { m_xPos = xPos; }
+		inline const int GetYPos() const { return m_yPos; }
+		inline const void SetYPos(int yPos) { m_yPos = yPos; }
 
 		inline void SetWidth(int width) { m_width = width; }
 		inline void SetHeight(int height) { m_height = height; }
