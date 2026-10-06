@@ -49,6 +49,247 @@ function PlatformerController:create_player(x, y)
     return player, physics, sprite, anim
 end
 
+function PlatformerController:set_animation(name)
+    local cfg = ANIMATIONS[name]
+    if not cfg then return end
+
+    self.m_Sprite.texture_name = cfg.texture
+    self.m_Sprite.start_x      = 0
+    self.m_Sprite.start_y      = 0
+    self.m_Sprite:generate_uvs()
+
+    self.m_Anim.num_frames = cfg.frames
+    self.m_Anim.frame_rate = cfg.rate
+    self.m_Anim.looped     = cfg.loop
+    self.m_Anim:reset()
+
+    self.m_UVFrameW         = self.m_Sprite.uvs.uv_width
+    self.m_FlippedThisFrame = false
+end
+
+function PlatformerController:change_state(name)
+    if self.m_CurrentStateName == name or self.m_PendingStateName ~= nil then
+        return
+    end
+    local next_state = self.m_States[name]
+    if not next_state then return end
+
+    self.m_PendingStateName = name
+    next_state.killState = false
+    self.m_StateMachine:change_state(next_state)
+end
+
+function PlatformerController:set_state(state)
+    self:change_state(state)
+end
+
+function PlatformerController:get_horizontal_move()
+    local moveX = 0
+    if Keyboard.pressed(KEY_D) or Keyboard.pressed(KEY_RIGHT) then
+        moveX = MOVE_SPEED
+        self.m_Facing = "right"
+    elseif Keyboard.pressed(KEY_A) or Keyboard.pressed(KEY_LEFT) then
+        moveX = -MOVE_SPEED
+        self.m_Facing = "left"
+    end
+    return moveX
+end
+
+function PlatformerController:apply_jump_cut(moveX, vy)
+    if self.m_JumpJustReleased and vy < -5.0 then
+        self.m_Physics:set_linear_velocity(vec2(moveX, vy * 0.45))
+    end
+end
+
+function PlatformerController:check_ground_jump()
+    if self.m_JumpBuffer > 0 and self.m_CoyoteTimer > 0 then
+        self:change_state("jump")
+        return true
+    end
+    return false
+end
+
+function PlatformerController:create_states()
+    local function make_state(name, on_enter, on_update, on_exit)
+        local state = State(name)
+        state:set_on_enter(function()
+            self.m_CurrentStateName = name
+            self.m_PendingStateName = nil
+            self.m_State = name
+            self:set_animation(name)
+            if on_enter then on_enter(self) end
+        end)
+        if on_update then
+            state:set_on_update(function(dt)
+                on_update(self, dt)
+            end)
+        end
+        if on_exit then
+            state:set_on_exit(function()
+                on_exit(self)
+            end)
+        end
+        return state
+    end
+
+    local states = {}
+
+    states.idle = make_state("idle",
+        function(this)
+            this.m_Grounded        = true
+            this.m_CanDoubleJump   = true
+            this.m_IsJumping       = false
+            this.m_IsDoubleJumping = false
+            local velocity = this.m_Physics:get_linear_velocity()
+            this.m_Physics:set_linear_velocity(vec2(0, velocity.y))
+        end,
+        function(this, dt)
+            if not this.m_Grounded then
+                this:change_state("fall")
+                return
+            end
+            if this:check_ground_jump() then
+                return
+            end
+            local moveX = this:get_horizontal_move()
+            if moveX ~= 0 then
+                this:change_state("run")
+                return
+            end
+            local velocity = this.m_Physics:get_linear_velocity()
+            this.m_Physics:set_linear_velocity(vec2(0, velocity.y))
+        end
+    )
+
+    states.run = make_state("run",
+        function(this)
+            this.m_Grounded        = true
+            this.m_CanDoubleJump   = true
+            this.m_IsJumping       = false
+            this.m_IsDoubleJumping = false
+        end,
+        function(this, dt)
+            if not this.m_Grounded then
+                this:change_state("fall")
+                return
+            end
+            if this:check_ground_jump() then
+                return
+            end
+            local moveX = this:get_horizontal_move()
+            if moveX == 0 then
+                this:change_state("idle")
+                return
+            end
+            local velocity = this.m_Physics:get_linear_velocity()
+            this.m_Physics:set_linear_velocity(vec2(moveX, velocity.y))
+        end
+    )
+
+    states.jump = make_state("jump",
+        function(this)
+            local moveX = this:get_horizontal_move()
+            this.m_Physics:set_linear_velocity(vec2(moveX, JUMP_VELOCITY))
+            this.m_Grounded        = false
+            this.m_IsJumping       = true
+            this.m_IsDoubleJumping = false
+            this.m_CanDoubleJump   = true
+            this.m_CoyoteTimer     = 0.0
+            this.m_JumpBuffer      = 0.0
+        end,
+        function(this, dt)
+            local moveX = this:get_horizontal_move()
+            local velocity = this.m_Physics:get_linear_velocity()
+            this:apply_jump_cut(moveX, velocity.y)
+            velocity = this.m_Physics:get_linear_velocity()
+
+            if this.m_JumpJustPressed and this.m_CanDoubleJump then
+                this:change_state("double_jump")
+                return
+            end
+            if velocity.y >= 0.0 then
+                this:change_state("fall")
+                return
+            end
+            this.m_Physics:set_linear_velocity(vec2(moveX, velocity.y))
+        end
+    )
+
+    states.double_jump = make_state("double_jump",
+        function(this)
+            local moveX = this:get_horizontal_move()
+            this.m_Physics:set_linear_velocity(vec2(moveX, DOUBLE_JUMP_VELOCITY))
+            this.m_Grounded        = false
+            this.m_IsJumping       = true
+            this.m_IsDoubleJumping = true
+            this.m_CanDoubleJump   = false
+            this.m_JumpBuffer      = 0.0
+        end,
+        function(this, dt)
+            local moveX = this:get_horizontal_move()
+            local velocity = this.m_Physics:get_linear_velocity()
+            this:apply_jump_cut(moveX, velocity.y)
+            velocity = this.m_Physics:get_linear_velocity()
+
+            if velocity.y >= 0.0 then
+                this:change_state("fall")
+                return
+            end
+            this.m_Physics:set_linear_velocity(vec2(moveX, velocity.y))
+        end
+    )
+
+    states.fall = make_state("fall",
+        function(this)
+            this.m_Grounded = false
+        end,
+        function(this, dt)
+            local moveX = this:get_horizontal_move()
+            local velocity = this.m_Physics:get_linear_velocity()
+
+            if this.m_JumpBuffer > 0 and this.m_CoyoteTimer > 0 and not this.m_IsJumping then
+                this:change_state("jump")
+                return
+            end
+            if this.m_JumpJustPressed and this.m_CanDoubleJump then
+                this:change_state("double_jump")
+                return
+            end
+            if this.m_Grounded then
+                if this.m_JumpBuffer > 0 then
+                    this:change_state("jump")
+                elseif moveX ~= 0 then
+                    this:change_state("run")
+                else
+                    this:change_state("idle")
+                end
+                return
+            end
+            this.m_Physics:set_linear_velocity(vec2(moveX, velocity.y))
+        end
+    )
+
+    states.hit = make_state("hit",
+        function(this)
+            this.m_IsDead = true
+            this.m_DeathTimer = 0.5
+            this.m_Physics:set_linear_velocity(vec2(0, -12.0))
+        end,
+        function(this, dt)
+            this.m_DeathTimer = this.m_DeathTimer - dt
+            if this.m_DeathTimer <= 0 then
+                this:respawn()
+                this:change_state("idle")
+            end
+        end,
+        function(this)
+            this.m_IsDead = false
+        end
+    )
+
+    return states
+end
+
 function PlatformerController:init()
     local tilemap = CreatePlatformerMap()
     assert(tilemap, "Failed to create platformer map")
@@ -70,6 +311,8 @@ function PlatformerController:init()
     self.m_JumpBuffer       = 0.0
     self.m_CoyoteTimer      = 0.10
     self.m_FlippedThisFrame = false
+    self.m_CurrentStateName = nil
+    self.m_PendingStateName = nil
 
     self.m_Camera = FollowCamera(
         FollowCamParams({
@@ -82,14 +325,15 @@ function PlatformerController:init()
         }),
         self.m_Player
     )
+
+    self.m_StateMachine = StateStack()
+    self.m_States = self:create_states()
+    self:change_state("idle")
 end
 
 function PlatformerController:die()
-    if self.m_IsDead then return end
-    self.m_IsDead = true
-    self.m_DeathTimer = 0.5
-    self:set_state("hit")
-    self.m_Physics:set_linear_velocity(vec2(0, -12.0))
+    if self.m_IsDead or self.m_CurrentStateName == "hit" then return end
+    self:change_state("hit")
 end
 
 function PlatformerController:respawn()
@@ -101,7 +345,6 @@ function PlatformerController:respawn()
     self.m_Camera:set_entity(self.m_Player)
 
     self.m_UVFrameW         = self.m_Sprite.uvs.uv_width
-    self.m_State            = "idle"
     self.m_Facing           = "right"
     self.m_Grounded         = true
     self.m_IsJumping        = false
@@ -111,27 +354,6 @@ function PlatformerController:respawn()
     self.m_CoyoteTimer      = 0.10
     self.m_IsDead           = false
     self.m_DeathTimer       = 0.0
-    self.m_FlippedThisFrame = false
-end
-
-function PlatformerController:set_state(state)
-    if self.m_State == state then return end
-    self.m_State = state
-
-    local cfg = ANIMATIONS[state]
-    if not cfg then return end
-
-    self.m_Sprite.texture_name = cfg.texture
-    self.m_Sprite.start_x      = 0
-    self.m_Sprite.start_y      = 0
-    self.m_Sprite:generate_uvs()
-
-    self.m_Anim.num_frames = cfg.frames
-    self.m_Anim.frame_rate = cfg.rate
-    self.m_Anim.looped     = cfg.loop
-    self.m_Anim:reset()
-
-    self.m_UVFrameW         = self.m_Sprite.uvs.uv_width
     self.m_FlippedThisFrame = false
 end
 
@@ -159,108 +381,54 @@ function PlatformerController:update(dt)
     end
 
     local transform = self.m_Player:get_component(Transform)
-
-    if self.m_IsDead then
-        self.m_DeathTimer = self.m_DeathTimer - dt
-        if self.m_DeathTimer <= 0 then
-            self:respawn()
-        end
-        if self.m_Camera then self.m_Camera:update() end
-        return
-    end
-
-    if transform and transform.position.y > DEATH_Y then
+    if transform and transform.position.y > DEATH_Y and not self.m_IsDead then
         self:die()
-        return
     end
 
-    local velocity = self.m_Physics:get_linear_velocity()
-    local vy = velocity.y
+    if not self.m_IsDead then
+        local velocity = self.m_Physics:get_linear_velocity()
+        local vy = velocity.y
 
-    self.m_Physics:set_gravity_scale(vy > 0.0 and GRAVITY_FALL or GRAVITY_RISE)
+        self.m_Physics:set_gravity_scale(vy > 0.0 and GRAVITY_FALL or GRAVITY_RISE)
 
-    if vy > 1.0 or vy < -0.5 then
-        self.m_Grounded = false
-    elseif math.abs(vy) <= 0.2 and not self.m_IsJumping then
-        self.m_Grounded        = true
-        self.m_CanDoubleJump   = true
-        self.m_IsDoubleJumping = false
-    end
-
-    if self.m_IsJumping and vy >= 0.0 and math.abs(vy) <= 0.2 then
-        self.m_IsJumping       = false
-        self.m_IsDoubleJumping = false
-        self.m_CanDoubleJump   = true
-        self.m_Grounded        = true
-    end
-
-    if self.m_Grounded then
-        self.m_CoyoteTimer = 0.10
-    elseif self.m_CoyoteTimer > 0 then
-        self.m_CoyoteTimer = self.m_CoyoteTimer - dt
-    end
-
-    local moveX = 0
-    if Keyboard.pressed(KEY_D) or Keyboard.pressed(KEY_RIGHT) then
-        moveX = MOVE_SPEED
-        self.m_Facing = "right"
-    elseif Keyboard.pressed(KEY_A) or Keyboard.pressed(KEY_LEFT) then
-        moveX = -MOVE_SPEED
-        self.m_Facing = "left"
-    end
-
-    local jumpJustPressed = Keyboard.just_pressed(KEY_W)
-                         or Keyboard.just_pressed(KEY_UP)
-                         or Keyboard.just_pressed(KEY_SPACE)
-
-    if jumpJustPressed then
-        self.m_JumpBuffer = 0.15
-    elseif self.m_JumpBuffer > 0 then
-        self.m_JumpBuffer = self.m_JumpBuffer - dt
-    end
-
-    if self.m_JumpBuffer > 0 and self.m_CoyoteTimer > 0 and not self.m_IsJumping then
-        self.m_Physics:set_linear_velocity(vec2(moveX, JUMP_VELOCITY))
-        self.m_Grounded        = false
-        self.m_IsJumping       = true
-        self.m_IsDoubleJumping = false
-        self.m_CanDoubleJump   = true
-        self.m_CoyoteTimer     = 0.0
-        self.m_JumpBuffer      = 0.0
-    elseif jumpJustPressed and not self.m_Grounded and self.m_CanDoubleJump then
-        self.m_Physics:set_linear_velocity(vec2(moveX, DOUBLE_JUMP_VELOCITY))
-        self.m_Grounded        = false
-        self.m_IsJumping       = true
-        self.m_IsDoubleJumping = true
-        self.m_CanDoubleJump   = false
-        self.m_JumpBuffer      = 0.0
-        self:set_state("double_jump")
-    else
-        self.m_Physics:set_linear_velocity(vec2(moveX, vy))
-    end
-
-    local jumpReleased = Keyboard.just_released(KEY_W)
-                      or Keyboard.just_released(KEY_UP)
-                      or Keyboard.just_released(KEY_SPACE)
-
-    if jumpReleased and velocity.y < -5.0 then
-        self.m_Physics:set_linear_velocity(vec2(moveX, velocity.y * 0.45))
-    end
-
-    velocity = self.m_Physics:get_linear_velocity()
-
-    if not self.m_Grounded then
-        if self.m_IsDoubleJumping and velocity.y < 0 then
-            self:set_state("double_jump")
-        elseif velocity.y < 0 then
-            self:set_state("jump")
-        else
-            self:set_state("fall")
+        if vy > 1.0 or vy < -0.5 then
+            self.m_Grounded = false
+        elseif math.abs(vy) <= 0.2 and not self.m_IsJumping then
+            self.m_Grounded        = true
+            self.m_CanDoubleJump   = true
+            self.m_IsDoubleJumping = false
         end
-    elseif moveX ~= 0 then
-        self:set_state("run")
-    else
-        self:set_state("idle")
+
+        if self.m_IsJumping and vy >= 0.0 and math.abs(vy) <= 0.2 then
+            self.m_IsJumping       = false
+            self.m_IsDoubleJumping = false
+            self.m_CanDoubleJump   = true
+            self.m_Grounded        = true
+        end
+
+        if self.m_Grounded then
+            self.m_CoyoteTimer = 0.10
+        elseif self.m_CoyoteTimer > 0 then
+            self.m_CoyoteTimer = self.m_CoyoteTimer - dt
+        end
+
+        self.m_JumpJustPressed = Keyboard.just_pressed(KEY_W)
+                              or Keyboard.just_pressed(KEY_UP)
+                              or Keyboard.just_pressed(KEY_SPACE)
+
+        self.m_JumpJustReleased = Keyboard.just_released(KEY_W)
+                               or Keyboard.just_released(KEY_UP)
+                               or Keyboard.just_released(KEY_SPACE)
+
+        if self.m_JumpJustPressed then
+            self.m_JumpBuffer = 0.15
+        elseif self.m_JumpBuffer > 0 then
+            self.m_JumpBuffer = self.m_JumpBuffer - dt
+        end
+    end
+
+    if self.m_StateMachine then
+        self.m_StateMachine:update(dt)
     end
 
     if self.m_Camera then
@@ -273,6 +441,9 @@ function PlatformerController:render()
         self.m_Sprite.uvs.u        = self.m_Sprite.uvs.u + self.m_UVFrameW
         self.m_Sprite.uvs.uv_width = -self.m_UVFrameW
         self.m_FlippedThisFrame    = true
+    end
+    if self.m_StateMachine then
+        self.m_StateMachine:render()
     end
 end
 
