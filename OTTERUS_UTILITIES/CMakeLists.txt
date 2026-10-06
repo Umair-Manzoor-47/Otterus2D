@@ -9,7 +9,6 @@ add_library(OTTERUS_UTILITIES STATIC
 
 target_include_directories(OTTERUS_UTILITIES PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${CMAKE_CURRENT_SOURCE_DIR}/OtterusUtilities"
 )
 
 target_link_libraries(OTTERUS_UTILITIES PUBLIC

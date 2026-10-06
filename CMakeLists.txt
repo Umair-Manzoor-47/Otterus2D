@@ -13,6 +13,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 # Configure MSVC runtime library to match prebuilt static dependencies (/MT and /MTd)
 if(MSVC)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    add_compile_options(/MP)
 endif()
 
 # Global preprocessor definitions

@@ -68,9 +68,6 @@ target_include_directories(OTTERUS_CORE PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-target_compile_definitions(OTTERUS_CORE PUBLIC
-    NOMINMAX
-)
 
 target_link_libraries(OTTERUS_CORE PUBLIC
     OTTERUS_LOGGER
