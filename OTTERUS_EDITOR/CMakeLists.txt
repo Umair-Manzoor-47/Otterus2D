@@ -13,14 +13,9 @@ target_include_directories(OTTERUS_EDITOR PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
 
-target_compile_definitions(OTTERUS_EDITOR PRIVATE
-    NOMINMAX
-)
-
 target_link_libraries(OTTERUS_EDITOR PRIVATE
     OTTERUS_CORE
     ImGui
-    OpenGL::GL
 )
 
 
@@ -40,11 +35,6 @@ add_custom_command(TARGET OTTERUS_EDITOR POST_BUILD
         "$<TARGET_FILE_DIR:OTTERUS_EDITOR>"
     COMMENT "Copying runtime DLLs to output directory..."
 )
-
-# Copy assets directory to output directory so binary can be run standalone
-add_custom_command(TARGET OTTERUS_EDITOR POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_CURRENT_SOURCE_DIR}/assets"
-        "$<TARGET_FILE_DIR:OTTERUS_EDITOR>/assets"
-    COMMENT "Copying assets to output directory..."
+set_target_properties(OTTERUS_EDITOR PROPERTIES
+        VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
 )
