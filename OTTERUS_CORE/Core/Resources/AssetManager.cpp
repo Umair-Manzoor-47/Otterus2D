@@ -2,12 +2,25 @@
 #include <Rendering/Essentials/TextureLoader.h>
 #include <Rendering/Essentials/ShaderLoader.h>
 #include <Rendering/Essentials/FontLoader.h>
+#include "fonts/default_font.h"
 #include <Logger/Logger.h>
 
 
 namespace otterus_resources {
+    bool AssetManager::CreateDefaultFonts()
+    {
+        if (!AddFontFromMemory("pixel", default_font))
+        {
+            OTTERUS_ERROR("Failed to add font from memory.");
+            return false;
+        }
+        // TODO: Add more fonts as per need
 
-    bool otterus_resources::AssetManager::AddTexture(const std::string& textureName, const std::string& texturePath, bool pixelArt)
+
+        return true;
+    }
+
+    bool AssetManager::AddTexture(const std::string& textureName, const std::string& texturePath, bool pixelArt)
     {
         if (m_mapTextures.find(textureName) != m_mapTextures.end()) {
 
@@ -43,7 +56,7 @@ namespace otterus_resources {
         return *texItr->second;
     }
 
-    bool otterus_resources::AssetManager::AddShader(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath)
+    bool AssetManager::AddShader(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath)
     {
         if (m_mapShaders.find(shaderName) != m_mapShaders.end()) {
 

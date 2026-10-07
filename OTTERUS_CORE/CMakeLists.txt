@@ -62,6 +62,7 @@ add_library(OTTERUS_CORE STATIC
     Core/Systems/ScriptingSystem.h
     Core/Resources/AssetManager.cpp
     Core/Resources/AssetManager.h
+    Core/Resources/fonts/default_font.h
 )
 
 target_include_directories(OTTERUS_CORE PUBLIC

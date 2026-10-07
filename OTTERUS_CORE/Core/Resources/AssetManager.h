@@ -27,6 +27,8 @@ namespace otterus_resources {
 		AssetManager() = default;
 		~AssetManager() = default;
 
+		bool CreateDefaultFonts();
+
 		bool AddTexture(const std::string & textureName, const std::string & texturePath, bool pixelArt);
 		const otterus_rendering::Texture& GetTexture(const std::string& textureName);
 
