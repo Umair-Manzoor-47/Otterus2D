@@ -322,6 +322,14 @@ namespace otterus_editor {
 			OTTERUS_ERROR("Failed to load Shaders.");
 			return false;
 		}
+
+    	if (!assetManager->CreateDefaultFonts())
+	    {
+			OTTERUS_ERROR("Failed to load default fonts.");
+			return false;
+	    }
+
+
 		otterus_core::Systems::ScriptingSystem::RegisterLuaBindings(*lua, *m_registry);
 		otterus_core::Systems::ScriptingSystem::RegisterLuaFunctions(*lua, *m_registry);
 
