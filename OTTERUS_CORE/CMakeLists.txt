@@ -63,6 +63,8 @@ add_library(OTTERUS_CORE STATIC
     Core/Resources/AssetManager.cpp
     Core/Resources/AssetManager.h
     Core/Resources/fonts/default_font.h
+    Core/States/StateMachine.cpp
+    Core/States/StateMachine.h
 )
 
 target_include_directories(OTTERUS_CORE PUBLIC
