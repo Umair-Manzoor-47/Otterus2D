@@ -1,4 +1,5 @@
 -- Cozy Scene Showcase
+-- Relaxing countryside showcase featuring wandering animals, ambient rain, and weather effects
 
 run_script("assets/scripts/CozySceneShowcase/test_map.lua")
 run_script("assets/scripts/CozySceneShowcase/rain_generator.lua")
@@ -47,14 +48,17 @@ local ANIMAL_SPAWNS = {
 function CozySceneShowcase:init()
     local tilemap = CreateTestMap()
     assert(tilemap, "Failed to create tilemap")
-    LoadMap(tilemap)
-    Music.play("bgm")
+    self.map = MapLoader:Load(tilemap, { scale = 2 })
+
+    AssetLoader.PlayMusic("bgm")
 
     -- Spawn animals
     self.animalManager = AnimalWanderManager:Create()
     for _, config in ipairs(ANIMAL_SPAWNS) do
         local animal = SpawnAnimal(config.def, config.x, config.y)
-        self.animalManager:Add(animal, config.bounds)
+        if animal then
+            self.animalManager:Add(animal, config.bounds)
+        end
     end
 
     self.rainGen = RainGenerator:Create()
@@ -68,23 +72,23 @@ function CozySceneShowcase:SpawnTitleBanner(panelX, panelY, panelLayer, textLaye
     panelLayer = panelLayer or 9
     textLayer  = textLayer  or 10
 
-    -- Panel
-    local panelEnt = Entity("otterus2d_panel", "ui")
-    panelEnt:add_component(Transform(vec2(panelX, panelY), vec2(1, 1), 0))
-    local panelSpr = panelEnt:add_component(Sprite("title_panel", 201, 98, 0, 0, panelLayer))
-    panelSpr:generate_uvs()
-    self.panelEntity = panelEnt
+    if AssetLoader.HasTexture("title_panel") then
+        local panelEnt = Entity("otterus2d_panel", "ui")
+        panelEnt:add_component(Transform(vec2(panelX, panelY), vec2(1, 1), 0))
+        local panelSpr = panelEnt:add_component(Sprite("title_panel", 201, 98, 0, 0, panelLayer))
+        panelSpr:generate_uvs()
+        self.panelEntity = panelEnt
+    end
 
-    -- Title text
-    local textX = panelX + math.floor((201 - 172) / 2)
-    local textY = panelY + math.floor((98 - 28) / 2)
-    local titleEnt = Entity("otterus2d_title", "ui")
-    titleEnt:add_component(Transform(vec2(textX, textY), vec2(1, 1), 0))
-    local titleSpr = titleEnt:add_component(Sprite("otterus2d_logo", 172, 28, 0, 0, textLayer))
-    titleSpr:generate_uvs()
-    self.titleEntity = titleEnt
-
-    return panelEnt, titleEnt
+    if AssetLoader.HasTexture("otterus2d_logo") then
+        local textX = panelX + math.floor((201 - 172) / 2)
+        local textY = panelY + math.floor((98 - 28) / 2)
+        local titleEnt = Entity("otterus2d_title", "ui")
+        titleEnt:add_component(Transform(vec2(textX, textY), vec2(1, 1), 0))
+        local titleSpr = titleEnt:add_component(Sprite("otterus2d_logo", 172, 28, 0, 0, textLayer))
+        titleSpr:generate_uvs()
+        self.titleEntity = titleEnt
+    end
 end
 
 function CozySceneShowcase:SpawnTitleText(startX, startY, layer)
@@ -106,6 +110,40 @@ function CozySceneShowcase:update(dt)
     if self.rainGen then self.rainGen:Update(dt) end
     if self.animalManager then self.animalManager:Update(dt) end
     if self.ambientEffects then self.ambientEffects:Update(dt) end
+end
+
+function CozySceneShowcase:Destroy()
+    if self.map and self.map.destroy then
+        self.map:destroy()
+        self.map = nil
+    end
+
+    if self.animalManager then
+        self.animalManager:Destroy()
+        self.animalManager = nil
+    end
+
+    if self.rainGen then
+        self.rainGen:Destroy()
+        self.rainGen = nil
+    end
+
+    if self.ambientEffects then
+        self.ambientEffects:Destroy()
+        self.ambientEffects = nil
+    end
+
+    if self.panelEntity then
+        self.panelEntity:kill()
+        self.panelEntity = nil
+    end
+
+    if self.titleEntity then
+        self.titleEntity:kill()
+        self.titleEntity = nil
+    end
+
+    Music.stop()
 end
 
 function CozySceneShowcase:Create()

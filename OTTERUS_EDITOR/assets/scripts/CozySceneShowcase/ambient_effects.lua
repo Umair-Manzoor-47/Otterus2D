@@ -4,11 +4,16 @@ ThunderController = {}
 ThunderController.__index = ThunderController
 
 function ThunderController:Create()
-    local entity = Entity("ambient_lightning", "weather")
-    local transform = entity:add_component(Transform(vec2(0, 0), vec2(1, 1), 0))
-    local sprite = entity:add_component(Sprite("white_flash", 640, 480, 0, 0, 8))
-    sprite.color = Color(235, 245, 255, 0)
-    sprite:generate_uvs()
+    local entity = nil
+    local sprite = nil
+
+    if AssetLoader.HasTexture("white_flash") then
+        entity = Entity("ambient_lightning", "weather")
+        local transform = entity:add_component(Transform(vec2(0, 0), vec2(1, 1), 0))
+        sprite = entity:add_component(Sprite("white_flash", 640, 480, 0, 0, 8))
+        sprite.color = Color(235, 245, 255, 0)
+        sprite:generate_uvs()
+    end
 
     local this = {
         m_Entity           = entity,
@@ -57,11 +62,13 @@ function ThunderController:Update(dt)
     end
 
     if t >= 0.18 and not self.m_SoundPlayed then
-        Sound.play("thunder")
+        AssetLoader.PlaySound("thunder")
         self.m_SoundPlayed = true
     end
 
-    self.m_Sprite.color = Color(235, 245, 255, math.floor(math.max(0, math.min(255, alpha))))
+    if self.m_Sprite then
+        self.m_Sprite.color = Color(235, 245, 255, math.floor(math.max(0, math.min(255, alpha))))
+    end
 end
 
 function ThunderController:Destroy()
@@ -96,9 +103,11 @@ function LeafRustleController:Create(numLeaves)
     }
     setmetatable(this, self)
 
-    for i = 1, numLeaves do
-        local leaf = this:SpawnLeaf(true)
-        table.insert(this.m_Leaves, leaf)
+    if AssetLoader.HasTexture("leaf_particles") then
+        for i = 1, numLeaves do
+            local leaf = this:SpawnLeaf(true)
+            table.insert(this.m_Leaves, leaf)
+        end
     end
 
     return this
@@ -150,7 +159,7 @@ function LeafRustleController:ResetLeaf(leaf)
 end
 
 function LeafRustleController:TriggerRustle()
-    Sound.play("leaves_rustle")
+    AssetLoader.PlaySound("leaves_rustle")
     self.m_BreezeTimer      = 3.8
     self.m_NextRustleTimer  = math.random(14, 24)
 end

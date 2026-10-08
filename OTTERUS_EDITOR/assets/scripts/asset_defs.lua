@@ -41,7 +41,7 @@ AssetDefs = {
 		{ name = "thunder", path = "assets/sfx/thunder.wav" },
 		{ name = "leaves_rustle", path = "assets/sfx/leaves_rustle.wav" },
 	},
-	fonts = {{name = "pixel", path = "assets/fonts/Minecraft.ttf", size = 32.0}}
+	fonts = {{name = "Minecraft", path = "assets/fonts/Minecraft.ttf", size = 32.0}}
 
 }
 

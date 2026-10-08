@@ -435,3 +435,14 @@ function AnimalWanderManager:Update(dt)
         wanderer:Update(dt)
     end
 end
+
+function AnimalWanderManager:Destroy()
+    for _, wanderer in ipairs(self.m_Animals) do
+        if wanderer.m_Entity then
+            wanderer.m_Entity:kill()
+            wanderer.m_Entity = nil
+        end
+    end
+    self.m_Animals = {}
+end
+
