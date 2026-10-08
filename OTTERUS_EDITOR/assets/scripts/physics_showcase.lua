@@ -80,11 +80,11 @@ function PhysicsShowcase:init()
     -- Counter UI
     local countEnt = Entity("", "")
     countEnt:add_component(Transform(vec2(10, 48), vec2(1, 1), 0))
-    countEnt:add_component(TextComponent("Ball Count: ", "pixel", 4, -1.0, Color(0, 0, 0, 255)))
+    countEnt:add_component(TextComponent("Ball Count: ", "Minecraft", 4, -1.0, Color(0, 0, 0, 255)))
 
     local valEnt = Entity("", "")
     valEnt:add_component(Transform(vec2(352, 48), vec2(1, 1), 0))
-    self.val_text = valEnt:add_component(TextComponent("0", "pixel", 4, -1.0, Color(0, 0, 0, 255)))
+    self.val_text = valEnt:add_component(TextComponent("0", "Minecraft", 4, -1.0, Color(0, 0, 0, 255)))
 end
 
 function PhysicsShowcase:input()
@@ -137,7 +137,7 @@ function PhysicsShowcase:render()
     -- DrawLine(Line(vec2(50, 50), vec2(200, 200), Color(255, 0, 0, 255)))
     -- DrawLine(Line(vec2(200, 50), vec2(50, 200), Color(0, 0, 255, 255)))
     -- DrawFilledRect(Rect(vec2(300, 300), 100, 100, Color(255, 0, 0, 255)))
-    -- DrawText(Text(vec2(164.0, 156.0), "Otterus2D.", "pixel", 320.0, Color(255, 255, 0, 255)))
+    -- DrawText(Text(vec2(164.0, 156.0), "Otterus2D.", "Minecraft", 320.0, Color(255, 255, 0, 255)))
     -- DrawCircle(Circle(vec2(100, 100), 1.0, 32 , Color(255, 0, 0, 255)))
 end
 

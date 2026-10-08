@@ -21,6 +21,7 @@
 
 #include "../States/StateStack.h"
 #include "../States/State.h"
+#include "../States/StateMachine.h"
 
 #include <OtterusUtilities/Timer.h>
 #include <OtterusUtilities/RandomGenerator.h>
@@ -287,6 +288,7 @@ namespace otterus_core::Systems {
 		otterus_core::Scripting::ContactListenerBinder::CreateLuaContactListener(lua, registry.GetRegistry());
 		otterus_core::State::CreateLuaStateBind(lua);
 		otterus_core::StateStack::CreateLuaStateStackBind(lua);
+		otterus_core::StateMachine::CreateLuaStateMachine(lua);
 		otterus_core::FollowCamera::CreateLuaFollowCamera(lua, registry);
 
 		create_timer(lua);
@@ -342,6 +344,34 @@ namespace otterus_core::Systems {
 				return true;
 			}
 		);
+
+		lua.set_function(
+			"O2D_load_script_table", [&](const sol::table& scriptList)
+			{
+				if (!scriptList.valid())
+				{
+					OTTERUS_ERROR("Invalid Load script table.");
+					return;
+				}
+				for (const auto& [index, script] : scriptList)
+				{
+					try
+					{
+						auto result = lua.safe_script_file(script.as<std::string>());
+						if (!result.valid())
+						{
+							sol::error err = result;
+							throw err;
+						}
+					} catch (const sol::error& e)
+					{
+						OTTERUS_ERROR("Failed to load script [{}], Error: {}", script.as<std::string>(), e.what());
+						return;
+					}
+				}
+			}
+		);
+
 		lua.set_function("get_ticks", [] {
 			return SDL_GetTicks();
 			}
