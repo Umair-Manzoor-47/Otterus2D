@@ -330,14 +330,6 @@ namespace otterus_editor {
 	    }
 
 
-		otterus_core::Systems::ScriptingSystem::RegisterLuaBindings(*lua, *m_registry);
-		otterus_core::Systems::ScriptingSystem::RegisterLuaFunctions(*lua, *m_registry);
-
-		if (!scriptingSystem->LoadMainScript(*lua)) {
-
-			OTTERUS_ERROR("Failed to load the main lua script.");
-			return false;
-		}
 		auto frameBuffer = std::make_shared<otterus_rendering::Framebuffer>();
 
 		if (!frameBuffer) {
