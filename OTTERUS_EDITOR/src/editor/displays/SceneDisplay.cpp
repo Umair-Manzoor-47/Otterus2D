@@ -1,14 +1,71 @@
 #include "SceneDisplay.h"
-#include <ImGui.h>
 #include <Rendering/Buffers/Framebuffer.h>
+#include <Core/ECS/MainRegistry.h>
+#include <Core/Systems/ScriptingSystem.h>
+#include <Logger/Logger.h>
+#include <Core/Systems/AnimationSystem.h>
+#include <Core/Systems/PhysicsSystem.h>
+#include <Sounds/MusicPlayer/MusicPlayer.h>
+#include <Sounds/SoundPlayer/SoundFxPlayer.h>
+#include <Physics/Box2Dwrappers.h>
 #include <Core/CoreUtilities/CoreEngineData.h>
+
 #include <algorithm>
+#include <ImGui.h>
 
 namespace otterus_editor {
+
 	SceneDisplay::SceneDisplay(otterus_core::ECS::Registry& registry)
 		: m_Registry{ registry }
-	{
-	}
+        , m_PlayScene{ false }
+        , m_SceneLoaded{ false }
+	{}
+
+    void SceneDisplay::LoadScene()
+    {
+
+	    auto& lua = m_Registry.GetContext<std::shared_ptr<sol::state>>();
+
+		if (!lua)
+			lua = std::make_shared<sol::state>();
+
+	    lua->open_libraries(
+	        sol::lib::base,
+	        sol::lib::math,
+	        sol::lib::os,
+	        sol::lib::table,
+	        sol::lib::io,
+	        sol::lib::string,
+	        sol::lib::package
+	    );
+
+	    auto& scriptingSystem = m_Registry.GetContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>();
+	    otterus_core::Systems::ScriptingSystem::RegisterLuaBindings(*lua, m_Registry);
+	    otterus_core::Systems::ScriptingSystem::RegisterLuaFunctions(*lua, m_Registry);
+
+	    if (!scriptingSystem->LoadMainScript(*lua)) {
+
+	        OTTERUS_ERROR("Failed to load the main lua script.");
+	        return;
+	    }
+		m_SceneLoaded = true;
+		m_PlayScene = true;
+    }
+
+    void SceneDisplay::UnloadScene()
+    {
+		m_SceneLoaded = true;
+		m_PlayScene = true;
+		m_Registry.GetRegistry().clear();
+	    auto& lua = m_Registry.GetContext<std::shared_ptr<sol::state>>();
+
+		lua.reset();
+
+		auto& mainRegistry = MAIN_REGISTRY();
+		mainRegistry.GetMusicPlayer().Stop();
+		mainRegistry.GetSoundPlayer().Stop(-1);
+
+    }
 
     void SceneDisplay::Draw()
     {
@@ -59,4 +116,13 @@ namespace otterus_editor {
         ImGui::End();
     }
 
+    void SceneDisplay::Update()
+    {
+		if (!m_PlayScene) return;
+
+		auto& mainRegistry = MAIN_REGISTRY();
+		auto& coreGlobals = CORE_GLOBALS();
+
+        IDisplay::Update();
+    }
 }
