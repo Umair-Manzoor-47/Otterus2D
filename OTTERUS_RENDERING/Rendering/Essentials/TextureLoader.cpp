@@ -68,7 +68,33 @@ namespace otterus_rendering {
 		return true;
 	}
 
-	std::shared_ptr<Texture> otterus_rendering::TextureLoader::Create(const std::string& path, Texture::TextureType type)
+	bool TextureLoader::LoadTextureFromMemory(const unsigned char* imageData, size_t length, GLuint& id, int& width,
+		int& height, bool blended)
+	{
+		int channels = 0;
+		unsigned char* image = SOIL_load_image_from_memory(
+			imageData,
+			static_cast<int>(length),
+			&width,
+			&height,
+			&channels,
+			SOIL_LOAD_AUTO
+		);
+
+		if (!image)
+		{
+			OTTERUS_ERROR("Failed to load texture from memory -- {0}", SOIL_last_result());
+			return false;
+		}
+
+		id = CreateTexture();
+		SetTextureParams(blended);
+		UploadToGPU(image, width, height, channels);
+
+		return true;
+	}
+
+	std::shared_ptr<Texture> TextureLoader::Create(const std::string& path, Texture::TextureType type)
 	{
 		int channels = 0, width{ 0 }, height{ 0 };
 		unsigned char* image = SOIL_load_image(
@@ -125,5 +151,15 @@ namespace otterus_rendering {
 		return std::make_shared<Texture>(id, width, height, type);
 	}
 
+	std::shared_ptr<Texture> TextureLoader::CreateFromMemory(const unsigned char* imageData, size_t length,
+		bool blended)
+	{
+		GLuint id;
+		int width{ 0 }, height{ 0 };
+
+		LoadTextureFromMemory(imageData, length, id, width, height, blended);
+
+		return std::make_shared<Texture>(id, width, height, blended ? Texture::TextureType::BLENDED : Texture::TextureType::PIXEL, "");
+	}
 }
 

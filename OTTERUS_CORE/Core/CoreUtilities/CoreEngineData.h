@@ -1,6 +1,8 @@
 #pragma once
 #include <chrono>
 
+#define CORE_GLOBALS() otterus_core::CoreEngineData::GetInstance()
+
 namespace otterus_core {
 
 	class CoreEngineData

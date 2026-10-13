@@ -43,6 +43,30 @@ namespace otterus_resources {
         return true;
     }
 
+    bool AssetManager::AddTextureFromMemory(const std::string &textureName, const unsigned char *imageData,
+        size_t length, bool pixelArt)
+    {
+        // Check to see if the Texture already exist
+        if ( m_mapTextures.contains( textureName ) )
+        {
+            OTTERUS_ERROR( "AssetManager: Texture [{}] -- Already exists!", textureName );
+            return false;
+        }
+
+        auto texture = std::move( otterus_rendering::TextureLoader::CreateFromMemory( imageData, length, pixelArt ) );
+        // Load the texture
+        if ( !texture )
+        {
+            OTTERUS_ERROR( "Unable to load texture [{}] from memory!", textureName );
+            return false;
+        }
+
+        // Insert the texture into the map
+        m_mapTextures.emplace( textureName, std::move( texture ) );
+
+        return true;
+    }
+
     const otterus_rendering::Texture& AssetManager::GetTexture(const std::string& textureName)
     {
         auto texItr = m_mapTextures.find(textureName);
