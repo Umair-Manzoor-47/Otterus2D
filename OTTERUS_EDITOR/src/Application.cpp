@@ -53,6 +53,8 @@
 #include <Physics/ContactListener.h>
 #include <Core/ECS/MainRegistry.h>
 
+#include "Core/CoreUtilities/CoreEngineData.h"
+
 #ifdef _WIN32
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -452,31 +454,9 @@ namespace otterus_editor {
 
     void Application::Update()
     {
-		auto& camera = m_registry->GetContext<std::shared_ptr<otterus_rendering::Camera2D>>();
-		if (!camera) {
-		
-			OTTERUS_ERROR("Failed to get Camera2D from Registry.");
-			return;
-		}
+		auto& coreGlobals = CORE_GLOBALS();
 
-		camera->Update();
-
-		auto& scriptSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>();
-		scriptSystem->Update();
-
-		auto& physicsWorld = m_registry->GetContext<otterus_physics::PhysicsWorld>();
-		physicsWorld->Step(
-			1.f/60.f,
-			10,
-			8
-		);
-
-
-		auto& physicsSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::PhysicsSystem>>();
-		physicsSystem->Update(m_registry->GetRegistry());
-
-		auto& animationSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::AnimationSystem>>();
-		animationSystem->Update();
+		coreGlobals.UpdateDeltaTime();
 
 		auto& inputManager = otterus_core::InputManager::GetInstance();
 		auto& keyboard = inputManager.GetKeyboard();

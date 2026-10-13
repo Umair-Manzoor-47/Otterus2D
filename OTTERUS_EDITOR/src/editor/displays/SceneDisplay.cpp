@@ -9,9 +9,13 @@
 #include <Sounds/SoundPlayer/SoundFxPlayer.h>
 #include <Physics/Box2Dwrappers.h>
 #include <Core/CoreUtilities/CoreEngineData.h>
+#include <Rendering/Core/Camera2D.h>
+#include <Core/Resources/AssetManager.h>
 
 #include <algorithm>
 #include <ImGui.h>
+
+constexpr float one_over_sixty = 1.f / 60.f;
 
 namespace otterus_editor {
 
@@ -76,6 +80,13 @@ namespace otterus_editor {
             return;
         }
 
+		auto& mainRegistry = MAIN_REGISTRY();
+		auto& assetManager = mainRegistry.GetAssetManager();
+
+		auto playBtnTexture = assetManager.GetTexture("tex_play_btn");
+		//auto pauseBtnTexture = assetManager.GetTexture("tex_pause_btn");
+		auto stopBtnTexture = assetManager.GetTexture("tex_stop_btn");
+
         if (ImGui::BeginChild("##SceneChild", ImVec2{ 0.f, 0.f }, false, ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar))
         {
             const auto& fb = m_Registry.GetContext<std::shared_ptr<otterus_rendering::Framebuffer>>();
@@ -122,6 +133,29 @@ namespace otterus_editor {
 
 		auto& mainRegistry = MAIN_REGISTRY();
 		auto& coreGlobals = CORE_GLOBALS();
+
+		auto& camera = m_Registry.GetContext<std::shared_ptr<otterus_rendering::Camera2D>>();
+		if (!camera) {
+			OTTERUS_ERROR("Failed to get Camera2D from Registry.");
+			return;
+		}
+		camera->Update();
+
+		auto& scriptSystem = m_Registry.GetContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>();
+		scriptSystem->Update();
+
+		if (coreGlobals.IsPhysicsEnabled())
+		{
+			auto& physicsWorld = m_Registry.GetContext<otterus_physics::PhysicsWorld>();
+			physicsWorld->Step(	one_over_sixty, coreGlobals.GetVelocityIterations(), coreGlobals.GetPositionIterations() );
+			physicsWorld->ClearForces();
+		}
+
+		auto& physicsSystem = m_Registry.GetContext<std::shared_ptr<otterus_core::Systems::PhysicsSystem>>();
+		physicsSystem->Update(m_Registry.GetRegistry());
+
+		auto& animationSystem = m_Registry.GetContext<std::shared_ptr<otterus_core::Systems::AnimationSystem>>();
+		animationSystem->Update();
 
         IDisplay::Update();
     }
