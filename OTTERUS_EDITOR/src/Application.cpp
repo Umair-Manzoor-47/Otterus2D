@@ -53,6 +53,9 @@
 #include <Physics/ContactListener.h>
 #include <Core/ECS/MainRegistry.h>
 
+#include <Core/CoreUtilities/CoreEngineData.h>
+#include "editor/utilities/editor_textures.h"
+
 #ifdef _WIN32
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -322,6 +325,11 @@ namespace otterus_editor {
 			OTTERUS_ERROR("Failed to load Shaders.");
 			return false;
 		}
+    	if (!LoadEditorTextures())
+    	{
+    		OTTERUS_ERROR("Failed to load EditorTextures.");
+    		return false;
+    	}
 
     	if (!assetManager->CreateDefaultFonts())
 	    {
@@ -330,14 +338,6 @@ namespace otterus_editor {
 	    }
 
 
-		otterus_core::Systems::ScriptingSystem::RegisterLuaBindings(*lua, *m_registry);
-		otterus_core::Systems::ScriptingSystem::RegisterLuaFunctions(*lua, *m_registry);
-
-		if (!scriptingSystem->LoadMainScript(*lua)) {
-
-			OTTERUS_ERROR("Failed to load the main lua script.");
-			return false;
-		}
 		auto frameBuffer = std::make_shared<otterus_rendering::Framebuffer>();
 
 		if (!frameBuffer) {
@@ -405,6 +405,27 @@ namespace otterus_editor {
         return true;
     }
 
+    bool Application::LoadEditorTextures() {
+    	auto& registry = MAIN_REGISTRY();
+    	auto& assetManager = registry.GetAssetManager();
+
+    	if ( !assetManager.AddTextureFromMemory(
+				 "play_button", play_button, sizeof( play_button ) / sizeof( play_button[ 0 ] ) ) )
+    	{
+    		OTTERUS_ERROR( "Failed to load texture [play_button] from memory." );
+    		return false;
+    	}
+
+    	if ( !assetManager.AddTextureFromMemory(
+				 "stop_button", stop_button, sizeof( stop_button ) / sizeof( stop_button[ 0 ] ) ) )
+    	{
+    		OTTERUS_ERROR( "Failed to load texture [stop_button] from memory." );
+    		return false;
+    	}
+
+    	return true;
+    }
+
     void Application::ProcessEvents()
     {
 		auto& inputManager = otterus_core::InputManager::GetInstance();
@@ -460,31 +481,15 @@ namespace otterus_editor {
 
     void Application::Update()
     {
-		auto& camera = m_registry->GetContext<std::shared_ptr<otterus_rendering::Camera2D>>();
-		if (!camera) {
-		
-			OTTERUS_ERROR("Failed to get Camera2D from Registry.");
-			return;
-		}
+		auto& coreGlobals = CORE_GLOBALS();
 
-		camera->Update();
+		coreGlobals.UpdateDeltaTime();
 
-		auto& scriptSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>();
-		scriptSystem->Update();
+    	auto& mainRegistry = MAIN_REGISTRY();
+    	auto& displayHolder = mainRegistry.GetContext<std::shared_ptr<DisplayHolder>>();
 
-		auto& physicsWorld = m_registry->GetContext<otterus_physics::PhysicsWorld>();
-		physicsWorld->Step(
-			1.f/60.f,
-			10,
-			8
-		);
-
-
-		auto& physicsSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::PhysicsSystem>>();
-		physicsSystem->Update(m_registry->GetRegistry());
-
-		auto& animationSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::AnimationSystem>>();
-		animationSystem->Update();
+    	for ( const auto& display : displayHolder->displays )
+    		display->Update();
 
 		auto& inputManager = otterus_core::InputManager::GetInstance();
 		auto& keyboard = inputManager.GetKeyboard();
@@ -507,7 +512,7 @@ namespace otterus_editor {
 		auto& shader = assetManager->GetShader("color");
 		auto& fontShader = assetManager->GetShader("font");
 		auto& circleShader = assetManager->GetShader("circle");
-		auto& scriptSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>();
+		//auto& scriptSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>();
 
 		const auto& fb = m_registry->GetContext<std::shared_ptr<otterus_rendering::Framebuffer>>();
 
@@ -518,7 +523,7 @@ namespace otterus_editor {
 		renderer->SetClearColor(1.f, 1.f, 1.f, 1.f);
 		renderer->ClearBuffers(true, true, false);
 
-		scriptSystem->Render();
+		//scriptSystem->Render();
 		renderSystem->Upate();
 		renderShapeSystem->Upate();
 		renderUISystem->Upate(m_registry->GetRegistry());

@@ -7,6 +7,7 @@ add_executable(OTTERUS_EDITOR
     src/editor/displays/SceneDisplay.cpp
     src/editor/displays/SceneDisplay.h
     src/main.cpp
+        src/editor/utilities/editor_textures.h
 )
 
 target_include_directories(OTTERUS_EDITOR PRIVATE

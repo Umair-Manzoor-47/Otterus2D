@@ -113,7 +113,7 @@ namespace otterus_core::Systems {
 		}
 
 		auto lua = m_registry.GetContext<std::shared_ptr<sol::state>>();
-		lua->collect_garbage();
+		if (lua) lua->collect_garbage();
 	
 	}
 	void ScriptingSystem::Render()
@@ -140,7 +140,7 @@ namespace otterus_core::Systems {
 		}
 
 		auto lua = m_registry.GetContext<std::shared_ptr<sol::state>>();
-		lua->collect_garbage();
+		if (lua) lua->collect_garbage();
 	}
 
 	auto create_timer = [](sol::state& lua) {
