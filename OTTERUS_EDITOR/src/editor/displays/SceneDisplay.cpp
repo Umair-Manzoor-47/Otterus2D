@@ -56,20 +56,19 @@ namespace otterus_editor {
 		m_PlayScene = true;
     }
 
-    void SceneDisplay::UnloadScene()
-    {
-		m_SceneLoaded = true;
-		m_PlayScene = true;
+	void SceneDisplay::UnloadScene()
+	{
+		m_SceneLoaded = false;
+		m_PlayScene = false;
 		m_Registry.GetRegistry().clear();
-	    auto& lua = m_Registry.GetContext<std::shared_ptr<sol::state>>();
+		auto& lua = m_Registry.GetContext<std::shared_ptr<sol::state>>();
 
 		lua.reset();
 
 		auto& mainRegistry = MAIN_REGISTRY();
 		mainRegistry.GetMusicPlayer().Stop();
 		mainRegistry.GetSoundPlayer().Stop(-1);
-
-    }
+	}
 
     void SceneDisplay::Draw()
     {
@@ -83,9 +82,58 @@ namespace otterus_editor {
 		auto& mainRegistry = MAIN_REGISTRY();
 		auto& assetManager = mainRegistry.GetAssetManager();
 
-		auto playBtnTexture = assetManager.GetTexture("tex_play_btn");
-		//auto pauseBtnTexture = assetManager.GetTexture("tex_pause_btn");
-		auto stopBtnTexture = assetManager.GetTexture("tex_stop_btn");
+		auto playTexture = assetManager.GetTexture( "play_button" );
+		auto stopTexture = assetManager.GetTexture( "stop_button" );
+
+		if (m_PlayScene)
+		{
+			ImGui::PushStyleColor( ImGuiCol_Button, ImVec4{ 0.f, 0.9f, 0.f, 0.3 } );
+			ImGui::PushStyleColor( ImGuiCol_ButtonHovered, ImVec4{ 0.f, 0.9f, 0.f, 0.3 } );
+			ImGui::PushStyleColor( ImGuiCol_ButtonActive, ImVec4{ 0.f, 0.9f, 0.f, 0.3 } );
+		}
+
+		if ( ImGui::ImageButton( "##PlayButton",
+								 (ImTextureID)playTexture.GetID(),
+								 ImVec2{
+									 (float)playTexture.GetWidth() * 0.25f,
+									 (float)playTexture.GetHeight() * 0.25f,
+								 } ) &&
+			 !m_SceneLoaded )
+		{
+			LoadScene();
+		}
+
+		if ( ImGui::GetColorStackSize() > 0 )
+			ImGui::PopStyleColor( ImGui::GetColorStackSize() );
+
+		if ( ImGui::IsItemHovered( ImGuiHoveredFlags_DelayNormal ) )
+			ImGui::SetTooltip( "Play Scene" );
+
+		ImGui::SameLine();
+
+		if ( !m_PlayScene )
+		{
+			ImGui::PushStyleColor( ImGuiCol_Button, ImVec4{ 0.f, 0.9f, 0.f, 0.3 } );
+			ImGui::PushStyleColor( ImGuiCol_ButtonHovered, ImVec4{ 0.f, 0.9f, 0.f, 0.3 } );
+			ImGui::PushStyleColor( ImGuiCol_ButtonActive, ImVec4{ 0.f, 0.9f, 0.f, 0.3 } );
+		}
+
+		if ( ImGui::ImageButton( "##StopButton",
+								 (ImTextureID)stopTexture.GetID(),
+								 ImVec2{
+									 (float)stopTexture.GetWidth() * 0.25f,
+									 (float)stopTexture.GetHeight() * 0.25f,
+								 } ) &&
+			 m_SceneLoaded )
+		{
+			UnloadScene();
+		}
+
+		if ( ImGui::GetColorStackSize() > 0 )
+			ImGui::PopStyleColor( ImGui::GetColorStackSize() );
+
+		if ( ImGui::IsItemHovered( ImGuiHoveredFlags_DelayNormal ) )
+			ImGui::SetTooltip( "Stop Scene" );
 
         if (ImGui::BeginChild("##SceneChild", ImVec2{ 0.f, 0.f }, false, ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar))
         {

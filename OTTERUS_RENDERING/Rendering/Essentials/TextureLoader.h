@@ -21,7 +21,7 @@ namespace otterus_rendering {
 		TextureLoader() = delete;
 		static std::shared_ptr<Texture> Create(const std::string& path, Texture::TextureType type);
 		static std::shared_ptr<Texture> Create(const Texture::TextureType type, int width, int height);
-		static std::shared_ptr<Texture> CreateFromMemory(const unsigned char* imageData, size_t length, bool blended);
+		static std::shared_ptr<Texture> CreateFromMemory(const unsigned char* imageData, size_t length, bool blended = false);
 
 	};
 }

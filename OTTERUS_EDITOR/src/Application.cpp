@@ -53,7 +53,8 @@
 #include <Physics/ContactListener.h>
 #include <Core/ECS/MainRegistry.h>
 
-#include "Core/CoreUtilities/CoreEngineData.h"
+#include <Core/CoreUtilities/CoreEngineData.h>
+#include "editor/utilities/editor_textures.h"
 
 #ifdef _WIN32
 #ifndef NOMINMAX
@@ -324,6 +325,11 @@ namespace otterus_editor {
 			OTTERUS_ERROR("Failed to load Shaders.");
 			return false;
 		}
+    	if (!LoadEditorTextures())
+    	{
+    		OTTERUS_ERROR("Failed to load EditorTextures.");
+    		return false;
+    	}
 
     	if (!assetManager->CreateDefaultFonts())
 	    {
@@ -399,6 +405,27 @@ namespace otterus_editor {
         return true;
     }
 
+    bool Application::LoadEditorTextures() {
+    	auto& registry = MAIN_REGISTRY();
+    	auto& assetManager = registry.GetAssetManager();
+
+    	if ( !assetManager.AddTextureFromMemory(
+				 "play_button", play_button, sizeof( play_button ) / sizeof( play_button[ 0 ] ) ) )
+    	{
+    		OTTERUS_ERROR( "Failed to load texture [play_button] from memory." );
+    		return false;
+    	}
+
+    	if ( !assetManager.AddTextureFromMemory(
+				 "stop_button", stop_button, sizeof( stop_button ) / sizeof( stop_button[ 0 ] ) ) )
+    	{
+    		OTTERUS_ERROR( "Failed to load texture [stop_button] from memory." );
+    		return false;
+    	}
+
+    	return true;
+    }
+
     void Application::ProcessEvents()
     {
 		auto& inputManager = otterus_core::InputManager::GetInstance();
@@ -458,6 +485,12 @@ namespace otterus_editor {
 
 		coreGlobals.UpdateDeltaTime();
 
+    	auto& mainRegistry = MAIN_REGISTRY();
+    	auto& displayHolder = mainRegistry.GetContext<std::shared_ptr<DisplayHolder>>();
+
+    	for ( const auto& display : displayHolder->displays )
+    		display->Update();
+
 		auto& inputManager = otterus_core::InputManager::GetInstance();
 		auto& keyboard = inputManager.GetKeyboard();
 		auto& mouse = inputManager.GetMouse();
@@ -479,7 +512,7 @@ namespace otterus_editor {
 		auto& shader = assetManager->GetShader("color");
 		auto& fontShader = assetManager->GetShader("font");
 		auto& circleShader = assetManager->GetShader("circle");
-		auto& scriptSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>();
+		//auto& scriptSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>();
 
 		const auto& fb = m_registry->GetContext<std::shared_ptr<otterus_rendering::Framebuffer>>();
 
@@ -490,7 +523,7 @@ namespace otterus_editor {
 		renderer->SetClearColor(1.f, 1.f, 1.f, 1.f);
 		renderer->ClearBuffers(true, true, false);
 
-		scriptSystem->Render();
+		//scriptSystem->Render();
 		renderSystem->Upate();
 		renderShapeSystem->Upate();
 		renderUISystem->Upate(m_registry->GetRegistry());
