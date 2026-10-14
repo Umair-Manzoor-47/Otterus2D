@@ -8,12 +8,12 @@
 
 
 #if defined(_MSVC_TRADITIONAL) && _MSVC_TRADITIONAL
-#define OTTERUS_LOG(x, ...) otterus_logger::Logger::GetInstance().Log(x, __VA_ARGS__)
-#define OTTERUS_WARN(x, ...) otterus_logger::Logger::GetInstance().Warn(x, __VA_ARGS__)
+#define OTTERUS_LOG(x, ...)   otterus_logger::Logger::GetInstance().Log(std::source_location::current(), x, __VA_ARGS__)
+#define OTTERUS_WARN(x, ...)  otterus_logger::Logger::GetInstance().Warn(std::source_location::current(), x, __VA_ARGS__)
 #define OTTERUS_ERROR(x, ...) otterus_logger::Logger::GetInstance().Error(std::source_location::current(), x, __VA_ARGS__)
 #else
-#define OTTERUS_LOG(x, ...) otterus_logger::Logger::GetInstance().Log(x __VA_OPT__(,) __VA_ARGS__)
-#define OTTERUS_WARN(x, ...) otterus_logger::Logger::GetInstance().Warn(x __VA_OPT__(,) __VA_ARGS__)
+#define OTTERUS_LOG(x, ...)   otterus_logger::Logger::GetInstance().Log(std::source_location::current(), x __VA_OPT__(,) __VA_ARGS__)
+#define OTTERUS_WARN(x, ...)  otterus_logger::Logger::GetInstance().Warn(std::source_location::current(), x __VA_OPT__(,) __VA_ARGS__)
 #define OTTERUS_ERROR(x, ...) otterus_logger::Logger::GetInstance().Error(std::source_location::current(), x __VA_OPT__(,) __VA_ARGS__)
 #endif
 #define OTTERUS_ASSERT(x) assert(x)
@@ -36,6 +36,9 @@ namespace otterus_logger {
 	{
 		LogType type{LogType::INFO};
 		std::string log{""};
+		std::string timestamp;
+		std::string origin;
+		std::string stackTrace;
 	};
 
 	class Logger
@@ -69,23 +72,25 @@ namespace otterus_logger {
 		void Init(bool consoleLog = true, bool retainLog = true);
 
 		template <typename... Args>
-		void Log(const std::string& message, Args&&... args);
+		void Log(std::source_location location, const std::string& message, Args&&... args);
 
 		template <typename... Args>
-		void Warn(const std::string& message, Args&&... args);
+		void Warn(std::source_location location, const std::string& message, Args&&... args);
 
 		template <typename... Args>
 		void Error(std::source_location location, const std::string& message, Args&&... args);
 
-		void LuaLog(const std::string_view message);
-		void LuaWarn(const std::string_view message);
-		void LuaError(const std::string_view message);
+		void LuaLog(const std::string_view message, const std::string_view origin = "Lua Script");
+		void LuaWarn(const std::string_view message, const std::string_view origin = "Lua Script");
+		void LuaError(const std::string_view message, const std::string_view origin = "Lua Script");
 
 		inline void ClearLogs() { m_LogEntries.clear(); }
 
 		inline const std::vector<LogEntry>& GetLogs() { return m_LogEntries; }
 		inline void ResetLogAdded() { m_LogAdded = false; }
 		inline const bool LogAdded() const { return m_LogAdded; }
+
+		std::string FormatOrigin(const std::source_location& loc);
 	};
 }
 

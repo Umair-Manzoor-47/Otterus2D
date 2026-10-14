@@ -1,6 +1,5 @@
 #include "Logger.h"
 
-
 namespace otterus_logger {
 	Logger::LogTime::LogTime(const std::string& date) :
 		day{ date.substr(0, 3) }, dayNumber{ date.substr(8, 2) }, month{ date.substr(4, 3) }
@@ -37,22 +36,16 @@ namespace otterus_logger {
 		m_ConsoleLog = consoleLog;
 		m_RetainLogs = retainLog;
 		m_Initialized = true;
-	
 	}
-	void Logger::LuaLog(const std::string_view message)
+	void Logger::LuaLog(const std::string_view message, const std::string_view origin)
 	{
 		assert(m_Initialized && "The logger must be initialized before it is used!");
-
-		if (!m_Initialized)
-		{
-			std::cout << "The logger must be initialized before it is used!" << std::endl;
-			return;
-		}
+		if (!m_Initialized) return;
 
 		std::stringstream ss;
 		ss << "LUA [INFO]: " << CurrentDateTime() << " - " << message << "\n";
 
-		if ( m_ConsoleLog)
+		if (m_ConsoleLog)
 		{
 #ifdef _WIN32
 			HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -66,25 +59,26 @@ namespace otterus_logger {
 
 		if (m_RetainLogs)
 		{
-			m_LogEntries.emplace_back(LogType::INFO, ss.str());
+			m_LogEntries.push_back(LogEntry{
+				.type = LogType::INFO,
+				.log = std::string(message),
+				.timestamp = CurrentDateTime(),
+				.origin = std::string(origin),
+				.stackTrace = ""
+			});
 			m_LogAdded = true;
 		}
 	}
 
-	void Logger::LuaWarn(const std::string_view message)
+	void Logger::LuaWarn(const std::string_view message, const std::string_view origin)
 	{
 		assert(m_Initialized && "The logger must be initialized before it is used!");
-
-		if (!m_Initialized)
-		{
-			std::cout << "The logger must be initialized before it is used!" << std::endl;
-			return;
-		}
+		if (!m_Initialized) return;
 
 		std::stringstream ss;
 		ss << "LUA [WARN]: " << CurrentDateTime() << " - " << message << "\n";
 
-		if ( m_ConsoleLog)
+		if (m_ConsoleLog)
 		{
 #ifdef _WIN32
 			HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -98,25 +92,26 @@ namespace otterus_logger {
 
 		if (m_RetainLogs)
 		{
-			m_LogEntries.emplace_back(LogType::WARN, ss.str());
+			m_LogEntries.push_back(LogEntry{
+				.type = LogType::WARN,
+				.log = std::string(message),
+				.timestamp = CurrentDateTime(),
+				.origin = std::string(origin),
+				.stackTrace = ""
+			});
 			m_LogAdded = true;
 		}
 	}
 
-	void Logger::LuaError(const std::string_view message)
+	void Logger::LuaError(const std::string_view message, const std::string_view origin)
 	{
 		assert(m_Initialized && "The logger must be initialized before it is used!");
-
-		if (!m_Initialized)
-		{
-			std::cout << "The logger must be initialized before it is used!" << std::endl;
-			return;
-		}
+		if (!m_Initialized) return;
 
 		std::stringstream ss;
 		ss << "LUA [ERROR]: " << CurrentDateTime() << " - " << message << "\n";
 
-		if ( m_ConsoleLog)
+		if (m_ConsoleLog)
 		{
 #ifdef _WIN32
 			HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -130,9 +125,23 @@ namespace otterus_logger {
 
 		if (m_RetainLogs)
 		{
-			m_LogEntries.emplace_back(LogType::ERR, ss.str());
+			m_LogEntries.push_back(LogEntry{
+				.type = LogType::ERR,
+				.log = std::string(message),
+				.timestamp = CurrentDateTime(),
+				.origin = std::string(origin),
+				.stackTrace = ""
+			});
 			m_LogAdded = true;
 		}
+	}
+
+	std::string Logger::FormatOrigin(const std::source_location &loc) 		{
+		std::string_view file = loc.file_name();
+		size_t lastSlash = file.find_last_of("/\\");
+		if (lastSlash != std::string_view::npos)
+			file = file.substr(lastSlash + 1);
+		return std::format("{0}:{1} in {2}()", file, loc.line(), loc.function_name());
 	}
 }
 
