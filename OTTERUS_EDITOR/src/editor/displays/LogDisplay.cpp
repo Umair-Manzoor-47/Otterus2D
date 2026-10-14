@@ -1,6 +1,7 @@
 #include "LogDisplay.h"
 #include <Logger/Logger.h>
 #include <ranges>
+#include "imgui_internal.h"
 
 namespace otterus_editor {
 
@@ -37,7 +38,7 @@ namespace otterus_editor {
 
 	void LogDisplay::Draw()
 	{
-		if (!ImGui::Begin("Logs"))
+		if (!ImGui::Begin("Console"))
 		{
 			ImGui::End();
 			return;
@@ -81,10 +82,36 @@ namespace otterus_editor {
 					color = ImVec4{ 1.f, 0.f, 0.f, 1.f };
 				if (text.find("WARN") != std::string::npos)
 					color = ImVec4{ 1.f, 1.f, 0.f, 1.f };
+				
+				ImGui::PushID(lineNo);
 
-				ImGui::PushStyleColor( ImGuiCol_Text, color );
-				ImGui::TextUnformatted( line_start, line_end );
+				ImGui::PushStyleColor(ImGuiCol_Text, color);
+				bool is_selected = (m_SelectedLine == lineNo);
+
+				if (ImGui::Selectable(text.c_str(), is_selected, ImGuiSelectableFlags_SpanAvailWidth))
+				{
+					m_SelectedLine = lineNo;
+					// TODO: inspect logs
+				}
+
 				ImGui::PopStyleColor();
+
+
+				if (ImGui::BeginPopupContextItem())
+				{
+					if (ImGui::MenuItem("Copy Log"))
+					{
+						ImGui::SetClipboardText(text.c_str());
+					}
+					ImGui::EndPopup();
+				}
+
+				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+				{
+					// TODO: Handle double-click
+				}
+				ImGui::PopID();
+
 			}
 		}
 		

@@ -11,6 +11,7 @@ namespace otterus_editor {
 		ImVector<int> m_TextOffsets;
 
 		bool m_AutoScroll;
+		int m_SelectedLine{ -1 };
 
 	private:
 		void GetLogs();
@@ -21,7 +22,8 @@ namespace otterus_editor {
 
 		void Clear();
 
-		virtual void Draw() override;
+		void Draw() override;
+		inline int GetSelectedLine() const { return m_SelectedLine; };
 
 	};
 }
