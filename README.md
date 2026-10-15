@@ -1,6 +1,6 @@
-# 🦦 Otterus2D
+# Otterus2D
 
-A modular 2D game engine built from scratch in **C++20** and **OpenGL 4.5**, with an EnTT-based ECS, Box2D physics and Lua scripting.
+A modular 2D game engine built from scratch in **C++20** and **OpenGL 4.5 Core**, featuring an EnTT-based ECS, Box2D physics, and Lua scripting via Sol3.
 
 <p align="center"><img src="docs/media/CozyScene.gif" alt="Cozy scene running on Otterus2D" width="720"></p>
 
@@ -10,137 +10,130 @@ A modular 2D game engine built from scratch in **C++20** and **OpenGL 4.5**, wit
 
 ## Highlights
 
-- **Batched renderer** for sprites, text and shapes on a modern OpenGL 4.5 Core pipeline
-- **Data-oriented ECS** on EnTT, split into focused systems
-- **Lua scripting** (Lua 5.3 + Sol3) with the engine API exposed to scripts
-- **Box2D physics** with collision callbacks bridged to ECS entities
-- **Editor shell** built on Dear ImGui (docking, scene viewport, log console)
-
----
-
-## Features
-
-| Area | What's included |
-| :--- | :--- |
-| **Rendering** | Dynamic batching, layer-sorted sprites, primitives (rect, circle, line), TrueType text, 2D camera, framebuffers |
-| **ECS** | EnTT registry with transform, sprite, animation, collider, physics, text and script components |
-| **Scripting** | Lua access to entities, input, assets, timers, random and a game state stack, plus a follow camera |
-| **Physics** | Static, kinematic and dynamic bodies, sensors and triggers, runtime collider debug view |
-| **Audio** | Streamed music (MP3) and multi-channel sound effects (WAV) via SDL2_mixer |
-| **Assets** | Cached textures, shaders, fonts and audio through a central `AssetManager` |
-| **Tooling** | ImGui editor shell, scene viewport, filterable log console, structured logger with source locations |
-
-<details>
-<summary><b>Component and system details</b></summary>
-
-**Components:** `TransformComponent`, `SpriteComponent`, `AnimationComponent`, `BoxColliderComponent`, `CircleColliderComponent`, `RigidBodyComponent`, `PhysicsComponent`, `TextComponent`, `Identification`, `ScriptComponent`
-
-**Systems:** `RenderSystem`, `RenderShapeSystem`, `RenderUISystem`, `AnimationSystem`, `PhysicsSystem`, `ScriptingSystem`
-
-</details>
+- **Batched 2D Renderer**: Dynamic geometry batching for sprites, primitives, and TrueType fonts on OpenGL 4.5 Core.
+- **Data-Oriented ECS**: EnTT sparse-set registry providing cache-friendly linear memory iteration.
+- **Lua Scripting Bridge**: Sol3/Lua 5.3 runtime exposing entities, components, input, and resources to game scripts.
+- **Integrated Box2D Physics**: Rigid body simulation, collision filters, and event-driven contact callbacks.
+- **Dear ImGui Workspace**: Integrated docking shell with scene viewport, asset controls, and structured log console.
 
 ---
 
 ## Quick Start
 
-**Requirements**
-
+### Requirements
 - Windows 10/11 (64-bit)
-- Visual Studio 2022 (MSVC v143+) with C++20
+- Visual Studio 2022 (MSVC v143+) with C++20 support
 - CMake 3.20+
 - GPU with OpenGL 4.5 support
 
-> **Dependencies:** prebuilt third-party libraries are not committed to the repo. Download [`dependencies-win-x64.zip`](https://github.com/Umair-Manzoor-47/Otterus2D/releases/tag/deps-win-x64-v1) from the releases page and extract it into the repo root, so that `Dependencies/` sits next to `CMakeLists.txt`. The bundle contains x64 MSVC builds with static runtime linkage (`/MT` Release, `/MTd` Debug).
-
-**Build**
+### Dependencies
+Prebuilt third-party dependencies are packaged separately. Download [`dependencies-win-x64.zip`](https://github.com/Umair-Manzoor-47/Otterus2D/releases/tag/deps-win-x64-v1) and extract it into the repository root so that `Dependencies/` sits alongside `CMakeLists.txt`:
 
 ```powershell
+# Clone the repository
 git clone https://github.com/Umair-Manzoor-47/Otterus2D.git
 cd Otterus2D
 
-# Download and extract the prebuilt dependencies into ./Dependencies
+# Download and extract prebuilt dependencies
 Invoke-WebRequest -Uri "https://github.com/Umair-Manzoor-47/Otterus2D/releases/download/deps-win-x64-v1/dependencies-win-x64.zip" -OutFile deps.zip
 Expand-Archive deps.zip -DestinationPath .
 Remove-Item deps.zip
-
-cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
-cmake --build build --config Release
 ```
 
-**Run**
-
-A post-build step copies the runtime DLLs and `assets/` next to the executable.
-
+### Build and Run
 ```powershell
-cd build/bin
+# Configure and build Release
+cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release
+
+# Launch the editor
+cd build/bin/Release
 .\OTTERUS_EDITOR.exe
 ```
 
-With a multi-config Visual Studio generator the executable is in `build/bin/Release`.
+---
+
+## Documentation
+
+Full developer documentation is organized using the **Diataxis framework** in the **[Documentation Portal](docs/README.md)**:
+
+- **[Engine Architecture & Subsystems](docs/architecture/engine_overview.md)**: Layer rules, dependency boundaries, and the 4-phase frame execution lifecycle.
+- **[ECS Components Reference](docs/reference/ecs_components.md)**: Signatures and data layouts for all 10 engine components.
+- **[Lua Scripting API Reference](docs/reference/lua_api.md)**: Signature-first specifications for Entity, Registry, Input, Audio, Camera, and Timers.
+- **[AssetManager Reference](docs/reference/asset_manager.md)**: Supported formats, texture filtering modes (`pixel_art`), and caching.
+- **[Quickstart Tutorial: Building a 2D Scene](docs/tutorials/getting_started.md)**: Step-by-step guide to writing your first playable scene.
+- **[How-To: Collision Detection](docs/how-to/handle_collisions.md)**: Box2D contact callbacks, `ObjectData`, and safe deferred destruction.
+- **[How-To: Audio and Music](docs/how-to/play_audio_sfx.md)**: BGM streaming and 16-channel sound effect playback.
 
 ---
 
 ## Architecture
 
-The engine is a stack of static libraries. Each layer depends only on the layers below it.
-<p align="center"><img src="docs/media/architecture.svg" alt="Otterus2D architecture: Editor -> Core -> subsystems -> Logger and Utilities" width="720"></p>
+Otterus2D enforces a strict one-way dependency chain: upper layers may only include headers from layers below them.
 
+<p align="center">
+  <img src="docs/media/diagrams/subsystem_hierarchy.svg" alt="Otterus2D Subsystem Hierarchy" width="760">
+</p>
 
-| Module | Responsibility |
+For full architectural rules, lifecycle diagrams, and subsystem invariants, see [Engine Architecture and Overview](docs/architecture/engine_overview.md).
+
+---
+
+## Features
+
+| Subsystem | Capabilities |
 | :--- | :--- |
-| `OTTERUS_CORE` | ECS components and systems, asset caching, state stack, Lua bindings |
-| `OTTERUS_RENDERING` | Batch renderers, shaders, textures, font atlases, cameras, framebuffers |
-| `OTTERUS_PHYSICS` | Box2D wrappers, contact listener, collision user data |
-| `OTTERUS_SOUND` | `MusicPlayer` and `SoundFxPlayer` over SDL2_mixer |
-| `OTTERUS_WINDOW` | SDL2 window, OpenGL context, keyboard and mouse input |
-| `OTTERUS_LOGGER` | Structured logging with timestamps and `std::source_location` |
-| `OTTERUS_UTILITIES` | Frame timer, random generator, SDL RAII deleters |
-| `OTTERUS_EDITOR` | Entry point, main loop, ImGui docking workspace, scene view, log console |
+| **Rendering** | Dynamic batching, layer-sorted sprites, primitives (rect, circle, line), TrueType text, 2D camera, framebuffers |
+| **ECS** | EnTT registry managing transform, sprite, animation, collider, physics, text, and identification components |
+| **Scripting** | Lua 5.3 bindings for entity lifecycle, input queries, audio, timers, and mathematical vectors |
+| **Physics** | Static, kinematic, and dynamic Box2D bodies, sensor triggers, and contact listeners |
+| **Audio** | Streamed music (MP3/OGG) and 16-channel concurrent sound effects (WAV) via SDL2_mixer |
+| **Assets** | Centralized caching and deduplication for textures, shaders, fonts, and audio tracks |
+| **Tooling** | Dear ImGui docking workspace, aspect-fit scene viewport, and structured logger with source locations |
 
 ---
 
 ## Design Decisions
 
-| Decision | Approach |
+| Decision | Implementation Rationale |
 | :--- | :--- |
-| **ECS over inheritance** | Components are plain data in EnTT pools, so systems iterate linearly and stay cache-friendly. |
-| **Batched rendering** | A templated `Batcher` buffers geometry into dynamic vertex arrays. Sprites are sorted by layer and grouped by texture to cut draw calls. |
-| **Lua at the edge** | Gameplay lives in scripts via Sol3. Box2D contacts reach Lua through `std::any` and EnTT meta in `UserData`, with no hard-coded class dependencies. |
-| **Central asset cache** | `AssetManager` loads each resource once and shares it as a `shared_ptr` between C++ and Lua. |
-| **RAII for C resources** | SDL and Box2D handles are wrapped in smart pointers with custom deleters, so cleanup happens at scope exit. |
+| **ECS over Inheritance** | Plain data structs stored in contiguous EnTT pools; systems iterate linearly with high cache locality. |
+| **Batched Rendering** | Geometry is buffered into dynamic vertex arrays, sorted by layer and grouped by texture to minimize draw calls. |
+| **Data-Driven Scripting** | Gameplay logic lives in Lua scripts via Sol3. Engine services and components are exposed without hard-coded class dependencies. |
+| **Centralized Asset Cache** | `AssetManager` loads each asset once and shares it via `std::shared_ptr` between C++ and Lua. |
+| **RAII Resource Wrappers** | OpenGL handles, SDL surfaces, and audio chunks are encapsulated in smart pointers for automated cleanup. |
 
 ---
 
 ## Tech Stack
 
-| Library | Version | Used for |
+| Library | Version | Role |
 | :--- | :--- | :--- |
-| SDL2 / SDL2_mixer | 2.26.5 / 2.6.3 | Window, input, audio |
-| EnTT | 3.12.2 | ECS |
-| Box2D | 2.4.x | Physics |
-| Lua + Sol3 | 5.3.5 / 3.2.3 | Scripting |
-| GLM | 1.0.3 | Math |
-| Dear ImGui | 1.93 WIP | Editor UI |
-| GLAD, SOIL / stb | n/a | OpenGL loading, images, font baking |
+| SDL2 / SDL2_mixer | 2.26.5 / 2.6.3 | Windowing, input events, audio playback |
+| EnTT | 3.12.2 | Sparse-set Entity Component System |
+| Box2D | 2.4.x | 2D rigid-body simulation and collision detection |
+| Lua + Sol3 | 5.3.5 / 3.2.3 | Embedded scripting language and C++ binding bridge |
+| GLM | 1.0.3 | 2D/3D vector mathematics |
+| Dear ImGui | 1.93 WIP | Docking workspace, inspector, and log console |
+| GLAD / SOIL | OpenGL 4.5 Core | OpenGL function loader and image/texture decoding |
 
 ---
 
 ## Roadmap
 
-**Status:** active development
+**Status:** Active Development
 
 - [ ] UI system (layout containers, buttons, sliders, input fields)
 - [ ] Editor panels: scene hierarchy, component inspector, asset browser
-- [ ] Decouple editor from engine
+- [ ] Decouple editor from engine into standalone runtime
 - [ ] Linux build support
-- [ ] Automated tests and CI
+- [ ] Automated tests and CI pipeline
 
 ---
 
 ## Links
 
 - **Author:** Umair Manzoor
-<!-- ... - **Devlog:** `[TODO: YouTube link]` ...-->
 - **LinkedIn:** [Umair Manzoor](https://www.linkedin.com/in/umair-manzoor/)
 - **Issues:** [github.com/Umair-Manzoor-47/Otterus2D/issues](https://github.com/Umair-Manzoor-47/Otterus2D/issues)
 - **License:** [MIT](LICENSE)

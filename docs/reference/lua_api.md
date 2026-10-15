@@ -6,7 +6,7 @@ Otterus2D exposes core engine services, ECS entities, input devices, and resourc
 
 ## 1. Script Entry Points
 
-Gameplay scripts are loaded from `./assets/scripts/main.lua`. The engine requires a global `main` table containing update and render tables:
+Gameplay scripts are loaded from `./assets/scripts/main.lua`. The engine requires a global `main` table containing update and render functions:
 
 ```lua
 main = {
@@ -29,29 +29,27 @@ main = {
 
 ### Entity (`Entity`)
 
-Entities are instantiated through `Entity(name, group)` or referenced by ID via `Entity(id)`.
+| Signature | Description |
+| :--- | :--- |
+| `Entity(name: string, group: string) -> Entity` | Instantiates a new entity in the registry with name and group tags. |
+| `Entity(id: int) -> Entity` | Wraps an existing integer entity ID into an operable script handle. |
+| `entity:add_component(comp: Component) -> Component` | Attaches a component instance and returns its reference. |
+| `entity:get_component(Type: ComponentType) -> Component?` | Returns attached component instance, or `nil` if not present. |
+| `entity:has_component(Type: ComponentType) -> bool` | Checks if the entity possesses the specified component type. |
+| `entity:remove_component(Type: ComponentType) -> void` | Detaches the component type from the entity. |
+| `entity:name() -> string` | Returns the entity's identification name tag. |
+| `entity:group() -> string` | Returns the entity's group categorization tag. |
+| `entity:id() -> int` | Returns the underlying integer entity identifier. |
+| `entity:kill() -> void` | Destroys the entity and purges all its component data. |
 
-| Method | Parameters | Returns | Description |
-| :--- | :--- | :--- | :--- |
-| `Entity(name, group)` | `string`, `string` | `Entity` | Instantiates a new entity in the registry. |
-| `Entity(id)` | `int` | `Entity` | Wraps an existing entity identifier. |
-| `entity:add_component(comp)` | `Component` | `Component` | Attaches a component instance to the entity. |
-| `entity:get_component(Type)` | `Type` | `Component` | Retrieves attached component or `nil`. |
-| `entity:has_component(Type)` | `Type` | `bool` | Checks if component type exists on entity. |
-| `entity:remove_component(Type)` | `Type` | None | Detaches component type from entity. |
-| `entity:name()` | None | `string` | Returns entity name tag. |
-| `entity:group()` | None | `string` | Returns entity group categorization. |
-| `entity:id()` | None | `int` | Returns unique integer entity identifier. |
-| `entity:kill()` | None | None | Destroys the entity in the registry. |
+### Registry (`Registry`)
 
-### Registry Query (`Registry`)
-
-| Method | Parameters | Returns | Description |
-| :--- | :--- | :--- | :--- |
-| `Registry.get_entities(...)` | Component types | `runtime_view` | Queries entities matching component types. |
-| `view:for_each(callback)` | `function(ent)` | None | Iterates over each matching entity. |
-| `view:exclude(...)` | Component types | None | Excludes entities matching specified types. |
-| `Registry.clear()` | None | None | Purges all entities from the active registry. |
+| Signature | Description |
+| :--- | :--- |
+| `Registry.get_entities(...Type: ComponentType) -> runtime_view` | Queries entities possessing all specified component types. |
+| `view:for_each(callback: function(ent: Entity)) -> void` | Iterates over each entity matching the view criteria. |
+| `view:exclude(...Type: ComponentType) -> void` | Filters out entities possessing any of the excluded types. |
+| `Registry.clear() -> void` | Purges all entities and components from the active scene registry. |
 
 ---
 
@@ -59,13 +57,13 @@ Entities are instantiated through `Entity(name, group)` or referenced by ID via 
 
 Input states are queried through static `Keyboard` and `Mouse` user types.
 
-### Keyboard Methods
+### Keyboard (`Keyboard`)
 
-| Method | Returns | Description |
-| :--- | :--- | :--- |
-| `Keyboard.pressed(key)` | `bool` | True continuously while key is held down. |
-| `Keyboard.just_pressed(key)` | `bool` | True only on the initial frame key is pressed. |
-| `Keyboard.just_released(key)` | `bool` | True only on the frame key is released. |
+| Signature | Description |
+| :--- | :--- |
+| `Keyboard.pressed(key: KeyConstant) -> bool` | Returns true continuously while key is held down. |
+| `Keyboard.just_pressed(key: KeyConstant) -> bool` | Returns true only on the initial frame the key is pressed. |
+| `Keyboard.just_released(key: KeyConstant) -> bool` | Returns true only on the frame the key is released. |
 
 #### Key Constants
 - Letters: `KEY_A` through `KEY_Z`
@@ -75,18 +73,18 @@ Input states are queried through static `Keyboard` and `Mouse` user types.
 - Controls: `KEY_SPACE`, `KEY_ENTER`, `KEY_ESC`, `KEY_BACKSPACE`
 - Functions: `KEY_F1` through `KEY_F12`
 
-### Mouse Methods
+### Mouse (`Mouse`)
 
-| Method | Returns | Description |
-| :--- | :--- | :--- |
-| `Mouse.pressed(btn)` | `bool` | True continuously while button is held down. |
-| `Mouse.just_pressed(btn)` | `bool` | True only on initial button press. |
-| `Mouse.just_released(btn)` | `bool` | True only on button release. |
-| `Mouse.screen_position()` | `vec2` | Pixel coordinates in window space. |
-| `Mouse.world_position()` | `vec2` | Coordinates transformed into 2D world space. |
-| `Mouse.wheel_x()` | `int` | Horizontal scroll wheel delta. |
-| `Mouse.wheel_y()` | `int` | Vertical scroll wheel delta. |
-| `Mouse.is_moving()` | `bool` | True if mouse moved during current frame. |
+| Signature | Description |
+| :--- | :--- |
+| `Mouse.pressed(btn: MouseButton) -> bool` | Returns true continuously while mouse button is held down. |
+| `Mouse.just_pressed(btn: MouseButton) -> bool` | Returns true only on the initial frame the button is pressed. |
+| `Mouse.just_released(btn: MouseButton) -> bool` | Returns true only on the frame the button is released. |
+| `Mouse.screen_position() -> vec2` | Returns pixel coordinates relative to the window backbuffer. |
+| `Mouse.world_position() -> vec2` | Returns coordinates transformed into 2D world space. |
+| `Mouse.wheel_x() -> int` | Returns horizontal scroll wheel delta for the current frame. |
+| `Mouse.wheel_y() -> int` | Returns vertical scroll wheel delta for the current frame. |
+| `Mouse.is_moving() -> bool` | Returns true if the mouse pointer moved during the frame. |
 
 #### Mouse Constants
 `LEFT_BTN`, `MIDDLE_BTN`, `RIGHT_BTN`
@@ -95,75 +93,66 @@ Input states are queried through static `Keyboard` and `Mouse` user types.
 
 ## 4. Physics Contacts (`ContactListener`)
 
-Provides Box2D collision pairs each frame.
+| Signature | Description |
+| :--- | :--- |
+| `ContactListener.get_user_data() -> ObjectData?, ObjectData?` | Returns active colliding object pair, or `nil` if no contact occurred. |
 
-| Method | Returns | Description |
-| :--- | :--- | :--- |
-| `ContactListener.get_user_data()` | `ObjectData`, `ObjectData` | Returns pair of colliding objects, or `nil`. |
-
-### Contact Object Fields (`ObjectData`)
-
-- `object.tag`: Tag string.
-- `object.group`: Group string.
-- `object.entityId`: Integer ID of the entity.
-- `object.isTrigger`: True if sensor.
-- `object.isCollider`: True if solid obstacle.
+### Contact Metadata Fields (`ObjectData`)
+- `object.tag`: String tag identifier.
+- `object.group`: String group identifier.
+- `object.entityId`: Integer ID of the entity (pass to `Entity(id)`).
+- `object.isTrigger`: True if configured as a sensor.
+- `object.isCollider`: True if participating in solid physical collisions.
 
 ---
 
 ## 5. Audio Subsystem
 
-Provides music streaming via SDL2_mixer and multi-channel sound effects.
+### Music (`Music`)
 
-### Music Methods (`Music`)
-
-| Method | Parameters | Description |
-| :--- | :--- | :--- |
-| `Music.play(name, [loops])` | `string`, `int` | Play background music (`-1` loops indefinitely). |
-| `Music.stop()` | None | Stop active music playback. |
-| `Music.pause()` | None | Pause playback. |
-| `Music.resume()` | None | Resume paused playback. |
-| `Music.set_volume(volume)` | `int` (0-128) | Set music volume level. |
-| `Music.is_playing()` | None | Returns `bool` indicating active playback. |
+| Signature | Description |
+| :--- | :--- |
+| `Music.play(name: string, [loops: int = -1]) -> void` | Streams background music track (`-1` loops indefinitely). |
+| `Music.stop() -> void` | Stops active music playback. |
+| `Music.pause() -> void` | Temporarily halts music playback. |
+| `Music.resume() -> void` | Resumes paused music playback. |
+| `Music.set_volume(volume: int) -> void` | Adjusts music volume on a scale from 0 to 100. |
+| `Music.is_playing() -> bool` | Returns true if music is actively streaming. |
 
 ### Sound Effects (`Sound`)
 
-| Method | Parameters | Description |
-| :--- | :--- | :--- |
-| `Sound.play(name, [loops, channel])` | `string`, `int`, `int` | Play cached sound effect on designated channel. |
-| `Sound.stop(channel)` | `int` (`-1` for all) | Stop playback on specified channel. |
-| `Sound.set_volume(volume, channel)`| `int`, `int` | Adjust channel volume (0-128). |
-| `Sound.is_playing(channel)` | `int` | Returns `bool` for channel status. |
+| Signature | Description |
+| :--- | :--- |
+| `Sound.play(name: string, [loops: int = 0, channel: int = -1]) -> void` | Plays sound effect on designated channel (`-1` selects first free). |
+| `Sound.stop(channel: int) -> void` | Stops playback on specified channel (`-1` stops all channels). |
+| `Sound.set_volume(channel: int, volume: int) -> void` | Adjusts channel volume on a scale from 0 to 100. |
+| `Sound.is_playing(channel: int) -> bool` | Returns true if the channel is currently playing audio. |
 
 ---
 
-## 6. AssetManager
+## 6. AssetManager (`AssetManager`)
 
-Allows dynamic loading and registration of assets into the central cache.
-
-| Method | Parameters | Returns | Description |
-| :--- | :--- | :--- | :--- |
-| `AssetManager.add_texture(name, path, pixel_art)` | `string`, `string`, `bool` | `bool` | Loads texture file into GPU memory. |
-| `AssetManager.add_music(name, path)` | `string`, `string` | `bool` | Loads streaming audio file (MP3/OGG). |
-| `AssetManager.add_sound(name, path)` | `string`, `string` | `bool` | Loads sound effect into memory (WAV). |
-| `AssetManager.add_font(name, path, size)` | `string`, `string`, `float` | `bool` | Loads TrueType font atlas. |
+| Signature | Description |
+| :--- | :--- |
+| `AssetManager.add_texture(name: string, path: string, pixel_art: bool) -> bool` | Loads texture into GPU memory (`pixel_art` toggles nearest vs linear). |
+| `AssetManager.add_music(name: string, path: string) -> bool` | Registers streaming audio file (`.mp3`, `.ogg`, `.wav`). |
+| `AssetManager.add_sound(name: string, path: string) -> bool` | Loads sound effect audio chunk into memory (`.wav`, `.ogg`). |
+| `AssetManager.add_font(name: string, path: string, [size: float = 32.0]) -> bool` | Generates TrueType font atlas. |
 
 ---
 
-## 7. Camera Control
+## 7. Camera Control (`Camera`)
 
-Controls the 2D orthographic scene camera.
-
-| Method | Parameters | Returns | Description |
-| :--- | :--- | :--- | :--- |
-| `Camera.position()` | None | `vec2` | Current camera position. |
-| `Camera.set_position(pos)` | `vec2` | None | Set world coordinates of camera center. |
-| `Camera.scale()` | None | `float` | Current zoom scale. |
-| `Camera.set_scale(scale)` | `float` | None | Adjust camera zoom level. |
-| `Camera.width()` | None | `int` | Viewport width in pixels. |
-| `Camera.height()` | None | `int` | Viewport height in pixels. |
-| `Camera.get_world_coords(screenPos)` | `vec2` | `vec2` | Convert screen coordinates to world units. |
-| `Camera.get_screen_coords(worldPos)` | `vec2` | `vec2` | Convert world coordinates to screen units. |
+| Signature | Description |
+| :--- | :--- |
+| `Camera.position() -> vec2` | Returns current camera center in world coordinates. |
+| `Camera.set_position(pos: vec2) -> void` | Moves camera center to target world position. |
+| `Camera.scale() -> float` | Returns current camera zoom factor. |
+| `Camera.set_scale(scale: float) -> void` | Sets camera zoom factor. |
+| `Camera.width() -> int` | Returns viewport pixel width. |
+| `Camera.height() -> int` | Returns viewport pixel height. |
+| `Camera.get_world_coords(screen_pos: vec2) -> vec2` | Converts screen pixel coordinates to world coordinates. |
+| `Camera.get_screen_coords(world_pos: vec2) -> vec2` | Converts world coordinates to screen pixel coordinates. |
 
 ---
 
@@ -171,53 +160,45 @@ Controls the 2D orthographic scene camera.
 
 ### 2D Vector (`vec2`)
 
-Vector construction supports `vec2(scalar)` or `vec2(x, y)`. Standard operators (`+`, `-`, `*`, `/`) are overloaded.
+| Signature | Description |
+| :--- | :--- |
+| `vec2(scalar: float) -> vec2` | Constructs 2D vector with identical x and y values. |
+| `vec2(x: float, y: float) -> vec2` | Constructs 2D vector with explicit x and y coordinates. |
+| `v:length() -> float` | Returns Euclidean length of the vector. |
+| `v:lengthSq() -> float` | Returns squared length of the vector (avoids square root). |
 
-```lua
-local v1 = vec2(10.0, 20.0)
-local v2 = vec2(5.0, 5.0)
-local v3 = v1 + v2 * 2.0
-
-local len = v1:length()
-local lenSq = v1:lengthSq()
-```
+Standard arithmetic operators (`+`, `-`, `*`, `/`) are overloaded for vector-vector and vector-scalar operations.
 
 ### Free Math Functions
 
-| Function | Parameters | Returns | Description |
-| :--- | :--- | :--- | :--- |
-| `distance(v1, v2)` | `vec2, vec2` | `float` | Euclidean distance between two points. |
-| `lerp(a, b, t)` | `float, float, float` | `float` | Linear interpolation from `a` to `b` by factor `t`. |
-| `clamp(val, min, max)` | `float, float, float` | `float` | Constrains value between `min` and `max`. |
+| Signature | Description |
+| :--- | :--- |
+| `distance(v1: vec2, v2: vec2) -> float` | Returns Euclidean distance between two points. |
+| `lerp(a: float, b: float, t: float) -> float` | Computes linear interpolation between `a` and `b` by factor `t`. |
+| `clamp(val: float, min: float, max: float) -> float` | Constrains value within `[min, max]` range. |
 
 ### Precision Timer (`Timer`)
 
-Used to track cooldowns, frame timing, and delays.
-
-| Method | Returns | Description |
-| :--- | :--- | :--- |
-| `timer = Timer()` | `Timer` | Constructs a new inactive timer. |
-| `timer:start()` | None | Starts tracking elapsed time. |
-| `timer:stop()` | None | Stops timer. |
-| `timer:restart()` | None | Resets and immediately starts timer. |
-| `timer:pause()` | None | Temporarily halts timer. |
-| `timer:resume()` | None | Resumes paused timer. |
-| `timer:elapsed_ms()` | `int64` | Returns elapsed time in milliseconds. |
-| `timer:elapsed_sec()` | `float` | Returns elapsed time in seconds. |
-| `timer:is_running()` | `bool` | Returns true if currently running. |
+| Signature | Description |
+| :--- | :--- |
+| `Timer() -> Timer` | Instantiates a new inactive timer. |
+| `timer:start() -> void` | Begins tracking elapsed time. |
+| `timer:stop() -> void` | Halts timer. |
+| `timer:restart() -> void` | Halts and immediately restarts timer from zero. |
+| `timer:pause() -> void` | Temporarily halts elapsed time accumulation. |
+| `timer:resume() -> void` | Resumes a paused timer. |
+| `timer:elapsed_ms() -> int` | Returns elapsed time in milliseconds. |
+| `timer:elapsed_sec() -> float` | Returns elapsed time in seconds. |
+| `timer:is_running() -> bool` | Returns true if the timer is actively ticking. |
+| `timer:is_paused() -> bool` | Returns true if the timer is currently paused. |
 
 ---
 
 ## 9. Logging and Diagnostics
 
-Outputs structured log entries to stdout and the Dear ImGui Log Console.
-
-```lua
--- Standard log levels
-OTLog.log("System initialized with status: %d", status)
-OTLog.warn("Asset '%s' loaded with fallback settings", assetName)
-OTLog.error("Failed to acquire entity handle")
-
--- Assert with engine error reporting
-assert(entity ~= nil, "Entity must not be nil")
-```
+| Signature | Description |
+| :--- | :--- |
+| `OTLog.log(fmt: string, ...args) -> void` | Writes info message to stdout and editor Log Console. |
+| `OTLog.warn(fmt: string, ...args) -> void` | Writes warning message to stdout and editor Log Console. |
+| `OTLog.error(fmt: string, ...args) -> void` | Writes error message with source origin to Log Console. |
+| `assert(cond: bool, [message: string]) -> bool` | Evaluates condition; writes to `OTLog.error` on failure. |

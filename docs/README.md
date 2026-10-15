@@ -33,7 +33,7 @@ Authoritative technical specifications and data dictionaries.
   Technical specification for all ten core components (`TransformComponent`, `SpriteComponent`, `BoxColliderComponent`, etc.).
 - [Lua Scripting API Reference](reference/lua_api.md)  
   Complete listing of functions, tables, and user types exposed to Lua via Sol3.
-- **AssetManager and Resource Caching** *(Upcoming)*  
+- [AssetManager and Resource Caching](reference/asset_manager.md)  
   Texture, shader, font, and audio resource caching mechanics.
 
 ---
@@ -51,5 +51,5 @@ Focused procedures addressing specific engineering problems.
 
 - [Detecting and Handling Collisions](how-to/handle_collisions.md)  
   Geometric queries with colliders, Box2D rigid bodies, and deferred destruction patterns.
-- **Configuring Audio and Music Playback** *(Upcoming)*  
+- [Configuring Audio and Music Playback](how-to/play_audio_sfx.md)  
   Streaming background music and managing multi-channel sound effects.

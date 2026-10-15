@@ -29,6 +29,10 @@ In Otterus2D, components are plain data structures (PODs) managed by EnTT. They 
 
 Defines spatial transformation in 2D world space.
 
+### Constructor Signatures
+- `Transform(position: vec2, scale: vec2, rotation: float) -> Transform`
+- `Transform(x: float, y: float, scale_x: float, scale_y: float, rotation: float) -> Transform`
+
 ### Fields
 
 | Field | Type | Default | Description |
@@ -40,13 +44,9 @@ Defines spatial transformation in 2D world space.
 ### Lua Usage
 
 ```lua
--- Construct with position, scale, rotation:
 local transform = entity:add_component(
     Transform(vec2(100.0, 200.0), vec2(1.0, 1.0), 0.0)
 )
-
--- Or construct with raw coordinates:
--- Transform(x, y, scale_x, scale_y, rotation)
 
 transform.position = vec2(150.0, 250.0)
 transform.rotation = 45.0
@@ -57,6 +57,15 @@ transform.rotation = 45.0
 ## 2. SpriteComponent (`Sprite`)
 
 Defines visual appearance using a cached texture from `AssetManager`.
+
+### Constructor Signature
+- `Sprite(texture_name: string, width: float, height: float, start_x: int, start_y: int, layer: int) -> Sprite`
+
+### Methods
+
+| Signature | Description |
+| :--- | :--- |
+| `sprite:generate_uvs() -> void` | Computes texture coordinates based on texture sheet dimensions. |
 
 ### Fields
 
@@ -73,12 +82,9 @@ Defines visual appearance using a cached texture from `AssetManager`.
 ### Lua Usage
 
 ```lua
--- Constructor parameters: texture_name, width, height, start_x, start_y, layer
 local sprite = entity:add_component(
     Sprite("player_tex", 32.0, 32.0, 0, 0, 1)
 )
-
--- Generates normalized UV coordinates from texture dimensions
 sprite:generate_uvs()
 ```
 
@@ -87,6 +93,15 @@ sprite:generate_uvs()
 ## 3. AnimationComponent (`Animation`)
 
 Cycles UV coordinates of a `Sprite` across frames in a sprite sheet.
+
+### Constructor Signature
+- `Animation([num_frames: int = 1, frame_rate: int = 1, frame_offset: int = 0, is_vertical: bool = false, looped: bool = false]) -> Animation`
+
+### Methods
+
+| Signature | Description |
+| :--- | :--- |
+| `anim:reset() -> void` | Resets current frame to 0 and updates the start time. |
 
 ### Fields
 
@@ -102,12 +117,9 @@ Cycles UV coordinates of a `Sprite` across frames in a sprite sheet.
 ### Lua Usage
 
 ```lua
--- Constructor parameters: num_frames, frame_rate, frame_offset, is_vertical, looped
 local anim = entity:add_component(
     Animation(6, 12, 0, false, true)
 )
-
--- Reset animation to frame 0
 anim:reset()
 ```
 
@@ -116,6 +128,9 @@ anim:reset()
 ## 4. BoxColliderComponent (`BoxCollider`)
 
 Defines an axis-aligned rectangular boundary for simple trigger or distance queries.
+
+### Constructor Signature
+- `BoxCollider(width: int, height: int, offset: vec2) -> BoxCollider`
 
 ### Fields
 
@@ -129,7 +144,6 @@ Defines an axis-aligned rectangular boundary for simple trigger or distance quer
 ### Lua Usage
 
 ```lua
--- Constructor parameters: width, height, offset
 local box = entity:add_component(
     BoxCollider(32, 32, vec2(0.0, 0.0))
 )
@@ -140,6 +154,10 @@ local box = entity:add_component(
 ## 5. CircleColliderComponent (`CircleCollider`)
 
 Defines a radial boundary for simple distance-based collision queries.
+
+### Constructor Signatures
+- `CircleCollider(radius: float) -> CircleCollider`
+- `CircleCollider(radius: float, offset: vec2) -> CircleCollider`
 
 ### Fields
 
@@ -152,7 +170,6 @@ Defines a radial boundary for simple distance-based collision queries.
 ### Lua Usage
 
 ```lua
--- Constructor parameter: radius, [offset]
 local circle = entity:add_component(CircleCollider(16.0))
 ```
 
@@ -161,6 +178,9 @@ local circle = entity:add_component(CircleCollider(16.0))
 ## 6. PhysicsComponent (`PhysicsComponent`)
 
 Wraps a Box2D physical body (`b2Body`) for full rigid-body dynamics, forces, and contacts.
+
+### Constructor Signature
+- `PhysicsComponent.new(attribs: PhysicsAttributes) -> PhysicsComponent`
 
 ### Attributes (`PhysicsAttributes`)
 
@@ -180,16 +200,16 @@ Wraps a Box2D physical body (`b2Body`) for full rigid-body dynamics, forces, and
 
 ### Runtime Methods
 
-| Method | Parameters | Description |
-| :--- | :--- | :--- |
-| `physics:linear_impulse(vec2)` | `vec2` | Apply sudden impulse force. |
-| `physics:angular_impulse(float)`| `float` | Apply rotational torque impulse. |
-| `physics:set_linear_velocity(vec2)` | `vec2` | Directly set linear velocity vector. |
-| `physics:get_linear_velocity()` | None | Returns current linear velocity `vec2`. |
-| `physics:set_angular_velocity(float)` | `float` | Set rotational speed. |
-| `physics:get_angular_velocity()` | None | Returns current rotational speed. |
-| `physics:set_gravity_scale(float)` | `float` | Adjust gravity scale at runtime. |
-| `physics:set_transform(vec2)` | `vec2` | Teleport body to world position. |
+| Signature | Description |
+| :--- | :--- |
+| `physics:linear_impulse(impulse: vec2) -> void` | Applies sudden directional impulse force. |
+| `physics:angular_impulse(impulse: float) -> void` | Applies rotational torque impulse. |
+| `physics:set_linear_velocity(velocity: vec2) -> void` | Assigns body linear velocity vector. |
+| `physics:get_linear_velocity() -> vec2` | Returns current body linear velocity vector. |
+| `physics:set_angular_velocity(velocity: float) -> void` | Assigns rotational velocity. |
+| `physics:get_angular_velocity() -> float` | Returns current rotational velocity. |
+| `physics:set_gravity_scale(scale: float) -> void` | Overrides global gravity scale for this body. |
+| `physics:set_transform(position: vec2) -> void` | Teleports body to target world position. |
 
 ### Lua Usage
 
@@ -212,6 +232,9 @@ physics:linear_impulse(vec2(0.0, -5.0))
 
 Lightweight, non-Box2D kinematic velocity component for simple programmatic movement.
 
+### Constructor Signature
+- `RigidBody(velocity: vec2) -> RigidBody`
+
 ### Fields
 
 | Field | Type | Default | Description |
@@ -221,7 +244,6 @@ Lightweight, non-Box2D kinematic velocity component for simple programmatic move
 ### Lua Usage
 
 ```lua
--- Constructor parameter: velocity
 local rb = entity:add_component(RigidBody(vec2(150.0, 0.0)))
 rb.velocity = vec2(200.0, 0.0)
 ```
@@ -231,6 +253,10 @@ rb.velocity = vec2(200.0, 0.0)
 ## 8. TextComponent (`TextComponent`)
 
 Renders TrueType text using a font loaded in `AssetManager`.
+
+### Constructor Signatures
+- `TextComponent(font_name: string, text: string) -> TextComponent`
+- `TextComponent(text: string, font_name: string, padding: int, wrap: float, color: Color) -> TextComponent`
 
 ### Fields
 
@@ -246,7 +272,6 @@ Renders TrueType text using a font loaded in `AssetManager`.
 ### Lua Usage
 
 ```lua
--- Constructor parameters: fontName, textStr
 local text = entity:add_component(
     TextComponent("pixel", "Score: 100")
 )
