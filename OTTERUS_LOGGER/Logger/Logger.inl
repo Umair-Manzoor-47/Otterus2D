@@ -16,7 +16,7 @@ constexpr WORD WHITE = 7;
 namespace otterus_logger {
 
 	template <typename... Args>
-	void Logger::Log(const std::string& message, Args&&... args) {
+	void Logger::Log(std::source_location location, const std::string& message, Args&&... args) {
 		
 		assert(m_Initialized && "Logger must be initialized before it can be used.");
 		
@@ -25,27 +25,32 @@ namespace otterus_logger {
 			std::cout << "Logger must be initialized before it can be used." << std::endl;
 			return;
 		}
+		std::string formattedMsg = std::vformat(message, std::make_format_args(args...));
+		std::string timeStr = CurrentDateTime();
+		std::string originStr = FormatOrigin(location);
 
-		std::stringstream ss;
-		ss << "OTTERUS [INFO]: " << CurrentDateTime() << "-" << std::vformat(message, std::make_format_args(args...)) << "\n";
-		
 		if (m_ConsoleLog) {
-
 			HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 			SetConsoleTextAttribute(hConsole, GREEN);
-			std::cout << ss.str();
+			std::cout << "OTTERUS [INFO]: " << timeStr << " - " << formattedMsg << "\n";
 			SetConsoleTextAttribute(hConsole, WHITE);
 		}
 
 		if (m_RetainLogs) {
-			m_LogEntries.emplace_back(LogType::INFO, ss.str());
+			m_LogEntries.push_back(LogEntry{
+				.type = LogType::INFO,
+				.log = formattedMsg,
+				.timestamp = timeStr,
+				.origin = originStr,
+				.stackTrace = ""
+			});
 			m_LogAdded = true;
 		}
 	}
 
 
 	template <typename... Args>
-	void Logger::Warn(const std::string& message, Args&&... args) {
+	void Logger::Warn(std::source_location location, const std::string& message, Args&&... args) {
 
 		assert(m_Initialized && "Logger must be initialized before it can be used.");
 
@@ -54,20 +59,25 @@ namespace otterus_logger {
 			std::cout << "Logger must be initialized before it can be used." << std::endl;
 			return;
 		}
-
-		std::stringstream ss;
-		ss << "OTTERUS [WARN]: " << CurrentDateTime() << "-" << std::vformat(message, std::make_format_args(args...)) << "\n";
+		std::string formattedMsg = std::vformat(message, std::make_format_args(args...));
+		std::string timeStr = CurrentDateTime();
+		std::string originStr = FormatOrigin(location);
 
 		if (m_ConsoleLog) {
-
 			HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 			SetConsoleTextAttribute(hConsole, YELLOW);
-			std::cout << ss.str();
+			std::cout << "OTTERUS [WARN]: " << timeStr << " - " << formattedMsg << "\n";
 			SetConsoleTextAttribute(hConsole, WHITE);
 		}
 
 		if (m_RetainLogs) {
-			m_LogEntries.emplace_back(LogType::WARN, ss.str());
+			m_LogEntries.push_back(LogEntry{
+				.type = LogType::WARN,
+				.log = formattedMsg,
+				.timestamp = timeStr,
+				.origin = originStr,
+				.stackTrace = ""
+			});
 			m_LogAdded = true;
 		}
 
@@ -86,22 +96,25 @@ namespace otterus_logger {
 			return;
 		}
 
-		std::stringstream ss;
-		ss << "OTTERUS [ERROR]: " << CurrentDateTime() << "-"
-			<< std::vformat(message, std::make_format_args(args...))
-			<< "\nFUNC: " << location.function_name()
-			<< "\nLINE: " << location.line() << "\n\n";
+		std::string formattedMsg = std::vformat(message, std::make_format_args(args...));
+		std::string timeStr = CurrentDateTime();
+		std::string originStr = FormatOrigin(location);
 
 		if (m_ConsoleLog) {
-
 			HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 			SetConsoleTextAttribute(hConsole, RED);
-			std::cout << ss.str();
+			std::cout << "OTTERUS [ERROR]: " << timeStr << " - " << formattedMsg << "\n";
 			SetConsoleTextAttribute(hConsole, WHITE);
 		}
 
 		if (m_RetainLogs) {
-			m_LogEntries.emplace_back(LogType::ERR, ss.str());
+			m_LogEntries.push_back(LogEntry{
+				.type = LogType::ERR,
+				.log = formattedMsg,
+				.timestamp = timeStr,
+				.origin = originStr,
+				.stackTrace = ""
+			});
 			m_LogAdded = true;
 		}
 	}

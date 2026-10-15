@@ -209,16 +209,27 @@ namespace otterus_core::Systems {
 				}
 			}
 
+			lua_State* l_state = s;
+			std::string origin = "Lua Script";
+			lua_Debug ar;
+			if (lua_getstack(l_state, 1, &ar) && lua_getinfo(l_state, "nSl",
+				&ar)) {
+				std::string_view src = ar.short_src;
+				origin = (ar.name && ar.name[0] != '\0')
+					? std::format("{0}:{1} in {2}()", src, ar.currentline, ar.name)
+					: std::format("{0}:{1}", src, ar.currentline);
+			}
+
 			auto& logger = otterus_logger::Logger::GetInstance();
 			switch (type) {
 				case otterus_logger::LogType::INFO:
-					logger.LuaLog(message);
+					logger.LuaLog(message, origin);
 					break;
 				case otterus_logger::LogType::WARN:
-					logger.LuaWarn(message);
+					logger.LuaWarn(message, origin);
 					break;
 				case otterus_logger::LogType::ERR:
-					logger.LuaError(message);
+					logger.LuaError(message, origin);
 					break;
 				default:
 					break;
