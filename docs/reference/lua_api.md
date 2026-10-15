@@ -1,6 +1,6 @@
 # Lua Scripting API Reference
 
-Otterus2D exposes core engine services, input devices, and resource loaders to Lua 5.3 via Sol3 bindings.
+Otterus2D exposes core engine services, ECS entities, input devices, and resource loaders to Lua 5.3 via Sol3 bindings.
 
 ---
 
@@ -25,7 +25,37 @@ main = {
 
 ---
 
-## 2. Input System
+## 2. ECS Entity and Registry
+
+### Entity (`Entity`)
+
+Entities are instantiated through `Entity(name, group)` or referenced by ID via `Entity(id)`.
+
+| Method | Parameters | Returns | Description |
+| :--- | :--- | :--- | :--- |
+| `Entity(name, group)` | `string`, `string` | `Entity` | Instantiates a new entity in the registry. |
+| `Entity(id)` | `int` | `Entity` | Wraps an existing entity identifier. |
+| `entity:add_component(comp)` | `Component` | `Component` | Attaches a component instance to the entity. |
+| `entity:get_component(Type)` | `Type` | `Component` | Retrieves attached component or `nil`. |
+| `entity:has_component(Type)` | `Type` | `bool` | Checks if component type exists on entity. |
+| `entity:remove_component(Type)` | `Type` | None | Detaches component type from entity. |
+| `entity:name()` | None | `string` | Returns entity name tag. |
+| `entity:group()` | None | `string` | Returns entity group categorization. |
+| `entity:id()` | None | `int` | Returns unique integer entity identifier. |
+| `entity:kill()` | None | None | Destroys the entity in the registry. |
+
+### Registry Query (`Registry`)
+
+| Method | Parameters | Returns | Description |
+| :--- | :--- | :--- | :--- |
+| `Registry.get_entities(...)` | Component types | `runtime_view` | Queries entities matching component types. |
+| `view:for_each(callback)` | `function(ent)` | None | Iterates over each matching entity. |
+| `view:exclude(...)` | Component types | None | Excludes entities matching specified types. |
+| `Registry.clear()` | None | None | Purges all entities from the active registry. |
+
+---
+
+## 3. Input System
 
 Input states are queried through static `Keyboard` and `Mouse` user types.
 
@@ -61,23 +91,27 @@ Input states are queried through static `Keyboard` and `Mouse` user types.
 #### Mouse Constants
 `LEFT_BTN`, `MIDDLE_BTN`, `RIGHT_BTN`
 
-### Input Example
+---
 
-```lua
-if Keyboard.pressed(KEY_W) then
-    -- Continuous movement
-end
+## 4. Physics Contacts (`ContactListener`)
 
-if Keyboard.just_pressed(KEY_SPACE) then
-    -- Single-trigger action
-end
+Provides Box2D collision pairs each frame.
 
-local mousePos = Mouse.world_position()
-```
+| Method | Returns | Description |
+| :--- | :--- | :--- |
+| `ContactListener.get_user_data()` | `ObjectData`, `ObjectData` | Returns pair of colliding objects, or `nil`. |
+
+### Contact Object Fields (`ObjectData`)
+
+- `object.tag`: Tag string.
+- `object.group`: Group string.
+- `object.entityId`: Integer ID of the entity.
+- `object.isTrigger`: True if sensor.
+- `object.isCollider`: True if solid obstacle.
 
 ---
 
-## 3. Audio Subsystem
+## 5. Audio Subsystem
 
 Provides music streaming via SDL2_mixer and multi-channel sound effects.
 
@@ -103,7 +137,7 @@ Provides music streaming via SDL2_mixer and multi-channel sound effects.
 
 ---
 
-## 4. AssetManager
+## 6. AssetManager
 
 Allows dynamic loading and registration of assets into the central cache.
 
@@ -114,18 +148,9 @@ Allows dynamic loading and registration of assets into the central cache.
 | `AssetManager.add_sound(name, path)` | `string`, `string` | `bool` | Loads sound effect into memory (WAV). |
 | `AssetManager.add_font(name, path, size)` | `string`, `string`, `float` | `bool` | Loads TrueType font atlas. |
 
-### Asset Loading Example
-
-```lua
-AssetManager.add_texture("ship", "assets/textures/ship.png", true)
-AssetManager.add_sound("laser", "assets/sounds/laser.wav")
-
-Sound.play("laser")
-```
-
 ---
 
-## 5. Camera Control
+## 7. Camera Control
 
 Controls the 2D orthographic scene camera.
 
@@ -142,7 +167,7 @@ Controls the 2D orthographic scene camera.
 
 ---
 
-## 6. Math and Utilities
+## 8. Math and Utilities
 
 ### 2D Vector (`vec2`)
 
@@ -183,7 +208,7 @@ Used to track cooldowns, frame timing, and delays.
 
 ---
 
-## 7. Logging and Diagnostics
+## 9. Logging and Diagnostics
 
 Outputs structured log entries to stdout and the Dear ImGui Log Console.
 

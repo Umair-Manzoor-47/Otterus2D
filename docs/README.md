@@ -49,7 +49,7 @@ Hands-on walkthroughs designed to guide new developers from project setup to a w
 ### 4. How-To Guides (Problem-Oriented)
 Focused procedures addressing specific engineering problems.
 
-- **Handling Box2D Collisions in Lua** *(Upcoming)*  
-  Configuring contact listeners, processing collision callbacks, and safely queuing deferred mutations.
+- [Detecting and Handling Collisions](how-to/handle_collisions.md)  
+  Geometric queries with colliders, Box2D rigid bodies, and deferred destruction patterns.
 - **Configuring Audio and Music Playback** *(Upcoming)*  
   Streaming background music and managing multi-channel sound effects.
