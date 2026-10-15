@@ -31,7 +31,7 @@ Authoritative technical specifications and data dictionaries.
 
 - [ECS Components Reference](reference/ecs_components.md)  
   Technical specification for all ten core components (`TransformComponent`, `SpriteComponent`, `BoxColliderComponent`, etc.).
-- **Lua Scripting API Reference** *(Upcoming)*  
+- [Lua Scripting API Reference](reference/lua_api.md)  
   Complete listing of functions, tables, and user types exposed to Lua via Sol3.
 - **AssetManager and Resource Caching** *(Upcoming)*  
   Texture, shader, font, and audio resource caching mechanics.
@@ -41,7 +41,7 @@ Authoritative technical specifications and data dictionaries.
 ### 3. Tutorials (Learning-Oriented)
 Hands-on walkthroughs designed to guide new developers from project setup to a working game.
 
-- **Quickstart: Building a 2D Scene** *(Upcoming)*  
+- [Quickstart: Building a 2D Scene](tutorials/getting_started.md)  
   Creating a scene, instantiating an entity, attaching components, and binding user input.
 
 ---
