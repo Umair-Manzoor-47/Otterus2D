@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="100%" height="100%" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#4B5563"/>
+    </marker>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="108%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.06"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="520" fill="#FFFFFF" rx="12" stroke="#E5E7EB" stroke-width="1.5"/>
+
+  <!-- Title & Context -->
+  <text x="40" y="42" fill="#111827" font-size="18" font-weight="700">Otterus2D Subsystem Hierarchy</text>
+  <text x="40" y="62" fill="#6B7280" font-size="13">Strict one-way dependency chain: each layer only includes headers from layers below it</text>
+
+  <!-- Layer 1: Application -->
+  <g transform="translate(180, 85)" filter="url(#shadow)">
+    <rect width="680" height="64" rx="8" fill="#1E293B" stroke="#0F172A" stroke-width="1.5"/>
+    <text x="340" y="30" text-anchor="middle" fill="#FFFFFF" font-size="16" font-weight="700">OTTERUS_EDITOR</text>
+    <text x="340" y="50" text-anchor="middle" fill="#94A3B8" font-size="12">Editor Workspace, Scene Viewport, Tooling Panels, Application Host</text>
+  </g>
+  <text x="50" y="122" fill="#64748B" font-size="11" font-weight="700" letter-spacing="1">APPLICATION</text>
+
+  <!-- Arrow 1 -> 2 -->
+  <path d="M 520 150 L 520 178" stroke="#4B5563" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Layer 2: Core -->
+  <g transform="translate(180, 180)" filter="url(#shadow)">
+    <rect width="680" height="68" rx="8" fill="#2563EB" stroke="#1D4ED8" stroke-width="1.5"/>
+    <text x="340" y="30" text-anchor="middle" fill="#FFFFFF" font-size="16" font-weight="700">OTTERUS_CORE</text>
+    <text x="340" y="52" text-anchor="middle" fill="#DBEAFE" font-size="12">Entity Component System, Resource Management, Scripting Bridge, Scene States</text>
+  </g>
+  <text x="50" y="220" fill="#64748B" font-size="11" font-weight="700" letter-spacing="1">ENGINE CORE</text>
+
+  <!-- Arrows 2 -> 3 -->
+  <path d="M 260 250 L 260 278" stroke="#4B5563" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M 435 250 L 435 278" stroke="#4B5563" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M 605 250 L 605 278" stroke="#4B5563" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M 780 250 L 780 278" stroke="#4B5563" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Layer 3: Subsystems -->
+  <g transform="translate(180, 280)" filter="url(#shadow)">
+    <!-- Window -->
+    <rect x="0" y="0" width="160" height="96" rx="8" fill="#F0FDF4" stroke="#86EFAC" stroke-width="1.5"/>
+    <text x="80" y="32" text-anchor="middle" fill="#166534" font-size="14" font-weight="700">WINDOW</text>
+    <text x="80" y="54" text-anchor="middle" fill="#374151" font-size="11">Window Creation</text>
+    <text x="80" y="70" text-anchor="middle" fill="#374151" font-size="11">Context Setup</text>
+    <text x="80" y="86" text-anchor="middle" fill="#4B5563" font-size="10">Event Polling</text>
+
+    <!-- Rendering -->
+    <rect x="173" y="0" width="160" height="96" rx="8" fill="#EFF6FF" stroke="#93C5FD" stroke-width="1.5"/>
+    <text x="253" y="32" text-anchor="middle" fill="#1E40AF" font-size="14" font-weight="700">RENDERING</text>
+    <text x="253" y="54" text-anchor="middle" fill="#374151" font-size="11">2D Batch Renderer</text>
+    <text x="253" y="70" text-anchor="middle" fill="#374151" font-size="11">Shaders &amp; Buffers</text>
+    <text x="253" y="86" text-anchor="middle" fill="#4B5563" font-size="10">Cameras &amp; FBOs</text>
+
+    <!-- Physics -->
+    <rect x="346" y="0" width="160" height="96" rx="8" fill="#FFFBEB" stroke="#FDE68A" stroke-width="1.5"/>
+    <text x="426" y="32" text-anchor="middle" fill="#92400E" font-size="14" font-weight="700">PHYSICS</text>
+    <text x="426" y="54" text-anchor="middle" fill="#374151" font-size="11">2D Physics World</text>
+    <text x="426" y="70" text-anchor="middle" fill="#374151" font-size="11">Collision Shapes</text>
+    <text x="426" y="86" text-anchor="middle" fill="#4B5563" font-size="10">Contact Callbacks</text>
+
+    <!-- Sound -->
+    <rect x="520" y="0" width="160" height="96" rx="8" fill="#FAF5FF" stroke="#E9D5FF" stroke-width="1.5"/>
+    <text x="600" y="32" text-anchor="middle" fill="#6B21A8" font-size="14" font-weight="700">SOUND</text>
+    <text x="600" y="54" text-anchor="middle" fill="#374151" font-size="11">Audio Device</text>
+    <text x="600" y="70" text-anchor="middle" fill="#374151" font-size="11">Music Streams</text>
+    <text x="600" y="86" text-anchor="middle" fill="#4B5563" font-size="10">Sound Effects</text>
+  </g>
+  <text x="50" y="334" fill="#64748B" font-size="11" font-weight="700" letter-spacing="1">SUBSYSTEMS</text>
+
+  <!-- Arrows 3 -> 4 -->
+  <path d="M 345 377 L 345 408" stroke="#4B5563" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M 695 377 L 695 408" stroke="#4B5563" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Layer 4: Foundation -->
+  <g transform="translate(180, 410)" filter="url(#shadow)">
+    <!-- Logger -->
+    <rect x="0" y="0" width="333" height="66" rx="8" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+    <text x="166" y="28" text-anchor="middle" fill="#334155" font-size="14" font-weight="700">OTTERUS_LOGGER</text>
+    <text x="166" y="48" text-anchor="middle" fill="#64748B" font-size="11">Diagnostic logging, formatting, and console output sinks</text>
+
+    <!-- Utilities -->
+    <rect x="347" y="0" width="333" height="66" rx="8" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+    <text x="513" y="28" text-anchor="middle" fill="#334155" font-size="14" font-weight="700">OTTERUS_UTILITIES</text>
+    <text x="513" y="48" text-anchor="middle" fill="#64748B" font-size="11">Timing, random number generation, and RAII memory helpers</text>
+  </g>
+  <text x="50" y="450" fill="#64748B" font-size="11" font-weight="700" letter-spacing="1">FOUNDATION</text>
+</svg>

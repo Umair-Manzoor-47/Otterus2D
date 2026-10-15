@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 380" width="100%" height="100%" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#4B5563"/>
+    </marker>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.06"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="380" fill="#FFFFFF" rx="12" stroke="#E5E7EB" stroke-width="1.5"/>
+
+  <!-- Title & Context -->
+  <text x="36" y="38" fill="#111827" font-size="18" font-weight="700">Entity Component System (ECS) Architecture</text>
+  <text x="36" y="58" fill="#6B7280" font-size="13">Entities act as handles into dense component arrays; systems operate over component queries</text>
+
+  <!-- Column 1: Entities -->
+  <g transform="translate(36, 85)" filter="url(#shadow)">
+    <rect width="180" height="250" rx="8" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+    <rect width="180" height="36" rx="8" fill="#334155"/>
+    <rect y="28" width="180" height="8" fill="#334155"/>
+    <text x="90" y="24" text-anchor="middle" fill="#FFFFFF" font-size="14" font-weight="700">ENTITIES</text>
+    
+    <g transform="translate(14, 52)" font-size="11" fill="#1E293B">
+      <text y="14" font-weight="700">Identifier Handles</text>
+      <text y="30" fill="#64748B">• Lightweight integer IDs</text>
+      <text y="46" fill="#64748B">• No direct state storage</text>
+      <text y="62" fill="#64748B">• No inheritance hierarchy</text>
+      
+      <rect y="78" width="152" height="42" rx="4" fill="#FFFFFF" stroke="#E2E8F0"/>
+      <text x="8" y="96" font-size="11" font-weight="600">Entity A</text>
+      <text x="8" y="110" font-size="10" fill="#64748B">ID: 0x0001</text>
+
+      <rect y="128" width="152" height="42" rx="4" fill="#FFFFFF" stroke="#E2E8F0"/>
+      <text x="8" y="146" font-size="11" font-weight="600">Entity B</text>
+      <text x="8" y="160" font-size="10" fill="#64748B">ID: 0x0002</text>
+    </g>
+  </g>
+
+  <!-- Arrow Entities -> Component Pools -->
+  <path d="M 220 200 L 256 200" stroke="#4B5563" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Column 2: Component Pools -->
+  <g transform="translate(262, 85)" filter="url(#shadow)">
+    <rect width="360" height="250" rx="8" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1.5"/>
+    <rect width="360" height="36" rx="8" fill="#2563EB"/>
+    <rect y="28" width="360" height="8" fill="#2563EB"/>
+    <text x="180" y="24" text-anchor="middle" fill="#FFFFFF" font-size="14" font-weight="700">COMPONENTS (Contiguous Memory Pools)</text>
+
+    <g transform="translate(16, 52)" font-size="11">
+      <!-- Pool 1 -->
+      <rect width="328" height="52" rx="6" fill="#FFFFFF" stroke="#DBEAFE"/>
+      <text x="12" y="20" font-weight="700" fill="#1D4ED8">Spatial / Transform Pool</text>
+      <text x="12" y="38" fill="#4B5563">[Entity A: Position, Scale, Angle]  [Entity B: ...] ...</text>
+
+      <!-- Pool 2 -->
+      <rect y="60" width="328" height="52" rx="6" fill="#FFFFFF" stroke="#DBEAFE"/>
+      <text x="12" y="80" font-weight="700" fill="#1D4ED8">Visual / Renderable Pool</text>
+      <text x="12" y="98" fill="#4B5563">[Entity A: Texture, UVs, Layer]  [Entity B: ...] ...</text>
+
+      <!-- Pool 3 -->
+      <rect y="120" width="328" height="52" rx="6" fill="#FFFFFF" stroke="#DBEAFE"/>
+      <text x="12" y="140" font-weight="700" fill="#1D4ED8">Physics / Collider Pool</text>
+      <text x="12" y="158" fill="#4B5563">[Entity A: Body, Bounds]  [Entity B: ...] ...</text>
+    </g>
+  </g>
+
+  <!-- Arrow Component Pools -> Systems -->
+  <path d="M 626 200 L 662 200" stroke="#4B5563" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Column 3: Systems -->
+  <g transform="translate(668, 85)" filter="url(#shadow)">
+    <rect width="196" height="250" rx="8" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1.5"/>
+    <rect width="196" height="36" rx="8" fill="#10B981"/>
+    <rect y="28" width="196" height="8" fill="#10B981"/>
+    <text x="98" y="24" text-anchor="middle" fill="#FFFFFF" font-size="14" font-weight="700">SYSTEMS</text>
+    
+    <g transform="translate(14, 52)" font-size="11" fill="#1E293B">
+      <text y="14" font-weight="700" fill="#047857">Stateless Processing</text>
+      <text y="30" fill="#64748B">Queries matching components:</text>
+      
+      <rect y="44" width="168" height="40" rx="4" fill="#FFFFFF" stroke="#E2E8F0"/>
+      <text x="8" y="60" font-weight="600" fill="#0F172A">Render Pipeline</text>
+      <text x="8" y="74" font-size="10" fill="#64748B">Transforms &amp; Visuals</text>
+
+      <rect y="92" width="168" height="40" rx="4" fill="#FFFFFF" stroke="#E2E8F0"/>
+      <text x="8" y="108" font-weight="600" fill="#0F172A">Physics Simulation</text>
+      <text x="8" y="122" font-size="10" fill="#64748B">Transforms &amp; Colliders</text>
+
+      <rect y="140" width="168" height="40" rx="4" fill="#FFFFFF" stroke="#E2E8F0"/>
+      <text x="8" y="156" font-weight="600" fill="#0F172A">Gameplay Logic</text>
+      <text x="8" y="170" font-size="10" fill="#64748B">Script &amp; State Updates</text>
+    </g>
+  </g>
+</svg>
