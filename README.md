@@ -1,20 +1,35 @@
-# 🦦 Otterus2D
+<p align="center">
+  <img src="docs/media/Otterus2D_SplashBanner.png" alt="Otterus2D Logo" width="600">
+</p>
 
-A modular 2D game engine built from scratch in **C++20** and **OpenGL 4.5**, with an EnTT-based ECS, Box2D physics and Lua scripting.
+<p align="center">
+  A modular 2D game engine built from scratch in <strong>C++20</strong> and <strong>OpenGL 4.5 Core</strong>, featuring an EnTT-based ECS, Box2D physics, and Lua scripting.
+</p>
 
-<p align="center"><img src="docs/media/CozyScene.gif" alt="Cozy scene running on Otterus2D" width="720"></p>
+<p align="center">
+  <a href="#quick-start"><img src="https://img.shields.io/badge/Platform-Windows%20x64-0078D6?logo=windows&logoColor=white" alt="Windows x64"></a>
+  <a href="#tech-stack"><img src="https://img.shields.io/badge/C%2B%2B-20-00599C?logo=c%2B%2B&logoColor=white" alt="C++20"></a>
+  <a href="#tech-stack"><img src="https://img.shields.io/badge/OpenGL-4.5%20Core-5586A4?logo=opengl&logoColor=white" alt="OpenGL 4.5"></a>
+  <a href="#tech-stack"><img src="https://img.shields.io/badge/Scripting-Lua%205.3%20%2B%20Sol3-000080?logo=lua&logoColor=white" alt="Lua 5.3"></a>
+  <a href="#tech-stack"><img src="https://img.shields.io/badge/Physics-Box2D-E84D3D" alt="Box2D"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License MIT"></a>
+</p>
 
-<p align="center"><em>A cozy scene running on the engine: tilemap, animated sprites, particles and audio, all driven by Lua scripts.</em></p>
+<p align="center">
+  <img src="docs/media/CozyScene.gif" alt="Cozy scene running on Otterus2D" width="720">
+  <br>
+  <em>Showcase scene running on Otterus2D: tilemap, animated sprites, particle weather, and spatial audio driven by Lua scripts.</em>
+</p>
 
 ---
 
 ## Highlights
 
-- **Batched renderer** for sprites, text and shapes on a modern OpenGL 4.5 Core pipeline
-- **Data-oriented ECS** on EnTT, split into focused systems
-- **Lua scripting** (Lua 5.3 + Sol3) with the engine API exposed to scripts
-- **Box2D physics** with collision callbacks bridged to ECS entities
-- **Editor shell** built on Dear ImGui (docking, scene viewport, log console)
+- **Batched 2D Renderer**: Dynamic sprite batching, layer sorting, shape primitives (rectangles, circles, lines), and font atlases on modern OpenGL 4.5 Core.
+- **Data-Oriented ECS**: EnTT registry with decoupled plain data components and linear, cache-friendly system iterations.
+- **Lua Scripting**: Lua 5.3 and Sol3 integration exposing entities, cameras, state stacks, input, and physics callbacks.
+- **Box2D Physics**: Static, kinematic, and dynamic rigid bodies with contact listener callbacks bridged to ECS entities.
+- **Editor Workspace**: Built with Dear ImGui, featuring docking, scene viewport framebuffer (FBO), and filterable log console.
 
 ---
 
@@ -23,42 +38,44 @@ A modular 2D game engine built from scratch in **C++20** and **OpenGL 4.5**, wit
 | Area | What's included |
 | :--- | :--- |
 | **Rendering** | Dynamic batching, layer-sorted sprites, primitives (rect, circle, line), TrueType text, 2D camera, framebuffers |
-| **ECS** | EnTT registry with transform, sprite, animation, collider, physics, text and script components |
-| **Scripting** | Lua access to entities, input, assets, timers, random and a game state stack, plus a follow camera |
-| **Physics** | Static, kinematic and dynamic bodies, sensors and triggers, runtime collider debug view |
+| **ECS** | EnTT registry with transform, sprite, animation, collider, physics, text, and script components |
+| **Scripting** | Lua access to entities, input, assets, timers, random, game state stack, and follow camera |
+| **Physics** | Static, kinematic, and dynamic bodies, sensors and triggers, runtime collider debug view |
 | **Audio** | Streamed music (MP3) and multi-channel sound effects (WAV) via SDL2_mixer |
-| **Assets** | Cached textures, shaders, fonts and audio through a central `AssetManager` |
+| **Assets** | Cached textures, shaders, fonts, and audio managed through a central `AssetManager` |
 | **Tooling** | ImGui editor shell, scene viewport, filterable log console, structured logger with source locations |
 
-<details>
-<summary><b>Component and system details</b></summary>
+---
 
-**Components:** `TransformComponent`, `SpriteComponent`, `AnimationComponent`, `BoxColliderComponent`, `CircleColliderComponent`, `RigidBodyComponent`, `PhysicsComponent`, `TextComponent`, `Identification`, `ScriptComponent`
+## Documentation
 
-**Systems:** `RenderSystem`, `RenderShapeSystem`, `RenderUISystem`, `AnimationSystem`, `PhysicsSystem`, `ScriptingSystem`
+Comprehensive documentation is available in the [Otterus2D Documentation Repository](https://github.com/Umair-Manzoor-47/Otterus2D-docs):
 
-</details>
+- **[Getting Started Guide](https://github.com/Umair-Manzoor-47/Otterus2D-docs)**: Environment setup, engine concepts, and first project walkthrough.
+- **[Architecture & Internals](https://github.com/Umair-Manzoor-47/Otterus2D-docs)**: Subsystem boundaries, static library layering, and frame execution lifecycle.
+- **[ECS Components & Lua API Reference](https://github.com/Umair-Manzoor-47/Otterus2D-docs)**: Complete component specifications and Sol3 scripting interface.
+- **[How-To Recipes](https://github.com/Umair-Manzoor-47/Otterus2D-docs)**: Practical guides for collision handling, audio playback, and custom cameras.
 
 ---
 
 ## Quick Start
 
-**Requirements**
+### Requirements
 
 - Windows 10/11 (64-bit)
-- Visual Studio 2022 (MSVC v143+) with C++20
+- Visual Studio 2022 (MSVC v143+) with C++20 support
 - CMake 3.20+
 - GPU with OpenGL 4.5 support
 
-> **Dependencies:** prebuilt third-party libraries are not committed to the repo. Download [`dependencies-win-x64.zip`](https://github.com/Umair-Manzoor-47/Otterus2D/releases/tag/deps-win-x64-v1) from the releases page and extract it into the repo root, so that `Dependencies/` sits next to `CMakeLists.txt`. The bundle contains x64 MSVC builds with static runtime linkage (`/MT` Release, `/MTd` Debug).
+> **Dependencies**: Prebuilt third-party libraries are hosted on the releases page. Download [`dependencies-win-x64.zip`](https://github.com/Umair-Manzoor-47/Otterus2D/releases/tag/deps-win-x64-v1) and extract it into the repository root so that `Dependencies/` resides alongside `CMakeLists.txt`. The bundle contains x64 MSVC builds with static runtime linkage (`/MT` Release, `/MTd` Debug).
 
-**Build**
+### Build
 
 ```powershell
 git clone https://github.com/Umair-Manzoor-47/Otterus2D.git
 cd Otterus2D
 
-# Download and extract the prebuilt dependencies into ./Dependencies
+# Download and extract prebuilt dependencies into ./Dependencies
 Invoke-WebRequest -Uri "https://github.com/Umair-Manzoor-47/Otterus2D/releases/download/deps-win-x64-v1/dependencies-win-x64.zip" -OutFile deps.zip
 Expand-Archive deps.zip -DestinationPath .
 Remove-Item deps.zip
@@ -67,47 +84,16 @@ cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release
 ```
 
-**Run**
+### Run
 
-A post-build step copies the runtime DLLs and `assets/` next to the executable.
+A post-build step automatically copies runtime DLLs and `assets/` adjacent to the executable.
 
 ```powershell
 cd build/bin
 .\OTTERUS_EDITOR.exe
 ```
 
-With a multi-config Visual Studio generator the executable is in `build/bin/Release`.
-
----
-
-## Architecture
-
-The engine is a stack of static libraries. Each layer depends only on the layers below it.
-<p align="center"><img src="docs/media/architecture.svg" alt="Otterus2D architecture: Editor -> Core -> subsystems -> Logger and Utilities" width="720"></p>
-
-
-| Module | Responsibility |
-| :--- | :--- |
-| `OTTERUS_CORE` | ECS components and systems, asset caching, state stack, Lua bindings |
-| `OTTERUS_RENDERING` | Batch renderers, shaders, textures, font atlases, cameras, framebuffers |
-| `OTTERUS_PHYSICS` | Box2D wrappers, contact listener, collision user data |
-| `OTTERUS_SOUND` | `MusicPlayer` and `SoundFxPlayer` over SDL2_mixer |
-| `OTTERUS_WINDOW` | SDL2 window, OpenGL context, keyboard and mouse input |
-| `OTTERUS_LOGGER` | Structured logging with timestamps and `std::source_location` |
-| `OTTERUS_UTILITIES` | Frame timer, random generator, SDL RAII deleters |
-| `OTTERUS_EDITOR` | Entry point, main loop, ImGui docking workspace, scene view, log console |
-
----
-
-## Design Decisions
-
-| Decision | Approach |
-| :--- | :--- |
-| **ECS over inheritance** | Components are plain data in EnTT pools, so systems iterate linearly and stay cache-friendly. |
-| **Batched rendering** | A templated `Batcher` buffers geometry into dynamic vertex arrays. Sprites are sorted by layer and grouped by texture to cut draw calls. |
-| **Lua at the edge** | Gameplay lives in scripts via Sol3. Box2D contacts reach Lua through `std::any` and EnTT meta in `UserData`, with no hard-coded class dependencies. |
-| **Central asset cache** | `AssetManager` loads each resource once and shares it as a `shared_ptr` between C++ and Lua. |
-| **RAII for C resources** | SDL and Box2D handles are wrapped in smart pointers with custom deleters, so cleanup happens at scope exit. |
+When using a multi-config Visual Studio generator, the binary is located at `build/bin/Release/OTTERUS_EDITOR.exe`.
 
 ---
 
