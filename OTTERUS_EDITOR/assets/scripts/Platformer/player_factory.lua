@@ -19,7 +19,7 @@ function PlayerFactory.CreatePlayer(x, y)
     attrs.boxShape      = true
     attrs.boxSize       = vec2(collider.width, collider.height)
     attrs.fixedRotation = true
-    attrs.objectData    = ObjectData("NinjaFrog", "player", true, false, player:id())
+    attrs.objectData    = ObjectData("NinjaFrog", "player", true, false, true, player:id())
 
     local physics = player:add_component(PhysicsComponent(attrs))
     local sprite  = player:add_component(Sprite("nf_idle", 32, 32, 0, 0, 1))

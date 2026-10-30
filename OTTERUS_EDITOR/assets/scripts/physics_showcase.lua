@@ -25,6 +25,7 @@ function PhysicsShowcase:create_wall(name, width, height, x, y)
     physAttrs.boxShape = true
     physAttrs.boxSize = vec2(collider.width, collider.height)
     physAttrs.fixedRotation = false
+    physAttrs.objectData = ObjectData("wall", "environment", true, false, false, wall:id())
 
     local physics = wall:add_component(PhysicsComponent(physAttrs))
 
@@ -47,6 +48,7 @@ function PhysicsShowcase:create_ball(pos_x, pos_y, scale_x, scale_y)
     physAttribs.scale = transform.scale
     physAttribs.circle = true
     physAttribs.fixedRotation = false
+    physAttribs.objectData = ObjectData("ball", "ball", true, false, true, ball:id())
 
     local physics = ball:add_component(PhysicsComponent(physAttribs))
     local sprite = ball:add_component(Sprite("ball", 32, 32, 0, 0, 0))

@@ -20,6 +20,7 @@ script_list = {
     -- Platformer: Data, Factory, Systems, States & Controller
     "assets/scripts/Platformer/platformerMap.lua",
     "assets/scripts/Platformer/platformer_data.lua",
+    "assets/scripts/Platformer/projectile.lua",
     "assets/scripts/Platformer/player_factory.lua",
     "assets/scripts/Platformer/platformer_systems.lua",
     "assets/scripts/Platformer/player_states.lua",

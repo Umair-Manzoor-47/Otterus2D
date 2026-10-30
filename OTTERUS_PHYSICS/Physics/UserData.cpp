@@ -5,6 +5,15 @@
 namespace otterus_physics {
 	bool ObjectData::AddContact(const ObjectData& objectData)
 	{
+		if (tag.empty() && group.empty()) return false;
+
+		if (objectData.tag.empty() && objectData.group.empty()) return false;
+
+		if (objectData.tag == tag && objectData.group == group) return false;
+
+		if (isFriendly && objectData.isFriendly && isTrigger && objectData.isTrigger)
+			return false;
+
 		auto contactItr = std::find_if(
 			contactEntities.begin(), contactEntities.end(),
 			[&](ObjectData& contactInfo) {

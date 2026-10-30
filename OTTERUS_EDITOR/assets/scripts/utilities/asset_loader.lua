@@ -20,7 +20,7 @@ function AssetLoader.Load(assets)
                 OT_log("Loaded texture [%s]", v.name)
             else
                 AssetLoader.Loaded.textures[v.name] = nil
-                OT_error("Failed to load texture [%s] at path [%s]", v.name, v.path)
+                OT_warn("Failed to load texture [%s] at path [%s]", v.name, v.path)
             end
         end
     end

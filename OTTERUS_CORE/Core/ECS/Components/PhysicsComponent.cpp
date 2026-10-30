@@ -124,13 +124,14 @@ namespace otterus_core::ECS {
 			sol::call_constructor,
 			sol::factories(
 				[](const std::string& tag, const std::string& group, bool isCollider,
-					bool isTrigger, const std::uint32_t entityID)
+					bool isTrigger, bool isFriendly, const std::uint32_t entityID)
 				{
 					return ObjectData{
 						.tag = tag,
 						.group = group,
 						.isCollider = isCollider,
 						.isTrigger = isTrigger,
+						.isFriendly =  isFriendly,
 						.entityId = entityID
 					};
 
@@ -141,6 +142,7 @@ namespace otterus_core::ECS {
 						.group = params["group"].get_or(std::string{""}),
 						.isCollider = params["isCollider"].get_or(false),
 						.isTrigger = params["isTrigger"].get_or(false),
+						.isFriendly = params["isFriendly"].get_or(false),
 						.entityId = params["entityID"].get_or((std::uint32_t)entt::null)
 					};
 				}
@@ -148,6 +150,7 @@ namespace otterus_core::ECS {
 			"to_string", &ObjectData::to_string,
 			"tag", &ObjectData::tag,
 			"group", &ObjectData::group,
+			"isFriendly", &ObjectData::isFriendly,
 			"isCollider", &ObjectData::isCollider,
 			"isTrigger", &ObjectData::isTrigger,
 			"bTrigger", &ObjectData::isTrigger,
@@ -197,6 +200,7 @@ namespace otterus_core::ECS {
 							.group		= physicsAttribs["ObjectData"]["group"].get_or(std::string{""}),
 							.isCollider	= physicsAttribs["ObjectData"]["isCollider"].get_or(false),
 							.isTrigger	= physicsAttribs["ObjectData"]["isTrigger"].get_or(false),
+							.isFriendly	= physicsAttribs["ObjectData"]["isFriendly"].get_or(false),
 							.entityId	= physicsAttribs["ObjectData"]["entityID"].get_or((std::uint32_t)entt::null)
 						}
 					};

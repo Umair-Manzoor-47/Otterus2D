@@ -124,7 +124,7 @@ function ColliderLayerLoader:Load(layerDef, scale, isSensor, customTag, customGr
                 attrs.boxSize       = vec2(collider.width, collider.height)
                 attrs.fixedRotation = not isSensor and false or true
                 attrs.isSensor      = isSensor or false
-                attrs.objectData    = ObjectData(tag, group, not attrs.isSensor, attrs.isSensor, ent:id())
+                attrs.objectData    = ObjectData(tag, group, not attrs.isSensor, attrs.isSensor, false, ent:id())
                 ent:add_component(PhysicsComponent(attrs))
                 table.insert(entities, ent)
             else

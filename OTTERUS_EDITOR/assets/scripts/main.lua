@@ -18,8 +18,8 @@ main = {
     },
 
     [2] = {
-        render = function()
-            stateStack:render()
+       render = function()
+           -- stateStack:render()
         end
     }
 }

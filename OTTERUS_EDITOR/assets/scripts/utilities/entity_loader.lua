@@ -100,7 +100,8 @@ function EntityLoader.Create(def)
         end
 
         attrs.isSensor = p.isSensor or false
-        attrs.objectData = ObjectData(tag, group, not attrs.isSensor, attrs.isSensor, entity:id())
+        local isFriendly = (p.isFriendly ~= nil) and p.isFriendly or (group == "player" or group == "animals" or group == "friendly")
+        attrs.objectData = ObjectData(tag, group, not attrs.isSensor, attrs.isSensor, isFriendly, entity:id())
         entity:add_component(PhysicsComponent(attrs))
     end
 

@@ -71,7 +71,7 @@ namespace otterus_editor {
 
     bool Application::Initialize()
     {
-		OTTERUS_INIT_LOGS(true, true);
+		OTTERUS_INIT_LOGS(false, true);
 
 
 		// Initialize SDL
