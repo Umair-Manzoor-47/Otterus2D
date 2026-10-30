@@ -31,6 +31,7 @@ AssetDefs = {
 		{ name = "nf_double_jump", path = "assets/textures/Platformer/Players/Ninja Frog/Double Jump (32x32).png", pixel_art = true },
 		{ name = "nf_fall", path = "assets/textures/Platformer/Players/Ninja Frog/Fall (32x32).png",  pixel_art = true },
 		{ name = "nf_hit",  path = "assets/textures/Platformer/Players/Ninja Frog/Hit (32x32).png",   pixel_art = true },
+		{ name = "nf_wall_jump", path = "assets/textures/Platformer/Players/Ninja Frog/Wall Jump (32x32).png", pixel_art = true },
 
 		-- Platformer Terrain tileset
 		{ name = "Terrain", path = "assets/textures/platformer/Terrain/Terrain (16x16).png", pixel_art = true },
@@ -40,6 +41,7 @@ AssetDefs = {
 	sfx = {
 		{ name = "thunder", path = "assets/sfx/thunder.wav" },
 		{ name = "leaves_rustle", path = "assets/sfx/leaves_rustle.wav" },
+		{ name = "laser", path = "assets/sfx/laser.wav" },
 	},
 	fonts = {{name = "Minecraft", path = "assets/fonts/Minecraft.ttf", size = 32.0}}
 
@@ -82,7 +84,8 @@ AnimalsDefs = {
 				friction = 0.9,
 				restitution = 0.0,
 				gravityScale = 0.0,
-				fixedRotation = true
+				fixedRotation = true,
+				isFriendly = true
 			}
 		}
 	},
@@ -120,7 +123,8 @@ AnimalsDefs = {
 				friction = 0.9,
 				restitution = 0.0,
 				gravityScale = 0.0,
-				fixedRotation = true
+				fixedRotation = true,
+				isFriendly = true
 			}
 		}
 	},
@@ -158,7 +162,8 @@ AnimalsDefs = {
 				friction = 0.9,
 				restitution = 0.0,
 				gravityScale = 0.0,
-				fixedRotation = true
+				fixedRotation = true,
+				isFriendly = true
 			}
 		}
 	},
@@ -196,7 +201,8 @@ AnimalsDefs = {
 				friction = 0.9,
 				restitution = 0.0,
 				gravityScale = 0.0,
-				fixedRotation = true
+				fixedRotation = true,
+				isFriendly = true
 			}
 		}
 	},
@@ -234,7 +240,8 @@ AnimalsDefs = {
 				friction = 0.9,
 				restitution = 0.0,
 				gravityScale = 0.0,
-				fixedRotation = true
+				fixedRotation = true,
+				isFriendly = true
 			}
 		}
 	}

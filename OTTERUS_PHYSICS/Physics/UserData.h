@@ -18,7 +18,7 @@ namespace otterus_physics {
 	struct ObjectData
 	{
 		std::string tag{ "" }, group{ "" };
-		bool isCollider{ false }, isTrigger{ false };
+		bool isCollider{ false }, isTrigger{ false }, isFriendly{ false };;
 		std::uint32_t entityId{ 0 };
 		std::vector<ObjectData> contactEntities;
 

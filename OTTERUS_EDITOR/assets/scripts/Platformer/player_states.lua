@@ -32,6 +32,7 @@ function PlayerStates.Create(controller)
             this.m_CanDoubleJump   = true
             this.m_IsJumping       = false
             this.m_IsDoubleJumping = false
+            this.m_IsWallSliding   = false
             local velocity = this.m_Physics:get_linear_velocity()
             this.m_Physics:set_linear_velocity(vec2(0, velocity.y))
         end,
@@ -60,6 +61,7 @@ function PlayerStates.Create(controller)
             this.m_CanDoubleJump   = true
             this.m_IsJumping       = false
             this.m_IsDoubleJumping = false
+            this.m_IsWallSliding   = false
         end,
         function(this, dt)
             if not this.m_Grounded then
@@ -88,6 +90,7 @@ function PlayerStates.Create(controller)
             this.m_IsJumping       = true
             this.m_IsDoubleJumping = false
             this.m_CanDoubleJump   = true
+            this.m_IsWallSliding   = false
             this.m_CoyoteTimer     = 0.0
             this.m_JumpBuffer      = 0.0
         end,
@@ -118,6 +121,7 @@ function PlayerStates.Create(controller)
             this.m_IsJumping       = true
             this.m_IsDoubleJumping = true
             this.m_CanDoubleJump   = false
+            this.m_IsWallSliding   = false
             this.m_JumpBuffer      = 0.0
         end,
         function(this, dt)
@@ -142,6 +146,22 @@ function PlayerStates.Create(controller)
         function(this, dt)
             local moveX = PlatformerInput.GetHorizontalMove(this)
             local velocity = this.m_Physics:get_linear_velocity()
+
+            -- Ninja Wall Slide & Wall Jump handling
+            if this.m_IsWallSliding then
+                if this.m_JumpJustPressed then
+                    local kickDir = (this.m_Facing == "right") and -1 or 1
+                    this.m_Physics:set_linear_velocity(vec2(kickDir * PlatformerConfig.WALL_JUMP_VELOCITY_X, PlatformerConfig.WALL_JUMP_VELOCITY_Y))
+                    this.m_Facing = (kickDir > 0) and "right" or "left"
+                    this.m_IsWallSliding = false
+                    this.m_CanDoubleJump = true
+                    this:change_state("jump")
+                    return
+                end
+                this:set_animation("wall_slide")
+            elseif this.m_CurrentAnim == "wall_slide" then
+                this:set_animation("fall")
+            end
 
             if this.m_JumpBuffer > 0 and this.m_CoyoteTimer > 0 and not this.m_IsJumping then
                 this:change_state("jump")
