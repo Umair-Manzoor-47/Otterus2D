@@ -30,6 +30,11 @@ namespace otterus_editor {
 				(entry.type == otterus_logger::LogType::WARN && m_ShowWarn) ||
 				(entry.type == otterus_logger::LogType::ERR  && m_ShowError))
 			{
+				if (m_Filter.IsActive() && !m_Filter.PassFilter(entry.log.c_str()))
+				{
+					continue;
+				}
+
 				m_FilteredIndices.push_back(i);
 			}
 		}
@@ -97,6 +102,27 @@ namespace otterus_editor {
 		FilterButton(std::format("Warn ({0})###filter_warn", m_WarnCount).c_str(), m_ShowWarn, ImVec4(0.6f, 0.5f, 0.1f, 1.f));
 		ImGui::SameLine();
 		FilterButton(std::format("Error ({0})###filter_err", m_ErrorCount).c_str(), m_ShowError, ImVec4(0.6f, 0.2f, 0.2f, 1.f));
+
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(200.0f);
+		if (ImGui::InputTextWithHint("##LogSearch", "Search...", m_Filter.InputBuf, IM_COUNTOF(m_Filter.InputBuf)))
+		{
+			m_Filter.Build();
+			UpdateFilter();
+		}
+		if (m_Filter.IsActive())
+		{
+			ImGui::SameLine();
+			if (ImGui::SmallButton("x##clear_search"))
+			{
+				m_Filter.Clear();
+				UpdateFilter();
+			}
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetTooltip("Clear search");
+			}
+		}
 	}
 
 	void LogDisplay::DrawLogList(float reservedHeight)
