@@ -23,6 +23,8 @@ namespace otterus_editor {
 
 		int m_SelectedLine{ -1 };
 
+		ImGuiTextFilter m_Filter;
+
 	private:
 		void GetLogs();
 		void UpdateFilter();
