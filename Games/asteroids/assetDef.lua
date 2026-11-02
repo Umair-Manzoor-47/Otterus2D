@@ -2,11 +2,11 @@ AssetDefs = {
 
 	textures = {
 	
-		{ name = "ship", path = "../Games/asteroids/textures/ship.png", pixel_art = true },
-		{ name = "ast1", path = "../Games/asteroids/textures/meteor_small.png", pixel_art = true },
-		{ name = "ast2", path = "../Games/asteroids/textures/meteor_big.png", pixel_art = true },
-		{ name = "bg", path = "../Games/asteroids/textures/bg.png", pixel_art = true },
-		{ name = "laser", path = "../Games/asteroids/textures/laser.png", pixel_art = true },
+		{ name = "ship", path = "../Games/asteroids/textures/ship.png", pixel_art = true, tileset = false },
+		{ name = "ast1", path = "../Games/asteroids/textures/meteor_small.png", pixel_art = true, tileset = false },
+		{ name = "ast2", path = "../Games/asteroids/textures/meteor_big.png", pixel_art = true, tileset = false },
+		{ name = "bg", path = "../Games/asteroids/textures/bg.png", pixel_art = true, tileset = false },
+		{ name = "laser", path = "../Games/asteroids/textures/laser.png", pixel_art = true, tileset = false },
 	
 	},
 
@@ -17,7 +17,8 @@ AssetDefs = {
 
 function LoadAssets()
 	for k, v in pairs(AssetDefs.textures) do
-		if not AssetManager.add_texture(v.name, v.path, v.pixel_art) then
+		local tileset = v.tileset or false
+		if not AssetManager.add_texture(v.name, v.path, v.pixel_art, tileset) then
 			OT_error("Failed to load texture [%s] at path [%s]", v.name, v.path)
 		else
 			OT_log("Loaded texture [%s]", v.name)

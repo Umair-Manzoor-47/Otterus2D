@@ -1,4 +1,5 @@
 add_library(OTTERUS_UTILITIES STATIC
+    OtterusUtilities/OtterusUtilities.h
     OtterusUtilities/RandomGenerator.cpp
     OtterusUtilities/RandomGenerator.h
     OtterusUtilities/SDL_wrappers.cpp

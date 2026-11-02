@@ -29,9 +29,9 @@ namespace otterus_resources {
 
 		bool CreateDefaultFonts();
 
-		bool AddTexture(const std::string & textureName, const std::string & texturePath, bool pixelArt);
+		bool AddTexture(const std::string & textureName, const std::string & texturePath, bool pixelArt, bool tileset = false);
 		bool AddTextureFromMemory( const std::string& textureName, const unsigned char* imageData, size_t length,
-										 bool pixelArt = true );
+										 bool pixelArt = true, bool tileset = false );
 		const otterus_rendering::Texture& GetTexture(const std::string& textureName);
 
 		bool AddShader(const std::string & shaderName, const std::string & vertexPath, const std::string & fragmentPath);
@@ -46,6 +46,9 @@ namespace otterus_resources {
 
 		bool AddSoundFX(const std::string& soundFXName, const std::string& filePath);
 		std::shared_ptr<otterus_sounds::SoundFX> GetSoundFX(const std::string& soundFXName);
+
+		inline const std::map<std::string, std::shared_ptr<otterus_rendering::Texture>>& GetAllTextures()
+		const { return m_mapTextures; }
 
 		static void CreateLuaAssetManager(sol::state& lua, otterus_core::ECS::Registry& registry);
 	};

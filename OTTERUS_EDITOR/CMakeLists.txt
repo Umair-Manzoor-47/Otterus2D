@@ -6,8 +6,10 @@ add_executable(OTTERUS_EDITOR
     src/editor/displays/LogDisplay.h
     src/editor/displays/SceneDisplay.cpp
     src/editor/displays/SceneDisplay.h
+    src/editor/displays/TilesetDisplay.h
+    src/editor/displays/TilesetDisplay.cpp
+    src/editor/utilities/editor_textures.h
     src/main.cpp
-        src/editor/utilities/editor_textures.h
 )
 
 target_include_directories(OTTERUS_EDITOR PRIVATE

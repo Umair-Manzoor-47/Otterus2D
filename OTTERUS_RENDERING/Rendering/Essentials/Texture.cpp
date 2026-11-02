@@ -4,8 +4,15 @@ namespace otterus_rendering {
 	Texture::Texture() :
 		Texture(0,0,0, TextureType::NONE)
 	{}
-	Texture::Texture(GLuint texID, int width, int height, TextureType type, const std::string& texturePath):
-		m_texID{ texID }, m_width{ width }, m_height{ height }, m_type{ type }, m_path{texturePath}
+
+	Texture::Texture(GLuint texID, int width, int height, TextureType type, const std::string& texturePath, bool tileset):
+		m_texID{ texID },
+		m_width{ width },
+		m_height{ height },
+		m_type{ type },
+		m_path{texturePath},
+		m_Tileset{tileset},
+		m_EditorTexture{ false }
 	{}
 
 	void Texture::Bind()

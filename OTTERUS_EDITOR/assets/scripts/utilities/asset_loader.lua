@@ -15,7 +15,8 @@ function AssetLoader.Load(assets)
 
     if assets.textures then
         for _, v in pairs(assets.textures) do
-            if AssetManager.add_texture(v.name, v.path, v.pixel_art) then
+            local tileset = v.tileset or false
+            if AssetManager.add_texture(v.name, v.path, v.pixel_art, tileset) then
                 AssetLoader.Loaded.textures[v.name] = true
                 OT_log("Loaded texture [%s]", v.name)
             else

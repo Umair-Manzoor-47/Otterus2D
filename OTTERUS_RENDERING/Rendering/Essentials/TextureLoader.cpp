@@ -94,7 +94,7 @@ namespace otterus_rendering {
 		return true;
 	}
 
-	std::shared_ptr<Texture> TextureLoader::Create(const std::string& path, Texture::TextureType type)
+	std::shared_ptr<Texture> TextureLoader::Create(const std::string& path, Texture::TextureType type, bool tileset)
 	{
 		int channels = 0, width{ 0 }, height{ 0 };
 		unsigned char* image = SOIL_load_image(
@@ -132,10 +132,10 @@ namespace otterus_rendering {
 		
 		UploadToGPU(image, width, height, channels);
 
-		return std::make_shared<Texture>(texID, width, height, type, path);
+		return std::make_shared<Texture>(texID, width, height, type, path, tileset);
 	}
 
-	std::shared_ptr<Texture> TextureLoader::Create(const Texture::TextureType type, int width, int height)
+	std::shared_ptr<Texture> TextureLoader::Create(const Texture::TextureType type, int width, int height, bool tileset)
 	{
 		OTTERUS_ASSERT(type == Texture::TextureType::FRAMEBUFFER && "Must be FrameBuffer type.");
 
@@ -148,18 +148,18 @@ namespace otterus_rendering {
 		glGenTextures(1, &id);
 		LoadFBTexture(id, width, height);
 
-		return std::make_shared<Texture>(id, width, height, type);
+		return std::make_shared<Texture>(id, width, height, type, "", tileset);
 	}
 
 	std::shared_ptr<Texture> TextureLoader::CreateFromMemory(const unsigned char* imageData, size_t length,
-		bool blended)
+		bool blended, bool tileset)
 	{
 		GLuint id;
 		int width{ 0 }, height{ 0 };
 
 		LoadTextureFromMemory(imageData, length, id, width, height, blended);
 
-		return std::make_shared<Texture>(id, width, height, blended ? Texture::TextureType::BLENDED : Texture::TextureType::PIXEL, "");
+		return std::make_shared<Texture>(id, width, height, blended ? Texture::TextureType::BLENDED : Texture::TextureType::PIXEL, "", tileset);
 	}
 }
 
