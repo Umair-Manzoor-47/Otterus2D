@@ -20,7 +20,7 @@ namespace otterus_resources {
         return true;
     }
 
-    bool AssetManager::AddTexture(const std::string& textureName, const std::string& texturePath, bool pixelArt)
+    bool AssetManager::AddTexture(const std::string& textureName, const std::string& texturePath, bool pixelArt, bool tileset)
     {
         if (m_mapTextures.find(textureName) != m_mapTextures.end()) {
 
@@ -29,7 +29,8 @@ namespace otterus_resources {
         }
 
         auto texture = std::move(otterus_rendering::TextureLoader::Create(texturePath,
-            pixelArt ? otterus_rendering::Texture::TextureType::PIXEL : otterus_rendering::Texture::TextureType::BLENDED
+            pixelArt ? otterus_rendering::Texture::TextureType::PIXEL : otterus_rendering::Texture::TextureType::BLENDED,
+            tileset
             ));
 
         if (!texture) {
@@ -44,7 +45,7 @@ namespace otterus_resources {
     }
 
     bool AssetManager::AddTextureFromMemory(const std::string &textureName, const unsigned char *imageData,
-        size_t length, bool pixelArt)
+        size_t length, bool pixelArt, bool tileset)
     {
         // Check to see if the Texture already exist
         if ( m_mapTextures.contains( textureName ) )
@@ -53,7 +54,7 @@ namespace otterus_resources {
             return false;
         }
 
-        auto texture = std::move( otterus_rendering::TextureLoader::CreateFromMemory( imageData, length, pixelArt ) );
+        auto texture = std::move( otterus_rendering::TextureLoader::CreateFromMemory( imageData, length, pixelArt, tileset ) );
         // Load the texture
         if ( !texture )
         {
@@ -257,8 +258,7 @@ namespace otterus_resources {
     }
 
 
-    void AssetManager::CreateLuaAssetManager(sol::state& lua, otterus_core::ECS::Registry& registry)
-    {
+    void AssetManager::CreateLuaAssetManager(sol::state& lua, otterus_core::ECS::Registry& registry) {
         auto& assetManager = registry.GetContext <std::shared_ptr<AssetManager>>();
         if (!assetManager) {
             OTTERUS_ERROR("AssetManager does not exists in Registry.");
@@ -268,9 +268,14 @@ namespace otterus_resources {
         lua.new_usertype<AssetManager>(
             "AssetManager",
             sol::no_constructor,
-            "add_texture", [&](const std::string& assetName, const std::string& filepath, bool pixel_art) {
-                return assetManager->AddTexture(assetName, filepath, pixel_art);
-            },
+            "add_texture", sol::overload(
+                [&](const std::string& assetName, const std::string& filepath, bool pixel_art) {
+                    return assetManager->AddTexture(assetName, filepath, pixel_art);
+                },
+                [&](const std::string& assetName, const std::string& filepath, bool pixel_art, bool tileset = false){
+                    return assetManager->AddTexture(assetName, filepath, pixel_art, tileset);
+                }
+            ),
             "add_music", [&](const std::string& musicName, const std::string& filepath){
                 return assetManager->AddMusic(musicName, filepath);
             },

@@ -3,7 +3,7 @@ AssetDefs = {
 	textures = {
 	
 		--{ name = "collider", path = "assets/textures/tilemap_test/collider.png", pixel_art = true },
-		{ name = "ground_tiles", path = "assets/textures/tilemap_test/tiles/tiles.png", pixel_art = true },
+		{ name = "ground_tiles", path = "assets/textures/tilemap_test/tiles/tiles.png", pixel_art = true, tileset = true },
 		{ name = "bunny_baby", path = "assets/textures/tilemap_test/tiles/bunny_baby animation.png", pixel_art = true },
 		{ name = "bunny_baby_grey", path = "assets/textures/tilemap_test/tiles/bunny_baby_grey animation.png", pixel_art = true },
 		{ name = "chicken_baby", path = "assets/textures/tilemap_test/tiles/chicken_baby animation.png", pixel_art = true },
@@ -34,7 +34,7 @@ AssetDefs = {
 		{ name = "nf_wall_jump", path = "assets/textures/Platformer/Players/Ninja Frog/Wall Jump (32x32).png", pixel_art = true },
 
 		-- Platformer Terrain tileset
-		{ name = "Terrain", path = "assets/textures/platformer/Terrain/Terrain (16x16).png", pixel_art = true },
+		{ name = "Terrain", path = "assets/textures/platformer/Terrain/Terrain (16x16).png", pixel_art = true, tileset = true },
 	},
 
 	music = {{ name = "bgm", path = "assets/music/bgm.mp3" }},
