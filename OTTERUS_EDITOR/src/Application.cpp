@@ -9,17 +9,10 @@
 #include <Rendering/Essentials/TextureLoader.h>
 #include <Rendering/Core/Camera2D.h>
 #include <Rendering/Core/Renderer.h>
-#include <Rendering/Essentials/Vertex.h>
 #include <Rendering/Buffers/Framebuffer.h>
 
-#include <entt.hpp>
 #include <Core/ECS/Entity.h>
-#include <Core/ECS/Components/TransformComponent.h>
-#include <Core/ECS/Components/SpriteComponent.h>
-#include <Core/ECS/Components/Identification.h>
 #include <Core/ECS/Components/PhysicsComponent.h>
-#include <Core/ECS/Components/BoxColliderComponent.h>
-#include <Core/ECS/Components/CircleColliderComponent.h>
 
 
 #include <Core/Systems/ScriptingSystem.h>
@@ -55,7 +48,11 @@
 #include <Core/ECS/MainRegistry.h>
 
 #include <Core/CoreUtilities/CoreEngineData.h>
+
+#include "editor/displays/TilemapDisplay.h"
 #include "editor/utilities/editor_textures.h"
+#include "editor/utilities/EditorFrameBuffer.h"
+#include "editor/Systems/GridSystem.h"
 
 #ifdef _WIN32
 #ifndef NOMINMAX
@@ -154,7 +151,9 @@ namespace otterus_editor {
 		OTTERUS_LOG("OpenGL Renderer: {0}", (const char*)glGetString(GL_RENDERER));
 		OTTERUS_LOG("OpenGL Version:  {0}", (const char*)glGetString(GL_VERSION));
 
-		MAIN_REGISTRY().Initialize();
+    	auto& mainRegistry = MAIN_REGISTRY();
+
+		mainRegistry.Initialize();
 
 		auto renderer = std::make_shared<otterus_rendering::Renderer>();
 
@@ -177,7 +176,7 @@ namespace otterus_editor {
 		}
 
 		// Add Renderer to Registry 
-		if (!m_registry->AddToContext<std::shared_ptr<otterus_rendering::Renderer>>(renderer)) {
+		if (!mainRegistry.AddToContext<std::shared_ptr<otterus_rendering::Renderer>>(renderer)) {
 
 			OTTERUS_ERROR("Failed to add Renderer to registry context.");
 			return false;
@@ -221,7 +220,7 @@ namespace otterus_editor {
 			OTTERUS_ERROR("Failed to create the render system.");
 			return false;
 		}
-		if (!m_registry->AddToContext<std::shared_ptr<otterus_core::Systems::RenderSystem>>(renderSystem)) {
+		if (!mainRegistry.AddToContext<std::shared_ptr<otterus_core::Systems::RenderSystem>>(renderSystem)) {
 			OTTERUS_ERROR("Failed to add Render System into registry context.");
 			return false;
 		}
@@ -232,7 +231,7 @@ namespace otterus_editor {
 			OTTERUS_ERROR("Failed to create the render shape system.");
 			return false;
 		}
-		if (!m_registry->AddToContext<std::shared_ptr<otterus_core::Systems::RenderShapeSystem>>(renderShapeSystem)) {
+		if (!mainRegistry.AddToContext<std::shared_ptr<otterus_core::Systems::RenderShapeSystem>>(renderShapeSystem)) {
 			OTTERUS_ERROR("Failed to add Render Shape System into registry context.");
 			return false;
 		}
@@ -244,7 +243,7 @@ namespace otterus_editor {
 			OTTERUS_ERROR("Failed to create the Render UI System.");
 			return false;
 		}
-		if (!m_registry->AddToContext<std::shared_ptr<otterus_core::Systems::RenderUISystem>>(renderUISystem)) {
+		if (!mainRegistry.AddToContext<std::shared_ptr<otterus_core::Systems::RenderUISystem>>(renderUISystem)) {
 			OTTERUS_ERROR("Failed to add Render UI System into registry context.");
 			return false;
 		}
@@ -339,16 +338,29 @@ namespace otterus_editor {
 	    }
 
 
-		auto frameBuffer = std::make_shared<otterus_rendering::Framebuffer>();
+		auto editorFramebuffers = std::make_shared<EditorFramebuffers>();
 
-		if (!frameBuffer) {
-			OTTERUS_ERROR("Failed to create Framebuffer.");
+		if (!editorFramebuffers) {
+			OTTERUS_ERROR("Failed to create Editor Framebuffer.");
 			return false;
 		}
-		if (!m_registry->AddToContext<std::shared_ptr<otterus_rendering::Framebuffer>>(frameBuffer)) {
-			OTTERUS_ERROR("Failed to add Framebuffer into registry context.");
+		if (!mainRegistry.AddToContext<std::shared_ptr<EditorFramebuffers>>(editorFramebuffers)) {
+			OTTERUS_ERROR("Failed to add Editor Framebuffer into registry context.");
 			return false;
 		}
+
+    	editorFramebuffers->mapFramebuffers.emplace( FramebufferType::SCENE,
+											  std::make_shared<otterus_rendering::Framebuffer>( 640, 480, false ) );
+
+    	editorFramebuffers->mapFramebuffers.emplace( FramebufferType::TILEMAP,
+													  std::make_shared<otterus_rendering::Framebuffer>( 640, 480, false ) );
+
+    	if ( !mainRegistry.AddToContext<std::shared_ptr<GridSystem>>( std::make_shared<GridSystem>() ) )
+    	{
+    		OTTERUS_ERROR( "Failed add the grid system registry context!" );
+    		return false;
+    	}
+
 		if (!CreateDisplays()) {
 			OTTERUS_ERROR("Failed to create displays.");
 
@@ -359,7 +371,7 @@ namespace otterus_editor {
 
     bool Application::LoadShaders()
     {
-		auto assetManager = m_registry->GetContext<std::shared_ptr<otterus_resources::AssetManager>>();;
+		auto assetManager = m_registry->GetContext<std::shared_ptr<otterus_resources::AssetManager>>();
 		if (!assetManager->AddShader("basic", "assets/shaders/basic_shader.vert", "assets/shaders/basic_shader.frag")) {
 			
 			OTTERUS_ERROR("Failed to add Basic Shader to AssetManager.");
@@ -473,6 +485,7 @@ namespace otterus_editor {
 				default:
 					break;
 				}
+				break;
 			default:
 				break;
 
@@ -503,47 +516,12 @@ namespace otterus_editor {
 
     void Application::Render()
     {	
-		auto& renderSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::RenderSystem>>();
-		auto& renderUISystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::RenderUISystem>>();
-		auto& renderShapeSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::RenderShapeSystem>>();
-		auto& renderer = m_registry->GetContext<std::shared_ptr<otterus_rendering::Renderer>>();
-		auto& camera = m_registry->GetContext<std::shared_ptr<otterus_rendering::Camera2D>>();
-		auto& assetManager = m_registry->GetContext<std::shared_ptr<otterus_resources::AssetManager>>();
-
-		auto& shader = assetManager->GetShader("color");
-		auto& fontShader = assetManager->GetShader("font");
-		auto& circleShader = assetManager->GetShader("circle");
-		//auto& scriptSystem = m_registry->GetContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>();
-
-		const auto& fb = m_registry->GetContext<std::shared_ptr<otterus_rendering::Framebuffer>>();
-
-		fb->CheckResize();
-		fb->Bind();
-
-		renderer->SetViewport(0, 0, fb->GetWidth(), fb->GetHeight());
-		renderer->SetClearColor(1.f, 1.f, 1.f, 1.f);
-		renderer->ClearBuffers(true, true, false);
-
-		//scriptSystem->Render();
-		renderSystem->Upate();
-		renderShapeSystem->Upate();
-		renderUISystem->Upate(m_registry->GetRegistry());
-		fb->Unbind();
 
 		Begin();
 		RenderImGui();
 		End();
 
-		renderer->DrawLines(shader, *camera);
-		renderer->DrawFilledRects(shader, *camera);
-		renderer->DrawAllText(fontShader, *camera);
-		renderer->DrawCircles(circleShader, *camera);
-
-		fb->CheckResize();
-
 		SDL_GL_SwapWindow(m_window->GetWindow().get());
-
-		renderer->ClearPrimitives();
 	}
 
     void Application::CleanUp()
@@ -583,11 +561,18 @@ namespace otterus_editor {
     		return false;
     	}
 
+    	auto tilemapDisplay = std::make_unique<TilemapDisplay>();
+    	if ( !tilemapDisplay )
+    	{
+    		OTTERUS_ERROR( "Failed to Create TilemapDisplay!" );
+    		return false;
+    	}
 		// TODO: Other displays as needed
 
 		displayHolder->displays.push_back(std::move(sceneDisplay));
 		displayHolder->displays.push_back(std::move(logDisplay));
 		displayHolder->displays.push_back(std::move(tilesetDisplay));
+    	displayHolder->displays.push_back(std::move(tilemapDisplay));
 
 		return true;
 	}
@@ -670,7 +655,10 @@ namespace otterus_editor {
 			const auto LogNodeId = ImGui::DockBuilderSplitNode(centerNodeId, ImGuiDir_Down, 0.25f, nullptr, &centerNodeId);
 			ImGui::DockBuilderDockWindow("Dear ImGui Demo", leftNodeId);
 			ImGui::DockBuilderDockWindow("Scene", centerNodeId);
-			ImGui::DockBuilderDockWindow("Logs", LogNodeId);
+			ImGui::DockBuilderDockWindow( "Tilemap Editor", centerNodeId );
+			ImGui::DockBuilderDockWindow( "Logs", LogNodeId );
+
+			ImGui::DockBuilderDockWindow( "Tileset", LogNodeId );
 
 			ImGui::DockBuilderFinish(dockSpaceId);
 		}

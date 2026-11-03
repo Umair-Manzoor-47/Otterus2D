@@ -74,6 +74,9 @@ namespace otterus_rendering {
 	}
 	void Framebuffer::Resize(int width, int height)
 	{
+		if (m_Width == width && m_Height == height)
+			return;
+
 		m_Width = width;
 		m_Height = height;
 		m_ShouldResize = true;

@@ -15,6 +15,12 @@
 #include <algorithm>
 #include <ImGui.h>
 
+#include "core/Systems/RenderShapeSystem.h"
+#include "Core/Systems/RenderSystem.h"
+#include "core/Systems/RenderUISystem.h"
+#include "editor/utilities/EditorFrameBuffer.h"
+#include "Rendering/Core/Renderer.h"
+
 constexpr float one_over_sixty = 1.f / 60.f;
 
 namespace otterus_editor {
@@ -118,6 +124,8 @@ namespace otterus_editor {
 			ImGui::PushStyleColor( ImGuiCol_ButtonActive, ImVec4{ 0.f, 0.9f, 0.f, 0.3 } );
 		}
 
+		RenderScene();
+
 		if ( ImGui::ImageButton( "##StopButton",
 								 (ImTextureID)stopTexture.GetID(),
 								 ImVec2{
@@ -137,7 +145,8 @@ namespace otterus_editor {
 
         if (ImGui::BeginChild("##SceneChild", ImVec2{ 0.f, 0.f }, false, ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar))
         {
-            const auto& fb = m_Registry.GetContext<std::shared_ptr<otterus_rendering::Framebuffer>>();
+        	auto& editorFramebuffers = mainRegistry.GetContext<std::shared_ptr<EditorFramebuffers>>();
+        	const auto& fb = editorFramebuffers->mapFramebuffers[ FramebufferType::SCENE ];
             const auto& engineData = otterus_core::CoreEngineData::GetInstance();
 
             int targetWidth  = engineData.WindowWidth();
@@ -173,6 +182,30 @@ namespace otterus_editor {
         }
 
         ImGui::End();
+    }
+
+    void SceneDisplay::RenderScene() {
+		auto& mainRegistry = MAIN_REGISTRY();
+		auto& editorFramebuffers = mainRegistry.GetContext<std::shared_ptr<EditorFramebuffers>>();
+		auto& renderer = mainRegistry.GetContext<std::shared_ptr<otterus_rendering::Renderer>>();
+
+		auto& renderSystem = mainRegistry.GetContext<std::shared_ptr<otterus_core::Systems::RenderSystem>>();
+		auto& renderUISystem = mainRegistry.GetContext<std::shared_ptr<otterus_core::Systems::RenderUISystem>>();
+		auto& renderShapeSystem = mainRegistry.GetContext<std::shared_ptr<otterus_core::Systems::RenderShapeSystem>>();
+
+		const auto& fb = editorFramebuffers->mapFramebuffers[ FramebufferType::SCENE ];
+
+		fb->CheckResize();
+		fb->Bind();
+		renderer->SetViewport( 0, 0, fb->GetWidth(), fb->GetHeight() );
+		renderer->SetClearColor( 0.f, 0.f, 0.f, 1.f );
+		renderer->ClearBuffers( true, true, false );
+
+		renderSystem->Update();
+		renderShapeSystem->Update();
+		renderUISystem->Update( m_Registry.GetRegistry() );
+
+		fb->Unbind();
     }
 
     void SceneDisplay::Update()

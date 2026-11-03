@@ -17,7 +17,7 @@ namespace otterus_core::Systems {
 	{
 		m_batchRenderer = std::make_unique<otterus_rendering::SpriteBatchRenderer>();
 	}
-	void RenderSystem::Upate()
+	void RenderSystem::Update()
 	{
 		auto& camera = m_registry.GetContext<std::shared_ptr<Camera2D>>();
 		auto& assetManager = m_registry.GetContext<std::shared_ptr<otterus_resources::AssetManager>>();

@@ -21,6 +21,9 @@ namespace otterus_rendering {
 		Shader(GLuint shaderProgram, const std::string& vertexSrcPath, const std::string& fragmentSrcPath);
 		~Shader();
 
+		Shader(const Shader&) = delete;
+		Shader& operator=(const Shader&) = delete;
+
 		// TODO: Add Setters as per need
 		void SetUniformInt(const std::string& name, int value);
 		void SetUniformMat4(const std::string& name, glm::mat4 mat);
