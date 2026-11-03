@@ -30,6 +30,7 @@ namespace otterus_rendering {
 
 		inline const void SetIsTileset(bool isTileset) { m_Tileset = isTileset; }
 		inline const void SetEditorTexture(bool isEditorTexture) { m_EditorTexture = isEditorTexture; }
+		inline explicit operator bool() const { return m_texID != 0; }
 
 		void Bind();
 		void Unbind();

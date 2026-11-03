@@ -50,6 +50,7 @@
 // ===========================
 #include "editor/displays/SceneDisplay.h"
 #include "editor/displays/LogDisplay.h"
+#include "editor/displays/TilesetDisplay.h"
 #include <Physics/ContactListener.h>
 #include <Core/ECS/MainRegistry.h>
 
@@ -161,7 +162,7 @@ namespace otterus_editor {
 		renderer->SetBlendCapabilitiy(otterus_rendering::Renderer::BlendingFactors::SRC_ALPHA, otterus_rendering::Renderer::BlendingFactors::ONE_MINUS_SRC_ALPHA);
 
 
-		auto assetManager = std::make_shared<otterus_resources::AssetManager>();
+    	auto assetManager = MAIN_REGISTRY().GetContext<std::shared_ptr<otterus_resources::AssetManager>>();
 		if (!assetManager) {
 			OTTERUS_ERROR("Failed to create Asset Manager.");
 			return false;
@@ -259,7 +260,7 @@ namespace otterus_editor {
 			return false;
 		}
 
-		auto musicPlayer = std::make_shared<otterus_sounds::MusicPlayer>();
+		auto musicPlayer = MAIN_REGISTRY().GetContext<std::shared_ptr<otterus_sounds::MusicPlayer>>();
 		if (!musicPlayer) {
 			OTTERUS_ERROR("Failed to create music player.");
 			return false;
@@ -270,7 +271,7 @@ namespace otterus_editor {
 			OTTERUS_ERROR("Failed to add music player to registry context.");
 			return false;
 		}
-		auto soundFxPlayer = std::make_shared<otterus_sounds::SoundFxPlayer>();
+		auto soundFxPlayer = MAIN_REGISTRY().GetContext<std::shared_ptr<otterus_sounds::SoundFxPlayer>>();
 		if (!soundFxPlayer) {
 			OTTERUS_ERROR("Failed to create SoundFxPlayer player.");
 			return false;
@@ -575,11 +576,18 @@ namespace otterus_editor {
 			OTTERUS_ERROR("Failed to create LogDisplay.");
 			return false;
 		}
+    	auto tilesetDisplay = std::make_unique<TilesetDisplay>();
+
+    	if (!tilesetDisplay) {
+    		OTTERUS_ERROR("Failed to create TilesetDisplay.");
+    		return false;
+    	}
 
 		// TODO: Other displays as needed
 
 		displayHolder->displays.push_back(std::move(sceneDisplay));
 		displayHolder->displays.push_back(std::move(logDisplay));
+		displayHolder->displays.push_back(std::move(tilesetDisplay));
 
 		return true;
 	}
