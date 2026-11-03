@@ -1,6 +1,8 @@
 add_executable(OTTERUS_EDITOR
     src/Application.cpp
     src/Application.h
+    src/editor/Systems/GridSystem.h
+    src/editor/Systems/GridSystem.cpp
     src/editor/displays/IDisplay.h
     src/editor/displays/LogDisplay.cpp
     src/editor/displays/LogDisplay.h
@@ -8,7 +10,10 @@ add_executable(OTTERUS_EDITOR
     src/editor/displays/SceneDisplay.h
     src/editor/displays/TilesetDisplay.h
     src/editor/displays/TilesetDisplay.cpp
+    src/editor/displays/TilemapDisplay.h
+    src/editor/displays/TilemapDisplay.cpp
     src/editor/utilities/editor_textures.h
+    src/editor/utilities/EditorFrameBuffer.h
     src/main.cpp
 )
 

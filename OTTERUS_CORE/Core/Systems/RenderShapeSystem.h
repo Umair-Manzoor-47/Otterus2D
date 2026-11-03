@@ -18,7 +18,7 @@ namespace otterus_core::Systems {
 		RenderShapeSystem(otterus_core::ECS::Registry& registry);
 		~RenderShapeSystem() = default;
 
-		void Upate();
+		void Update();
 	};
 
 }

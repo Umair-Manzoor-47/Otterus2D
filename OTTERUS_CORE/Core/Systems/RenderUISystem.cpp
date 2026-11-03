@@ -20,7 +20,7 @@ namespace otterus_core::Systems {
 		m_UICamera->Update();
 	}
 
-	void RenderUISystem::Upate(entt::registry& registry)
+	void RenderUISystem::Update(entt::registry& registry)
 	{
 		auto& assetManager = m_registry.GetContext<std::shared_ptr<AssetManager>>();
 

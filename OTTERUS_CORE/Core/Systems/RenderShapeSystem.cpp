@@ -19,7 +19,7 @@ namespace otterus_core::Systems {
 		m_CircleBatchRenderer{ std::make_unique<CircleBatchRenderer>() }
 	{}
 
-	void RenderShapeSystem::Upate()
+	void RenderShapeSystem::Update()
 	{
 		if (!CoreEngineData::GetInstance().RenderCollidersEnabled())
 			return;

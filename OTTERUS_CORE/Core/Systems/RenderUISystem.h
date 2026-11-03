@@ -18,7 +18,7 @@ namespace otterus_core::Systems {
 		RenderUISystem(otterus_core::ECS::Registry& registry);
 		~RenderUISystem() = default;
 
-		void Upate(entt::registry& registry);
+		void Update(entt::registry& registry);
 	};
 
 }

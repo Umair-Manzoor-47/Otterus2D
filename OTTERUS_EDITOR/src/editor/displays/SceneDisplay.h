@@ -19,6 +19,7 @@ namespace otterus_editor {
 
 
 		virtual void Draw() override;
+		void RenderScene();
 		virtual void Update() override;
 
 	};

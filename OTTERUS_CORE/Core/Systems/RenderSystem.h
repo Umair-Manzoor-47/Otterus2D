@@ -15,7 +15,7 @@ namespace otterus_core::Systems {
 		RenderSystem(otterus_core::ECS::Registry& registry);
 		~RenderSystem() = default;
 
-		void Upate();
+		void Update();
 	};
 
 }

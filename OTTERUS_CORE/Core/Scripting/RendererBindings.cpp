@@ -5,12 +5,14 @@
 #include "../ECS/Registry.h"
 #include <Logger/Logger.h>
 #include "../Resources/AssetManager.h"
+#include "Core/ECS/MainRegistry.h"
 
 using namespace otterus_rendering;
 
 void otterus_core::Scripting::RendererBinder::CreateRendererBind(sol::state& lua, otterus_core::ECS::Registry& registry)
 {
-	auto& assetManager = registry.GetContext<std::shared_ptr<otterus_resources::AssetManager>>();
+	auto& mainRegistry = MAIN_REGISTRY();
+	auto& assetManager = mainRegistry.GetAssetManager();
 
 	lua.new_usertype<Line>(
 		"Line",
@@ -73,7 +75,7 @@ void otterus_core::Scripting::RendererBinder::CreateRendererBind(sol::state& lua
 		sol::factories(
 			[&](const glm::vec2& position, const std::string& textStr, const std::string& fontName, float wrap, const Color& color)
 			{
-				auto font = assetManager->GetFont(fontName);
+				auto font = assetManager.GetFont(fontName);
 				if (!font)
 				{
 					OTTERUS_ERROR("Failed to get font [{}] in Asset Manager.", fontName);
@@ -95,7 +97,7 @@ void otterus_core::Scripting::RendererBinder::CreateRendererBind(sol::state& lua
 		"color", &Text::color
 	);
 
-	auto& renderer = registry.GetContext<std::shared_ptr<Renderer>>();
+	auto& renderer = mainRegistry.GetContext<std::shared_ptr<Renderer>>();
 
 	if (!renderer) {
 		OTTERUS_ERROR("Failed to get the Renderer from Registry.");
