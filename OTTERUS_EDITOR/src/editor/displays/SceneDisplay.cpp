@@ -99,10 +99,10 @@ namespace otterus_editor {
 		}
 
 		if ( ImGui::ImageButton( "##PlayButton",
-								 (ImTextureID)playTexture.GetID(),
+								 (ImTextureID)playTexture->GetID(),
 								 ImVec2{
-									 (float)playTexture.GetWidth() * 0.25f,
-									 (float)playTexture.GetHeight() * 0.25f,
+									 (float)playTexture->GetWidth() * 0.25f,
+									 (float)playTexture->GetHeight() * 0.25f,
 								 } ) &&
 			 !m_SceneLoaded )
 		{
@@ -127,10 +127,10 @@ namespace otterus_editor {
 		RenderScene();
 
 		if ( ImGui::ImageButton( "##StopButton",
-								 (ImTextureID)stopTexture.GetID(),
+								 (ImTextureID)stopTexture->GetID(),
 								 ImVec2{
-									 (float)stopTexture.GetWidth() * 0.25f,
-									 (float)stopTexture.GetHeight() * 0.25f,
+									 (float)stopTexture->GetWidth() * 0.25f,
+									 (float)stopTexture->GetHeight() * 0.25f,
 								 } ) &&
 			 m_SceneLoaded )
 		{

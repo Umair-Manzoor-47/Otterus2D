@@ -100,14 +100,14 @@ namespace otterus_core::ECS {
 			"uvs", &SpriteComponent::uvs,
 			"generate_uvs", [&](SpriteComponent& sprite) {
 				auto& assetManager = registry.GetContext<std::shared_ptr<AssetManager>>();
-				auto& texture = assetManager->GetTexture(sprite.texture_name);
+				auto texture = assetManager->GetTexture(sprite.texture_name);
 
-				if (texture.GetID() == 0) {
+				if (texture->GetID() == 0) {
 					OTTERUS_ERROR("Failed to generate UVS texture [{0}] does not exists or invalid.", sprite.texture_name);
 					return;
 				}
 
-				sprite.generate_uvs(texture.GetWidth(), texture.GetHeight());
+				sprite.generate_uvs(texture->GetWidth(), texture->GetHeight());
 			},
 			"to_string", &SpriteComponent::to_string
 		);

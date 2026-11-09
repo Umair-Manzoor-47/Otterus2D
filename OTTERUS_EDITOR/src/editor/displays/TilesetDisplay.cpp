@@ -44,8 +44,8 @@ namespace otterus_editor {
             return;
         }
 
-        int textureWidth = texture.GetWidth();
-        int textureHeight = texture.GetHeight();
+        int textureWidth = texture->GetWidth();
+        int textureHeight = texture->GetHeight();
 
         constexpr int tileSize = 16; // Change to 32 if your tiles are 32x32
 
@@ -83,7 +83,7 @@ namespace otterus_editor {
 
                     ImGui::PushID(k++);
 
-                    if (ImGui::ImageButton("##tile", (ImTextureID)texture.GetID(),
+                    if (ImGui::ImageButton("##tile", (ImTextureID)texture->GetID(),
                         ImVec2{ tileSize * 1.5f, tileSize * 1.5f },
                         ImVec2{ u0, v0 }, ImVec2{ u1, v1 }))
                     {
