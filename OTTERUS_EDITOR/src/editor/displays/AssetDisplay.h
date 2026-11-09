@@ -27,6 +27,7 @@ namespace otterus_editor
         void DrawSelectedAssets();
         unsigned int GetTextureID( const std::string& sAssetName ) const;
         bool DoRenameAsset( const std::string& sOldName, const std::string& sNewName ) const;
+        bool DoDeleteAsset( const std::string& sAssetName );
         void CheckRename( const std::string& sCheckName ) const;
 
     public:

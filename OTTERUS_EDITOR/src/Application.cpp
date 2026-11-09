@@ -679,14 +679,13 @@ namespace otterus_editor {
 			const auto leftNodeId =
 				ImGui::DockBuilderSplitNode(centerNodeId, ImGuiDir_Left, 0.2f, nullptr, &centerNodeId);
 
-			const auto LogNodeId = ImGui::DockBuilderSplitNode(centerNodeId, ImGuiDir_Down, 0.25f, nullptr, &centerNodeId);
+			const auto bottomNodeId = ImGui::DockBuilderSplitNode(centerNodeId, ImGuiDir_Down, 0.25f, nullptr, &centerNodeId);
 			ImGui::DockBuilderDockWindow("Dear ImGui Demo", leftNodeId);
 			ImGui::DockBuilderDockWindow("Scene", centerNodeId);
-			ImGui::DockBuilderDockWindow( "Tilemap Editor", centerNodeId );
-			ImGui::DockBuilderDockWindow( "Assets", centerNodeId );
-			ImGui::DockBuilderDockWindow( "Logs", LogNodeId );
-
-			ImGui::DockBuilderDockWindow( "Tileset", LogNodeId );
+			ImGui::DockBuilderDockWindow("Tilemap Editor", centerNodeId);
+			ImGui::DockBuilderDockWindow("Assets", bottomNodeId);
+			ImGui::DockBuilderDockWindow("Console", bottomNodeId);
+			ImGui::DockBuilderDockWindow("Tileset", bottomNodeId);
 
 			ImGui::DockBuilderFinish(dockSpaceId);
 		}

@@ -302,6 +302,80 @@ namespace otterus_resources {
         return false;
     }
 
+    bool AssetManager::DeleteTexture( const std::string& textureName )
+    {
+        auto itr = m_mapTextures.find( textureName );
+        if ( itr == m_mapTextures.end() )
+        {
+            OTTERUS_ERROR( "Failed to delete texture [{}] -- Does not exist.", textureName );
+            return false;
+        }
+
+        if ( itr->second && itr->second->IsEditorTexture() )
+        {
+            OTTERUS_ERROR( "Cannot delete editor texture [{}]!", textureName );
+            return false;
+        }
+
+        m_mapTextures.erase( itr );
+        return true;
+    }
+
+    bool AssetManager::DeleteFont( const std::string& fontName )
+    {
+        auto itr = m_mapFonts.find( fontName );
+        if ( itr == m_mapFonts.end() )
+        {
+            OTTERUS_ERROR( "Failed to delete font [{}] -- Does not exist.", fontName );
+            return false;
+        }
+
+        m_mapFonts.erase( itr );
+        return true;
+    }
+
+    bool AssetManager::DeleteMusic( const std::string& musicName )
+    {
+        auto itr = m_mapMusic.find( musicName );
+        if ( itr == m_mapMusic.end() )
+        {
+            OTTERUS_ERROR( "Failed to delete music [{}] -- Does not exist.", musicName );
+            return false;
+        }
+
+        m_mapMusic.erase( itr );
+        return true;
+    }
+
+    bool AssetManager::DeleteSoundFX( const std::string& soundFXName )
+    {
+        auto itr = m_mapSoundFX.find( soundFXName );
+        if ( itr == m_mapSoundFX.end() )
+        {
+            OTTERUS_ERROR( "Failed to delete soundFX [{}] -- Does not exist.", soundFXName );
+            return false;
+        }
+
+        m_mapSoundFX.erase( itr );
+        return true;
+    }
+
+    bool AssetManager::DeleteAsset( const std::string& assetName, otterus_utils::AssetType assetType )
+    {
+        switch ( assetType )
+        {
+            case otterus_utils::AssetType::TEXTURE: return DeleteTexture( assetName );
+            case otterus_utils::AssetType::FONT: return DeleteFont( assetName );
+            case otterus_utils::AssetType::SOUNDFX: return DeleteSoundFX( assetName );
+            case otterus_utils::AssetType::MUSIC: return DeleteMusic( assetName );
+            default:
+                OTTERUS_ASSERT( false && "Cannot delete this asset type!" );
+                return false;
+        }
+
+        return false;
+    }
+
     void AssetManager::CreateLuaAssetManager(sol::state& lua, otterus_core::ECS::Registry& registry) {
         auto& assetManager = registry.GetContext <std::shared_ptr<AssetManager>>();
         if (!assetManager) {
