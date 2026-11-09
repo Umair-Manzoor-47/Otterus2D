@@ -44,12 +44,13 @@
 #include "editor/displays/SceneDisplay.h"
 #include "editor/displays/LogDisplay.h"
 #include "editor/displays/TilesetDisplay.h"
+#include "editor/displays/TilemapDisplay.h"
+#include "editor/displays/AssetDisplay.h"
 #include <Physics/ContactListener.h>
 #include <Core/ECS/MainRegistry.h>
 
 #include <Core/CoreUtilities/CoreEngineData.h>
 
-#include "editor/displays/TilemapDisplay.h"
 #include "editor/utilities/editor_textures.h"
 #include "editor/utilities/EditorFrameBuffer.h"
 #include "editor/Systems/GridSystem.h"
@@ -428,13 +429,32 @@ namespace otterus_editor {
     		OTTERUS_ERROR( "Failed to load texture [play_button] from memory." );
     		return false;
     	}
-
+    	assetManager.GetTexture( "play_button" )->SetIsEditorTexture( true );
     	if ( !assetManager.AddTextureFromMemory(
 				 "stop_button", stop_button, sizeof( stop_button ) / sizeof( stop_button[ 0 ] ) ) )
     	{
     		OTTERUS_ERROR( "Failed to load texture [stop_button] from memory." );
     		return false;
     	}
+    	assetManager.GetTexture( "stop_button" )->SetIsEditorTexture( true );
+
+    	if ( !assetManager.AddTextureFromMemory(
+				 "music_icon", music_icon, sizeof( music_icon ) / sizeof( music_icon[ 0 ] ) ) )
+    	{
+    		OTTERUS_ERROR( "Failed to load texture [music_icon] from memory." );
+    		return false;
+    	}
+
+    	assetManager.GetTexture( "music_icon" )->SetIsEditorTexture( true );
+
+    	if ( !assetManager.AddTextureFromMemory(
+				 "scene_icon", scene_icon, sizeof( scene_icon ) / sizeof( scene_icon[ 0 ] ) ) )
+    	{
+    		OTTERUS_ERROR( "Failed to load texture [scene_icon] from memory." );
+    		return false;
+    	}
+
+    	assetManager.GetTexture( "scene_icon" )->SetIsEditorTexture( true );
 
     	return true;
     }
@@ -567,12 +587,19 @@ namespace otterus_editor {
     		OTTERUS_ERROR( "Failed to Create TilemapDisplay!" );
     		return false;
     	}
+    	auto assetDisplay = std::make_unique<AssetDisplay>();
+    	if ( !assetDisplay )
+    	{
+    		OTTERUS_ERROR( "Failed to Create AssetDisplay!" );
+    		return false;
+    	}
 		// TODO: Other displays as needed
 
 		displayHolder->displays.push_back(std::move(sceneDisplay));
 		displayHolder->displays.push_back(std::move(logDisplay));
 		displayHolder->displays.push_back(std::move(tilesetDisplay));
     	displayHolder->displays.push_back(std::move(tilemapDisplay));
+    	displayHolder->displays.push_back(std::move(assetDisplay));
 
 		return true;
 	}
@@ -656,6 +683,7 @@ namespace otterus_editor {
 			ImGui::DockBuilderDockWindow("Dear ImGui Demo", leftNodeId);
 			ImGui::DockBuilderDockWindow("Scene", centerNodeId);
 			ImGui::DockBuilderDockWindow( "Tilemap Editor", centerNodeId );
+			ImGui::DockBuilderDockWindow( "Assets", centerNodeId );
 			ImGui::DockBuilderDockWindow( "Logs", LogNodeId );
 
 			ImGui::DockBuilderDockWindow( "Tileset", LogNodeId );

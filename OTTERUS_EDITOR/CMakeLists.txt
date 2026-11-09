@@ -12,6 +12,9 @@ add_executable(OTTERUS_EDITOR
     src/editor/displays/TilesetDisplay.cpp
     src/editor/displays/TilemapDisplay.h
     src/editor/displays/TilemapDisplay.cpp
+    src/editor/displays/AssetDisplay.h
+    src/editor/displays/AssetDisplay.cpp
+    src/editor/utilities/EditorUtilities.h
     src/editor/utilities/editor_textures.h
     src/editor/utilities/EditorFrameBuffer.h
     src/main.cpp

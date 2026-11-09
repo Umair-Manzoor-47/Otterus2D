@@ -5,6 +5,8 @@
 #include "fonts/default_font.h"
 #include <Logger/Logger.h>
 
+#include "OtterusUtilities/OtterusUtilities.h"
+
 
 namespace otterus_resources {
     bool AssetManager::CreateDefaultFonts()
@@ -68,17 +70,16 @@ namespace otterus_resources {
         return true;
     }
 
-    const otterus_rendering::Texture& AssetManager::GetTexture(const std::string& textureName)
+    std::shared_ptr<otterus_rendering::Texture> AssetManager::GetTexture( const std::string& textureName )
     {
-        auto texItr = m_mapTextures.find(textureName);
-        if (texItr == m_mapTextures.end()) {
-        
-            OTTERUS_ERROR("Failed to get texture [{0}] -- Does not exist.", textureName);
-            static otterus_rendering::Texture s_emptyTexture{};
-            return s_emptyTexture;
+        auto texItr = m_mapTextures.find( textureName );
+        if ( texItr == m_mapTextures.end() )
+        {
+            OTTERUS_ERROR( "Failed to get texture [{0}] -- Does not exist!", textureName );
+            return nullptr;
         }
 
-        return *texItr->second;
+        return texItr->second;
     }
 
     bool AssetManager::AddShader(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath)
@@ -257,6 +258,49 @@ namespace otterus_resources {
         return fontItr->second;
     }
 
+
+    std::vector<std::string> AssetManager::GetAssetKeyNames(otterus_utils::AssetType AssetType) {
+        switch ( AssetType )
+        {
+            case otterus_utils::AssetType::TEXTURE:
+                return otterus_utils::GetKeys( m_mapTextures, []( const auto& pair ) { return !pair.second->IsEditorTexture(); } );
+            case otterus_utils::AssetType::FONT: return otterus_utils::GetKeys( m_mapFonts );
+            case otterus_utils::AssetType::SOUNDFX: return otterus_utils::GetKeys( m_mapSoundFX );
+            case otterus_utils::AssetType::MUSIC: return otterus_utils::GetKeys( m_mapMusic );
+            default: OTTERUS_ASSERT( false && "Cannot get this type!" );
+        }
+
+        return std::vector<std::string>{};
+    }
+
+    bool AssetManager::ChangeAssetName(const std::string &oldName, const std::string &newName,
+        otterus_utils::AssetType assetType) {
+
+        switch ( assetType )
+        {
+            case otterus_utils::AssetType::TEXTURE: return otterus_utils::KeyChange( m_mapTextures, oldName, newName );
+            case otterus_utils::AssetType::FONT: return otterus_utils::KeyChange( m_mapFonts, oldName, newName );
+            case otterus_utils::AssetType::SOUNDFX: return otterus_utils::KeyChange( m_mapSoundFX, oldName, newName );
+            case otterus_utils::AssetType::MUSIC: return otterus_utils::KeyChange( m_mapMusic, oldName, newName );
+            default: OTTERUS_ASSERT( false && "Cannot get this type!" );
+        }
+
+
+        return false;
+    }
+
+    bool AssetManager::CheckHasAsset(const std::string &nameCheck, otterus_utils::AssetType assetType) {
+        switch ( assetType )
+        {
+            case otterus_utils::AssetType::TEXTURE: return m_mapTextures.contains( nameCheck );
+            case otterus_utils::AssetType::FONT: return m_mapFonts.contains( nameCheck );
+            case otterus_utils::AssetType::SOUNDFX: return m_mapSoundFX.contains( nameCheck );
+            case otterus_utils::AssetType::MUSIC: return m_mapMusic.contains( nameCheck );
+            default: OTTERUS_ASSERT( false && "Cannot get this type!" );
+        }
+
+        return false;
+    }
 
     void AssetManager::CreateLuaAssetManager(sol::state& lua, otterus_core::ECS::Registry& registry) {
         auto& assetManager = registry.GetContext <std::shared_ptr<AssetManager>>();

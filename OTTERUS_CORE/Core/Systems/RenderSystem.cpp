@@ -48,7 +48,7 @@ namespace otterus_core::Systems {
 
 			const auto& texture = assetManager->GetTexture(sprite.texture_name);
 
-			if (texture.GetID() == 0) {
+			if (texture->GetID() == 0) {
 			
 				OTTERUS_ERROR("texture [{0}] was not created correctly.", sprite.texture_name);
 				return;
@@ -75,7 +75,7 @@ namespace otterus_core::Systems {
 
 			}
 
-			m_batchRenderer->AddSprite(spriteRect, uvRect, texture.GetID(), sprite.layer, model, sprite.color);
+			m_batchRenderer->AddSprite(spriteRect, uvRect, texture->GetID(), sprite.layer, model, sprite.color);
 
 		}
 

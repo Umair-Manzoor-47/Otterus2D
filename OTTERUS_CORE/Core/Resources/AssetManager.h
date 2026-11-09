@@ -13,6 +13,8 @@
 #include <sol/sol.hpp>
 #include "../ECS/Registry.h"
 
+namespace otterus_utils{ enum class AssetType; }
+
 namespace otterus_resources {
 	class AssetManager
 	{
@@ -32,7 +34,7 @@ namespace otterus_resources {
 		bool AddTexture(const std::string & textureName, const std::string & texturePath, bool pixelArt, bool tileset = false);
 		bool AddTextureFromMemory( const std::string& textureName, const unsigned char* imageData, size_t length,
 										 bool pixelArt = true, bool tileset = false );
-		const otterus_rendering::Texture& GetTexture(const std::string& textureName);
+		std::shared_ptr<otterus_rendering::Texture> GetTexture( const std::string& textureName );
 
 		bool AddShader(const std::string & shaderName, const std::string & vertexPath, const std::string & fragmentPath);
 		otterus_rendering::Shader& GetShader(const std::string& shaderName);
@@ -49,6 +51,11 @@ namespace otterus_resources {
 
 		inline const std::map<std::string, std::shared_ptr<otterus_rendering::Texture>>& GetAllTextures()
 		const { return m_mapTextures; }
+
+		std::vector<std::string> GetAssetKeyNames(otterus_utils::AssetType AssetType);
+
+		bool ChangeAssetName( const std::string& oldName, const std::string& newName, otterus_utils::AssetType assetType );
+		bool CheckHasAsset( const std::string& nameCheck, otterus_utils::AssetType assetType );
 
 		static void CreateLuaAssetManager(sol::state& lua, otterus_core::ECS::Registry& registry);
 	};
