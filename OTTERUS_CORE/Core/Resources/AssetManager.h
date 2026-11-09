@@ -35,6 +35,7 @@ namespace otterus_resources {
 		bool AddTextureFromMemory( const std::string& textureName, const unsigned char* imageData, size_t length,
 										 bool pixelArt = true, bool tileset = false );
 		std::shared_ptr<otterus_rendering::Texture> GetTexture( const std::string& textureName );
+		bool DeleteTexture( const std::string& textureName );
 
 		bool AddShader(const std::string & shaderName, const std::string & vertexPath, const std::string & fragmentPath);
 		otterus_rendering::Shader& GetShader(const std::string& shaderName);
@@ -42,12 +43,15 @@ namespace otterus_resources {
 		bool AddFont(const std::string& fontName, const std::string& fontPath, float fontSize = 32.f);
 		bool AddFontFromMemory(const std::string& fontName, unsigned char* fontData, float fontSize = 32.f);
 		std::shared_ptr<otterus_rendering::Font> GetFont(const std::string& fontName);
+		bool DeleteFont( const std::string& fontName );
 
 		bool AddMusic(const std::string& musicName, const std::string& filePath);
 		std::shared_ptr<otterus_sounds::Music> GetMusic(const std::string& musicName);
+		bool DeleteMusic( const std::string& musicName );
 
 		bool AddSoundFX(const std::string& soundFXName, const std::string& filePath);
 		std::shared_ptr<otterus_sounds::SoundFX> GetSoundFX(const std::string& soundFXName);
+		bool DeleteSoundFX( const std::string& soundFXName );
 
 		inline const std::map<std::string, std::shared_ptr<otterus_rendering::Texture>>& GetAllTextures()
 		const { return m_mapTextures; }
@@ -56,6 +60,8 @@ namespace otterus_resources {
 
 		bool ChangeAssetName( const std::string& oldName, const std::string& newName, otterus_utils::AssetType assetType );
 		bool CheckHasAsset( const std::string& nameCheck, otterus_utils::AssetType assetType );
+		bool DeleteAsset( const std::string& assetName, otterus_utils::AssetType assetType );
+		inline bool RemoveAsset( const std::string& assetName, otterus_utils::AssetType assetType ) { return DeleteAsset( assetName, assetType ); }
 
 		static void CreateLuaAssetManager(sol::state& lua, otterus_core::ECS::Registry& registry);
 	};

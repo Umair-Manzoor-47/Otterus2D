@@ -7,11 +7,15 @@
 
 
 #include <imgui.h>
+#include <algorithm>
 
 #include "imgui_internal.h"
 #include "editor/utilities/EditorUtilities.h"
 
 constexpr float DEFAULT_ASSET_SIZE = 128.f;
+constexpr float MIN_ASSET_SIZE = 32.f;
+constexpr float MAX_ASSET_SIZE = 512.f;
+constexpr float ASSET_SIZE_STEP = 16.f;
 constexpr ImVec2 DRAG_ASSET_SIZE = ImVec2{ 32.f, 32.f };
 namespace otterus_editor {
     void AssetDisplay::SetAssetType()
@@ -71,10 +75,10 @@ namespace otterus_editor {
 
 	float windowWidth = ImGui::GetWindowWidth();
 
-	int numCols = static_cast<int>( ( windowWidth - m_AssetSize ) / m_AssetSize );
+	int numCols = std::max( 1, static_cast<int>( ( windowWidth - m_AssetSize ) / m_AssetSize ) );
 	int numRows = static_cast<int>( assetNames.size() / ( numCols <= 1 ? 1 : numCols ) + 1 );
 
-	if ( !numCols || !numRows )
+	if ( !numRows )
 		return;
 
 	ImGuiTableFlags tableFlags{ 0 };
@@ -124,7 +128,11 @@ namespace otterus_editor {
 					}
 					if ( ImGui::Selectable( "delete" ) )
 					{
-						OTTERUS_LOG( "PLEASE DELETE [{}]", *assetItr );
+						if ( !DoDeleteAsset( *assetItr ) )
+						{
+							OTTERUS_ERROR( "Failed to delete asset [{}]", *assetItr );
+						}
+						m_SelectedID = -1;
 					}
 					ImGui::EndPopup();
 				}
@@ -244,6 +252,24 @@ namespace otterus_editor {
         return false;
     }
 
+    bool AssetDisplay::DoDeleteAsset(const std::string &sAssetName) {
+        if ( sAssetName.empty() )
+            return false;
+
+        if ( m_SelectedType == otterus_utils::AssetType::SCENE )
+        {
+            // TODO: Delete scene
+            return false;
+        }
+        else
+        {
+            auto& assetManager = MAIN_REGISTRY().GetAssetManager();
+            return assetManager.DeleteAsset( sAssetName, m_SelectedType );
+        }
+
+        return false;
+    }
+
     void AssetDisplay::CheckRename(const std::string &sCheckName) const {
         if ( sCheckName.empty() )
         {
@@ -286,15 +312,41 @@ namespace otterus_editor {
     }
 
     void AssetDisplay::Update() {
+        if ( !m_WindowHovered )
+            return;
 
+        auto& inputManager = otterus_core::InputManager::GetInstance();
+        auto& keyboard = inputManager.GetKeyboard();
+        auto& mouse = inputManager.GetMouse();
+
+        const auto& io = ImGui::GetIO();
+        bool bCtrl = io.KeyCtrl || keyboard.IsKeyPressed( OT_KEY_LCTRL ) || keyboard.IsKeyPressed( OT_KEY_RCTRL );
+
+        if ( !bCtrl )
+            return;
+
+        float wheel = static_cast<float>( mouse.GetMouseWheelY() );
+        if ( wheel == 0.f )
+            wheel = io.MouseWheel;
+
+        if ( wheel != 0.f )
+        {
+            m_AssetSize += wheel * ASSET_SIZE_STEP;
+            m_AssetSize = std::clamp( m_AssetSize, MIN_ASSET_SIZE, MAX_ASSET_SIZE );
+        }
     }
 
     void AssetDisplay::Draw() {
         if ( !ImGui::Begin( "Assets" ) )
         {
+            m_WindowHovered = false;
+            m_WindowSelected = false;
             ImGui::End();
             return;
         }
+
+        m_WindowHovered = ImGui::IsWindowHovered( ImGuiHoveredFlags_RootAndChildWindows );
+        m_WindowSelected = ImGui::IsWindowFocused( ImGuiFocusedFlags_RootAndChildWindows );
 
         auto& mainRegistry = MAIN_REGISTRY();
         auto& assetManager = mainRegistry.GetAssetManager();
