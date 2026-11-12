@@ -8,3 +8,7 @@ target_include_directories(OTTERUS_LOGGER PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/Logger"
 )
+
+target_link_libraries(OTTERUS_LOGGER PUBLIC
+    fmt::fmt
+)

@@ -1,7 +1,7 @@
 
 #include <chrono>
 #include <ctime>
-#include <format>
+#include <fmt/format.h>
 #include <iostream>
 #include <windows.h>
 #include <sstream>
@@ -25,7 +25,7 @@ namespace otterus_logger {
 			std::cout << "Logger must be initialized before it can be used." << std::endl;
 			return;
 		}
-		std::string formattedMsg = std::vformat(message, std::make_format_args(args...));
+		std::string formattedMsg = fmt::vformat(message, fmt::make_format_args(args...));
 		std::string timeStr = CurrentDateTime();
 		std::string originStr = FormatOrigin(location);
 
@@ -59,7 +59,7 @@ namespace otterus_logger {
 			std::cout << "Logger must be initialized before it can be used." << std::endl;
 			return;
 		}
-		std::string formattedMsg = std::vformat(message, std::make_format_args(args...));
+		std::string formattedMsg = fmt::vformat(message, fmt::make_format_args(args...));
 		std::string timeStr = CurrentDateTime();
 		std::string originStr = FormatOrigin(location);
 
@@ -96,7 +96,7 @@ namespace otterus_logger {
 			return;
 		}
 
-		std::string formattedMsg = std::vformat(message, std::make_format_args(args...));
+		std::string formattedMsg = fmt::vformat(message, fmt::make_format_args(args...));
 		std::string timeStr = CurrentDateTime();
 		std::string originStr = FormatOrigin(location);
 

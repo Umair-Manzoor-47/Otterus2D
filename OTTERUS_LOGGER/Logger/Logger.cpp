@@ -16,7 +16,7 @@ namespace otterus_logger {
 
 		LogTime logTime{ std::string{buf} };
 	
-		return std::format("{0}-{1}-{2} {3}", logTime.year, logTime.month, logTime.dayNumber, logTime.time);
+		return fmt::format("{0}-{1}-{2} {3}", logTime.year, logTime.month, logTime.dayNumber, logTime.time);
 	}
 
 	Logger& Logger::GetInstance()
@@ -141,7 +141,7 @@ namespace otterus_logger {
 		size_t lastSlash = file.find_last_of("/\\");
 		if (lastSlash != std::string_view::npos)
 			file = file.substr(lastSlash + 1);
-		return std::format("{0}:{1} in {2}()", file, loc.line(), loc.function_name());
+		return fmt::format("{0}:{1} in {2}()", file, loc.line(), loc.function_name());
 	}
 }
 

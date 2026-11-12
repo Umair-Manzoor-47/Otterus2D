@@ -4,6 +4,7 @@
 #include "Core/Scripting/InputManager.h"
 #include "Core/Resources/AssetManager.h"
 #include "Logger/Logger.h"
+#include <fmt/format.h>
 
 
 #include <imgui.h>
@@ -292,7 +293,7 @@ namespace otterus_editor {
 
         if ( bHasAsset )
             ImGui::TextColored( ImVec4{ 1.f, 0.f, 0.f, 1.f },
-                                std::format( "Asset name [{}] already exists!", sCheckName ).c_str() );
+                                fmt::format( "Asset name [{}] already exists!", sCheckName ).c_str() );
     }
 
     AssetDisplay::AssetDisplay()

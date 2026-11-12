@@ -11,6 +11,7 @@
 
 #include "../ECS/Entity.h"
 #include <logger/Logger.h>
+#include <fmt/format.h>
 #include "../Scripting/GlmLuaBindings.h"
 #include "../Scripting/InputManager.h"
 #include "../Resources/AssetManager.h"
@@ -216,8 +217,8 @@ namespace otterus_core::Systems {
 				&ar)) {
 				std::string_view src = ar.short_src;
 				origin = (ar.name && ar.name[0] != '\0')
-					? std::format("{0}:{1} in {2}()", src, ar.currentline, ar.name)
-					: std::format("{0}:{1}", src, ar.currentline);
+					? fmt::format("{0}:{1} in {2}()", src, ar.currentline, ar.name)
+					: fmt::format("{0}:{1}", src, ar.currentline);
 			}
 
 			auto& logger = otterus_logger::Logger::GetInstance();
