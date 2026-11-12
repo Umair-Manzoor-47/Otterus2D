@@ -82,6 +82,16 @@ set_target_properties(Sol3::Sol3 PROPERTIES
 # -----------------------------------------------------------------------------
 # Subprojects (in dependency order)
 # -----------------------------------------------------------------------------
+# fmtlib
+include(FetchContent)
+FetchContent_Declare(
+    fmt
+    GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+    GIT_TAG 11.0.2
+    GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(fmt)
+
 add_subdirectory(GLAD)
 add_subdirectory(SOIL)
 add_subdirectory(ImGui)

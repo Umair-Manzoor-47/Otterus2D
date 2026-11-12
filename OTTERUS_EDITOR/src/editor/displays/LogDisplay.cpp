@@ -1,7 +1,7 @@
 #include "LogDisplay.h"
 #include <Logger/Logger.h>
 #include <ranges>
-#include <format>
+#include <fmt/format.h>
 
 #include "imgui_internal.h"
 
@@ -74,7 +74,7 @@ namespace otterus_editor {
 			std::string allLogs;
 			for (const auto& entry : m_Logs)
 			{
-				allLogs += std::format("[{0}] [{1}] {2} - {3}\n", 
+				allLogs += fmt::format("[{0}] [{1}] {2} - {3}\n", 
 					entry.timestamp, entry.origin, entry.log, entry.stackTrace.empty() ? "" : ("\n" + entry.stackTrace));
 			}
 			ImGui::SetClipboardText(allLogs.c_str());
@@ -97,11 +97,11 @@ namespace otterus_editor {
 		};
 
 		ImGui::SameLine();
-		FilterButton(std::format("Info ({0})###filter_info", m_InfoCount).c_str(), m_ShowInfo, ImVec4(0.2f, 0.5f, 0.2f, 1.f));
+		FilterButton(fmt::format("Info ({0})###filter_info", m_InfoCount).c_str(), m_ShowInfo, ImVec4(0.2f, 0.5f, 0.2f, 1.f));
 		ImGui::SameLine();
-		FilterButton(std::format("Warn ({0})###filter_warn", m_WarnCount).c_str(), m_ShowWarn, ImVec4(0.6f, 0.5f, 0.1f, 1.f));
+		FilterButton(fmt::format("Warn ({0})###filter_warn", m_WarnCount).c_str(), m_ShowWarn, ImVec4(0.6f, 0.5f, 0.1f, 1.f));
 		ImGui::SameLine();
-		FilterButton(std::format("Error ({0})###filter_err", m_ErrorCount).c_str(), m_ShowError, ImVec4(0.6f, 0.2f, 0.2f, 1.f));
+		FilterButton(fmt::format("Error ({0})###filter_err", m_ErrorCount).c_str(), m_ShowError, ImVec4(0.6f, 0.2f, 0.2f, 1.f));
 
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(200.0f);
@@ -163,7 +163,7 @@ namespace otterus_editor {
 				ImGui::PushStyleColor(ImGuiCol_Text, color);
 
 				bool isSelected = (m_SelectedLine == logIndex);
-				std::string rowLabel = std::format("{0} {1} - {2}", typeTag, entry.timestamp, entry.log);
+				std::string rowLabel = fmt::format("{0} {1} - {2}", typeTag, entry.timestamp, entry.log);
 
 				if (ImGui::Selectable(rowLabel.c_str(), isSelected, ImGuiSelectableFlags_SpanAvailWidth))
 				{
@@ -180,7 +180,7 @@ namespace otterus_editor {
 					}
 					if (ImGui::MenuItem("Copy Details"))
 					{
-						std::string details = std::format("Message: {0}\nTime: {1}\nOrigin: {2}\n{3}",
+						std::string details = fmt::format("Message: {0}\nTime: {1}\nOrigin: {2}\n{3}",
 							entry.log, entry.timestamp, entry.origin, entry.stackTrace);
 						ImGui::SetClipboardText(details.c_str());
 					}
@@ -212,7 +212,7 @@ namespace otterus_editor {
 
 			if (ImGui::SmallButton("Copy Full Details"))
 			{
-				std::string details = std::format("Message: {0}\nTime: {1}\nOrigin: {2}\n{3}",
+				std::string details = fmt::format("Message: {0}\nTime: {1}\nOrigin: {2}\n{3}",
 					selected.log, selected.timestamp, selected.origin, selected.stackTrace);
 				ImGui::SetClipboardText(details.c_str());
 			}
