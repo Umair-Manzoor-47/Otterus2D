@@ -8,24 +8,24 @@
 #include "../CoreUtilities/CoreEngineData.h"
 #include <Logger/Logger.h>
 #include "../ECS/Components/PhysicsComponent.h"
+#include "Core/ECS/MainRegistry.h"
 
 using namespace otterus_core::ECS;
 using namespace otterus_rendering;
 using namespace otterus_resources;
 namespace otterus_core::Systems {
-	RenderShapeSystem::RenderShapeSystem(otterus_core::ECS::Registry& registry)
-		: m_registry{ registry },
-		m_RectBatchRenderer{ std::make_unique<RectBatchRenderer>() },
+	RenderShapeSystem::RenderShapeSystem()
+		: m_RectBatchRenderer{ std::make_unique<RectBatchRenderer>() },
 		m_CircleBatchRenderer{ std::make_unique<CircleBatchRenderer>() }
 	{}
 
-	void RenderShapeSystem::Update()
+	void RenderShapeSystem::Update(Registry& registry)
 	{
 		if (!CoreEngineData::GetInstance().RenderCollidersEnabled())
 			return;
 
-		auto& camera = m_registry.GetContext<std::shared_ptr<Camera2D>>();
-		auto& assetManager = m_registry.GetContext<std::shared_ptr<otterus_resources::AssetManager>>();
+		auto& camera = registry.GetContext<std::shared_ptr<Camera2D>>();
+		auto& assetManager = MAIN_REGISTRY().GetContext<std::shared_ptr<AssetManager>>();
 
 		auto& colorShader = assetManager->GetShader("color");
 		auto cameraMatrix = camera->GetCameraMatrix();
@@ -34,7 +34,7 @@ namespace otterus_core::Systems {
 		colorShader.SetUniformMat4("projection", cameraMatrix);
 		m_RectBatchRenderer->Begin();
 
-		auto boxView = m_registry.GetRegistry().view<TransformComponent, BoxColliderComponent>();
+		auto boxView = registry.GetRegistry().view<TransformComponent, BoxColliderComponent>();
 		for (auto entity : boxView)
 		{
 			auto& transform = boxView.get<TransformComponent>(entity);
@@ -60,9 +60,9 @@ namespace otterus_core::Systems {
 
 			auto color = Color{ 255, 0, 0, 135 };
 
-			if (m_registry.GetRegistry().all_of<PhysicsComponent>(entity))
+			if (registry.GetRegistry().all_of<PhysicsComponent>(entity))
 			{
-				auto& physics = m_registry.GetRegistry().get<PhysicsComponent>(entity);
+				auto& physics = registry.GetRegistry().get<PhysicsComponent>(entity);
 				if (physics.IsSensor())
 					color = Color{ 0, 255, 0, 135 };
 			}
@@ -91,7 +91,7 @@ namespace otterus_core::Systems {
 		circleShader.SetUniformMat4("uProjection", cameraMatrix);
 		m_CircleBatchRenderer->Begin();
 
-		auto circleView = m_registry.GetRegistry().view<TransformComponent, CircleColliderComponent>();
+		auto circleView = registry.GetRegistry().view<TransformComponent, CircleColliderComponent>();
 		for (auto entity : circleView)
 		{
 			auto& transform = circleView.get<TransformComponent>(entity);

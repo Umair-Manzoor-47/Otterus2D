@@ -7,7 +7,7 @@ namespace otterus_core::Scripting {
 
 	struct SoundBinder
 	{
-		static void CreateSoundBind(sol::state& lua, otterus_core::ECS::Registry& registry);
+		static void CreateSoundBind(sol::state& lua);
 
 	};
 

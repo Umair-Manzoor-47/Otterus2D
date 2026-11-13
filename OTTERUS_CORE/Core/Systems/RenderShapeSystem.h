@@ -9,16 +9,15 @@ namespace otterus_core::Systems {
 	class RenderShapeSystem
 	{
 	private:
-		otterus_core::ECS::Registry& m_registry;
 		std::unique_ptr<otterus_rendering::RectBatchRenderer> m_RectBatchRenderer;
 		std::unique_ptr<otterus_rendering::CircleBatchRenderer> m_CircleBatchRenderer;
 
 
 	public:
-		RenderShapeSystem(otterus_core::ECS::Registry& registry);
+		RenderShapeSystem();
 		~RenderShapeSystem() = default;
 
-		void Update();
+		void Update(ECS::Registry& registry);
 	};
 
 }

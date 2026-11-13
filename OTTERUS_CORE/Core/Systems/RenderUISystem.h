@@ -9,16 +9,15 @@ namespace otterus_core::Systems {
 	class RenderUISystem
 	{
 	private:
-		otterus_core::ECS::Registry& m_registry;
 		std::unique_ptr<otterus_rendering::SpriteBatchRenderer> m_SpriteRenderer;
 		std::unique_ptr<otterus_rendering::TextBatchRenderer> m_TextRenderer;
 		std::unique_ptr<otterus_rendering::Camera2D> m_UICamera;
 
 	public:
-		RenderUISystem(otterus_core::ECS::Registry& registry);
+		RenderUISystem();
 		~RenderUISystem() = default;
 
-		void Update(entt::registry& registry);
+		void Update(ECS::Registry& registry);
 	};
 
 }

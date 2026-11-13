@@ -34,7 +34,7 @@ function PlayerFactory.CreateUI()
     -- UI camera is 640x480. Position death count at top right (X=480, Y=40)
     local ui_entity = Entity("DeathCount_UI", "UI")
     ui_entity:add_component(Transform(vec2(480, 40), vec2(1, 1), 0))
-    local text_comp = ui_entity:add_component(TextComponent("Deaths: 0", "pixel", 0, -1.0, Color(0, 0, 0, 255)))
+    local text_comp = ui_entity:add_component(TextComponent("Deaths: 0", "pixel", 0, -1.0, Color(255, 255, 255, 255)))
     text_comp.isHidden = true
     return ui_entity, text_comp
 end

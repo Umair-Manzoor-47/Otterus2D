@@ -2,6 +2,7 @@
 #include <entt.hpp>
 #include "../../Resources/AssetManager.h"
 #include <logger/Logger.h>
+#include "Core/ECS/MainRegistry.h"
 
 
 using namespace otterus_resources;
@@ -40,7 +41,7 @@ namespace otterus_core::ECS {
 		return ss.str();
 	}
 
-	void SpriteComponent::CreateStaticLuaBind(sol::state& lua, otterus_core::ECS::Registry& registry)
+	void SpriteComponent::CreateStaticLuaBind(sol::state& lua)
 	{
 		lua.new_usertype<otterus_rendering::Color>(
 			"Color",
@@ -99,8 +100,8 @@ namespace otterus_core::ECS {
 			"color", &SpriteComponent::color,
 			"uvs", &SpriteComponent::uvs,
 			"generate_uvs", [&](SpriteComponent& sprite) {
-				auto& assetManager = registry.GetContext<std::shared_ptr<AssetManager>>();
-				auto texture = assetManager->GetTexture(sprite.texture_name);
+				auto& assetManager = MAIN_REGISTRY().GetAssetManager();
+				auto texture = assetManager.GetTexture(sprite.texture_name);
 
 				if (texture->GetID() == 0) {
 					OTTERUS_ERROR("Failed to generate UVS texture [{0}] does not exists or invalid.", sprite.texture_name);

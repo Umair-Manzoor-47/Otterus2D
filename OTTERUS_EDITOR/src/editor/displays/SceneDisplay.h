@@ -6,7 +6,6 @@ namespace otterus_editor {
 	class SceneDisplay : public IDisplay
 	{
 	private:
-		otterus_core::ECS::Registry& m_Registry;
 		bool m_PlayScene, m_SceneLoaded;
 
 	private:
@@ -14,7 +13,7 @@ namespace otterus_editor {
 		void UnloadScene();
 
 	public:
-		SceneDisplay(otterus_core::ECS::Registry& registry);
+		SceneDisplay();
 		~SceneDisplay() = default;
 
 

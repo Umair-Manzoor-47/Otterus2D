@@ -18,23 +18,56 @@
 #include "core/Systems/RenderShapeSystem.h"
 #include "Core/Systems/RenderSystem.h"
 #include "core/Systems/RenderUISystem.h"
+#include "editor/scene/SceneManager.h"
+#include "editor/scene/SceneObject.h"
 #include "editor/utilities/EditorFrameBuffer.h"
+#include "physics/ContactListener.h"
 #include "Rendering/Core/Renderer.h"
 
 constexpr float one_over_sixty = 1.f / 60.f;
+using namespace otterus_rendering;
+using namespace otterus_core::Systems;
 
 namespace otterus_editor {
 
-	SceneDisplay::SceneDisplay(otterus_core::ECS::Registry& registry)
-		: m_Registry{ registry }
-        , m_PlayScene{ false }
+	SceneDisplay::SceneDisplay()
+		: m_PlayScene{ false }
         , m_SceneLoaded{ false }
 	{}
 
     void SceneDisplay::LoadScene()
     {
+		auto currentScene = SCENE_MANAGER().GetCurrentScene();
 
-	    auto& lua = m_Registry.GetContext<std::shared_ptr<sol::state>>();
+		if (!currentScene)
+			return;
+
+		auto& runtimeRegistry = currentScene->GetRuntimeRegistry();
+	    auto lua = runtimeRegistry.AddToContext<std::shared_ptr<sol::state>>(std::make_shared<sol::state>());
+
+		const auto& canvas = currentScene->GetCanvas();
+
+		runtimeRegistry.AddToContext<std::shared_ptr<Camera2D>>(std::make_shared<Camera2D>(canvas.width, canvas.height));
+
+		auto physicsWorld =
+			runtimeRegistry.AddToContext<otterus_physics::PhysicsWorld>(std::make_shared<b2World>( b2Vec2{0.f, 9.8f} ));
+
+		auto contactListener =
+			runtimeRegistry.AddToContext<std::shared_ptr<otterus_physics::ContactListener>>(std::make_shared<otterus_physics::ContactListener>());
+
+		physicsWorld->SetContactListener(contactListener.get());
+
+		// Systems
+		auto scriptingSystem =
+			runtimeRegistry.AddToContext<std::shared_ptr<ScriptingSystem>>(std::make_shared<ScriptingSystem>(runtimeRegistry));
+
+		runtimeRegistry.AddToContext<std::shared_ptr<AnimationSystem>>(
+			std::make_shared<AnimationSystem>(runtimeRegistry));
+
+		runtimeRegistry.AddToContext<std::shared_ptr<PhysicsSystem>>(
+			std::make_shared<PhysicsSystem>(runtimeRegistry));
+
+
 
 		if (!lua)
 			lua = std::make_shared<sol::state>();
@@ -49,9 +82,8 @@ namespace otterus_editor {
 	        sol::lib::package
 	    );
 
-	    auto& scriptingSystem = m_Registry.GetContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>();
-	    otterus_core::Systems::ScriptingSystem::RegisterLuaBindings(*lua, m_Registry);
-	    otterus_core::Systems::ScriptingSystem::RegisterLuaFunctions(*lua, m_Registry);
+	    ScriptingSystem::RegisterLuaBindings(*lua, runtimeRegistry);
+	    ScriptingSystem::RegisterLuaFunctions(*lua, runtimeRegistry);
 
 	    if (!scriptingSystem->LoadMainScript(*lua)) {
 
@@ -64,12 +96,17 @@ namespace otterus_editor {
 
 	void SceneDisplay::UnloadScene()
 	{
+		auto currentScene = SCENE_MANAGER().GetCurrentScene();
+		auto& runtimeRegistry = currentScene->GetRuntimeRegistry();
 		m_SceneLoaded = false;
 		m_PlayScene = false;
-		m_Registry.GetRegistry().clear();
-		auto& lua = m_Registry.GetContext<std::shared_ptr<sol::state>>();
-
-		lua.reset();
+		runtimeRegistry.ClearRegistry();
+		runtimeRegistry.RemoveContext<std::shared_ptr<Camera2D>>();
+		runtimeRegistry.RemoveContext<std::shared_ptr<sol::state>>();
+		runtimeRegistry.RemoveContext<std::shared_ptr<otterus_physics::PhysicsWorld>>();
+		runtimeRegistry.RemoveContext<std::shared_ptr<otterus_physics::ContactListener>>();
+		runtimeRegistry.RemoveContext<std::shared_ptr<AnimationSystem>>();
+		runtimeRegistry.RemoveContext<std::shared_ptr<PhysicsSystem>>();
 
 		auto& mainRegistry = MAIN_REGISTRY();
 		mainRegistry.GetMusicPlayer().Stop();
@@ -201,9 +238,15 @@ namespace otterus_editor {
 		renderer->SetClearColor( 0.f, 0.f, 0.f, 1.f );
 		renderer->ClearBuffers( true, true, false );
 
-		renderSystem->Update();
-		renderShapeSystem->Update();
-		renderUISystem->Update( m_Registry.GetRegistry() );
+		auto currentScene = SCENE_MANAGER().GetCurrentScene();
+
+		if (currentScene && m_PlayScene)
+		{
+			auto& runtimeRegistry = currentScene->GetRuntimeRegistry();
+			renderSystem->Update(runtimeRegistry);
+			renderShapeSystem->Update(runtimeRegistry);
+			renderUISystem->Update( runtimeRegistry );
+		}
 
 		fb->Unbind();
     }
@@ -212,30 +255,36 @@ namespace otterus_editor {
     {
 		if (!m_PlayScene) return;
 
-		auto& mainRegistry = MAIN_REGISTRY();
+		auto currentScene = SCENE_MANAGER().GetCurrentScene();
+
+		if (!currentScene)
+			return;
+
+		auto& runtimeRegistry = currentScene->GetRuntimeRegistry();
+
 		auto& coreGlobals = CORE_GLOBALS();
 
-		auto& camera = m_Registry.GetContext<std::shared_ptr<otterus_rendering::Camera2D>>();
+		auto& camera = runtimeRegistry.GetContext<std::shared_ptr<otterus_rendering::Camera2D>>();
 		if (!camera) {
 			OTTERUS_ERROR("Failed to get Camera2D from Registry.");
 			return;
 		}
 		camera->Update();
 
-		auto& scriptSystem = m_Registry.GetContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>();
+		auto& scriptSystem = runtimeRegistry.GetContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>();
 		scriptSystem->Update();
 
 		if (coreGlobals.IsPhysicsEnabled())
 		{
-			auto& physicsWorld = m_Registry.GetContext<otterus_physics::PhysicsWorld>();
+			auto& physicsWorld = runtimeRegistry.GetContext<otterus_physics::PhysicsWorld>();
 			physicsWorld->Step(	one_over_sixty, coreGlobals.GetVelocityIterations(), coreGlobals.GetPositionIterations() );
 			physicsWorld->ClearForces();
 		}
 
-		auto& physicsSystem = m_Registry.GetContext<std::shared_ptr<otterus_core::Systems::PhysicsSystem>>();
-		physicsSystem->Update(m_Registry.GetRegistry());
+		auto& physicsSystem = runtimeRegistry.GetContext<std::shared_ptr<otterus_core::Systems::PhysicsSystem>>();
+		physicsSystem->Update(runtimeRegistry.GetRegistry());
 
-		auto& animationSystem = m_Registry.GetContext<std::shared_ptr<otterus_core::Systems::AnimationSystem>>();
+		auto& animationSystem = runtimeRegistry.GetContext<std::shared_ptr<otterus_core::Systems::AnimationSystem>>();
 		animationSystem->Update();
 
         IDisplay::Update();

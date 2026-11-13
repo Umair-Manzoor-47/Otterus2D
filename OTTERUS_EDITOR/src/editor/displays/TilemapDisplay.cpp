@@ -10,6 +10,9 @@
 #include "Logger/Logger.h"
 #include <imgui.h>
 
+#include "editor/scene/SceneManager.h"
+#include "editor/utilities/EditorUtilities.h"
+
 namespace otterus_editor
 {
 void TilemapDisplay::RenderTilemap()
@@ -72,6 +75,20 @@ void TilemapDisplay::Draw()
 		ImGui::SetCursorPos( ImVec2{ x, y } );
 
 		ImGui::Image( (ImTextureID)fb->GetTextureID(), imageSize, ImVec2{ 0.f, 1.f }, ImVec2{ 1.f, 0.f } );
+
+		// Accept incoming Scene Drop
+		if (ImGui::BeginDragDropTarget())
+		{
+			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(DROP_SCENE_SRC);
+			if (payload)
+			{
+				OTTERUS_LOG("Before: {}", SCENE_MANAGER().GetCurrentSceneName());
+				SCENE_MANAGER().SetCurrentScene( std::string{ (const char*)payload->Data } );
+				OTTERUS_LOG("After: {}", SCENE_MANAGER().GetCurrentSceneName());
+			}
+			ImGui::EndDragDropTarget();
+		}
+
 
 		ImGui::EndChild();
 	}

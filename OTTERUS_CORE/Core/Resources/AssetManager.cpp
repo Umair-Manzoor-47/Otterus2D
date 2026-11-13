@@ -5,6 +5,7 @@
 #include "fonts/default_font.h"
 #include <Logger/Logger.h>
 
+#include "Core/ECS/MainRegistry.h"
 #include "OtterusUtilities/OtterusUtilities.h"
 
 
@@ -376,33 +377,29 @@ namespace otterus_resources {
         return false;
     }
 
-    void AssetManager::CreateLuaAssetManager(sol::state& lua, otterus_core::ECS::Registry& registry) {
-        auto& assetManager = registry.GetContext <std::shared_ptr<AssetManager>>();
-        if (!assetManager) {
-            OTTERUS_ERROR("AssetManager does not exists in Registry.");
-            return;
-        }
+    void AssetManager::CreateLuaAssetManager(sol::state& lua) {
+        auto& assetManager = MAIN_REGISTRY().GetAssetManager();
 
         lua.new_usertype<AssetManager>(
             "AssetManager",
             sol::no_constructor,
             "add_texture", sol::overload(
                 [&](const std::string& assetName, const std::string& filepath, bool pixel_art) {
-                    return assetManager->AddTexture(assetName, filepath, pixel_art);
+                    return assetManager.AddTexture(assetName, filepath, pixel_art);
                 },
                 [&](const std::string& assetName, const std::string& filepath, bool pixel_art, bool tileset = false){
-                    return assetManager->AddTexture(assetName, filepath, pixel_art, tileset);
+                    return assetManager.AddTexture(assetName, filepath, pixel_art, tileset);
                 }
             ),
             "add_music", [&](const std::string& musicName, const std::string& filepath){
-                return assetManager->AddMusic(musicName, filepath);
+                return assetManager.AddMusic(musicName, filepath);
             },
             "add_sound", [&](const std::string& soundFXName, const std::string& filepath) {
-                return assetManager->AddSoundFX(soundFXName, filepath);
+                return assetManager.AddSoundFX(soundFXName, filepath);
             },
             "add_font", [&](const std::string& fontName, const std::string& fontPath, float fontSize) {
             
-                return assetManager->AddFont(fontName, fontPath, fontSize);
+                return assetManager.AddFont(fontName, fontPath, fontSize);
             }
         
         );

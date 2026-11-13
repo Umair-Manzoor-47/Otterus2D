@@ -82,11 +82,11 @@ function PhysicsShowcase:init()
     -- Counter UI
     local countEnt = Entity("", "")
     countEnt:add_component(Transform(vec2(10, 48), vec2(1, 1), 0))
-    countEnt:add_component(TextComponent("Ball Count: ", "Minecraft", 4, -1.0, Color(0, 0, 0, 255)))
+    countEnt:add_component(TextComponent("Ball Count: ", "Minecraft", 4, -1.0, Color(255, 255, 255, 255)))
 
     local valEnt = Entity("", "")
     valEnt:add_component(Transform(vec2(352, 48), vec2(1, 1), 0))
-    self.val_text = valEnt:add_component(TextComponent("0", "Minecraft", 4, -1.0, Color(0, 0, 0, 255)))
+    self.val_text = valEnt:add_component(TextComponent("0", "Minecraft", 4, -1.0, Color(255, 255, 255, 255)))
 end
 
 function PhysicsShowcase:input()

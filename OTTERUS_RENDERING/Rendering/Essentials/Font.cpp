@@ -4,7 +4,7 @@
 namespace otterus_rendering {
     Font::Font(GLuint fontAtlasID, int width, int height, float fontSize, void* data)
         : m_FontAtlasID{ fontAtlasID }, m_Width{ width }, m_Height{ height },
-        m_FontSize{ fontSize }, m_Data{ data }
+        m_FontSize{ fontSize }, m_Data{ std::move(data) }
     {}
 
     Font::~Font()
@@ -13,7 +13,10 @@ namespace otterus_rendering {
             glDeleteTextures(1, &m_FontAtlasID);
 
         if (m_Data)
-            delete[] static_cast<stbtt_bakedchar*>(m_Data);
+        {
+            typedef stbtt_bakedchar( stbtt_bakedchar )[ 96 ];
+            delete[] (stbtt_bakedchar*)m_Data;
+        }
     }
 
     FontGlyph Font::GetGlyph(char c, glm::vec2& pos)

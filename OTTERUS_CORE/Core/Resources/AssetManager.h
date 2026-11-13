@@ -63,7 +63,7 @@ namespace otterus_resources {
 		bool DeleteAsset( const std::string& assetName, otterus_utils::AssetType assetType );
 		inline bool RemoveAsset( const std::string& assetName, otterus_utils::AssetType assetType ) { return DeleteAsset( assetName, assetType ); }
 
-		static void CreateLuaAssetManager(sol::state& lua, otterus_core::ECS::Registry& registry);
+		static void CreateLuaAssetManager(sol::state& lua);
 	};
 
 

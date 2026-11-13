@@ -11,6 +11,7 @@
 #include <algorithm>
 
 #include "imgui_internal.h"
+#include "editor/scene/SceneManager.h"
 #include "editor/utilities/EditorUtilities.h"
 
 constexpr float DEFAULT_ASSET_SIZE = 128.f;
@@ -66,7 +67,7 @@ namespace otterus_editor {
 
 	if ( m_SelectedType == otterus_utils::AssetType::SCENE )
 	{
-		// TODO: Scene Manager
+		assetNames = SCENE_MANAGER().GetSceneNames();
 	}
 	else
 		assetNames = assetManager.GetAssetKeyNames( m_SelectedType );
@@ -304,7 +305,7 @@ namespace otterus_editor {
     , m_WindowHovered { false }
     , m_SelectedType {otterus_utils::AssetType::TEXTURE}
     , m_SelectedAssetName { "" }
-    , m_SelectedAssetType { "" }
+    , m_SelectedAssetType { "TEXTURES" }
     , m_DragSource { "" }
     , m_RenameBuf { "" }
     , m_AssetSize { DEFAULT_ASSET_SIZE }

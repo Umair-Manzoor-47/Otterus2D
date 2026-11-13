@@ -6,21 +6,23 @@
 #include <Rendering/Essentials/Shader.h>
 
 #include <logger/Logger.h>
+#include "Core/ECS/MainRegistry.h"
 
 
 using namespace otterus_rendering;
 using namespace otterus_core::ECS;
 
 namespace otterus_core::Systems {
-	RenderSystem::RenderSystem(Registry& registry):
-		m_registry{ registry }, m_batchRenderer{nullptr}
+	RenderSystem::RenderSystem():
+		m_batchRenderer{nullptr}
 	{
 		m_batchRenderer = std::make_unique<otterus_rendering::SpriteBatchRenderer>();
 	}
-	void RenderSystem::Update()
+	void RenderSystem::Update(Registry& registry)
 	{
-		auto& camera = m_registry.GetContext<std::shared_ptr<Camera2D>>();
-		auto& assetManager = m_registry.GetContext<std::shared_ptr<otterus_resources::AssetManager>>();
+		auto& camera = registry.GetContext<std::shared_ptr<Camera2D>>();
+
+		auto& assetManager = MAIN_REGISTRY().GetContext<std::shared_ptr<otterus_resources::AssetManager>>();
 
 		auto& spriteShader = assetManager->GetShader("basic");
 		auto cameraMatrix = camera->GetCameraMatrix();
@@ -37,7 +39,7 @@ namespace otterus_core::Systems {
 
 		m_batchRenderer->Begin();
 		
-		auto view = m_registry.GetRegistry().view<SpriteComponent, TransformComponent>();
+		auto view = registry.GetRegistry().view<SpriteComponent, TransformComponent>();
 
 		for (const auto entity : view)
 		{

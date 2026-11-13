@@ -14,12 +14,16 @@ namespace otterus_core::ECS {
 
 		inline entt::registry& GetRegistry() { return *m_registry; }
 		inline entt::entity CreateEntity() { return m_registry->create(); }
+		inline void ClearRegistry() { m_registry->clear(); }
 
 		template <typename TContext>
 		TContext AddToContext(TContext context);
 
 		template <typename TContext>
 		TContext& GetContext();
+
+		template <typename TContext>
+		bool RemoveContext();
 
 		static void CreateLuaRegistryBind(sol::state& lua, Registry& registry);
 
