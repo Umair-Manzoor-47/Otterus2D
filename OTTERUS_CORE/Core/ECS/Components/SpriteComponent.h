@@ -27,6 +27,6 @@ namespace otterus_core::ECS {
 		[[nodiscard]] std::string to_string() const;
 
 
-		static void CreateStaticLuaBind(sol::state& lua, otterus_core::ECS::Registry& registry);
+		static void CreateStaticLuaBind(sol::state& lua);
 	};
 }

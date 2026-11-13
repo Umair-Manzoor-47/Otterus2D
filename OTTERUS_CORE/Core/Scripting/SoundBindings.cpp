@@ -5,11 +5,14 @@
 #include <Sounds/SoundPlayer/SoundFxPlayer.h>
 #include <Logger/Logger.h>
 
+#include "Core/ECS/MainRegistry.h"
+
 using namespace otterus_sounds;
 using namespace otterus_resources;
 
-void otterus_core::Scripting::SoundBinder::CreateSoundBind(sol::state& lua, otterus_core::ECS::Registry& registry)
+void otterus_core::Scripting::SoundBinder::CreateSoundBind(sol::state& lua)
 {
+	auto& registry = MAIN_REGISTRY();
 	auto& musicPlayer = registry.GetContext<std::shared_ptr<MusicPlayer>>();
 	if (!musicPlayer) {
 		OTTERUS_ERROR("Failed to bind Music Player to lua -- Not in registry.");

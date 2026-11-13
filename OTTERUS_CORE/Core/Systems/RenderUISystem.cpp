@@ -4,14 +4,14 @@
 #include "../ECS/Components/TransformComponent.h"
 #include <Rendering/Essentials/Font.h>
 #include <Logger/Logger.h>
+#include "Core/ECS/MainRegistry.h"
 
 using namespace otterus_core::ECS;
 using namespace otterus_resources;
 
 namespace otterus_core::Systems {
-	RenderUISystem::RenderUISystem(Registry& registry)
-		: m_registry{ registry },
-		m_SpriteRenderer { std::make_unique<otterus_rendering::SpriteBatchRenderer>() },
+	RenderUISystem::RenderUISystem()
+		: m_SpriteRenderer { std::make_unique<otterus_rendering::SpriteBatchRenderer>() },
 		m_TextRenderer{ std::make_unique<otterus_rendering::TextBatchRenderer>() },
 		m_UICamera{ nullptr }
 
@@ -20,9 +20,9 @@ namespace otterus_core::Systems {
 		m_UICamera->Update();
 	}
 
-	void RenderUISystem::Update(entt::registry& registry)
+	void RenderUISystem::Update(Registry& registry)
 	{
-		auto& assetManager = m_registry.GetContext<std::shared_ptr<AssetManager>>();
+		auto& assetManager = MAIN_REGISTRY().GetContext<std::shared_ptr<AssetManager>>();
 
 		auto& fontShader = assetManager->GetShader("font");
 		if (fontShader.GetProgramID() == 0) {
@@ -32,7 +32,7 @@ namespace otterus_core::Systems {
 		}
 		auto cameraMatrix = m_UICamera->GetCameraMatrix();
 
-		auto textView = m_registry.GetRegistry().view<TextComponent, TransformComponent>();
+		auto textView = registry.GetRegistry().view<TextComponent, TransformComponent>();
 
 
 		fontShader.Enable();

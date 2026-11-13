@@ -54,6 +54,7 @@
 #include "editor/utilities/editor_textures.h"
 #include "editor/utilities/EditorFrameBuffer.h"
 #include "editor/Systems/GridSystem.h"
+#include "editor/scene/SceneManager.h"
 
 #ifdef _WIN32
 #ifndef NOMINMAX
@@ -215,7 +216,7 @@ namespace otterus_editor {
 			return false;
 		}
 
-		auto renderSystem = std::make_shared<otterus_core::Systems::RenderSystem>(*m_registry);
+		auto renderSystem = std::make_shared<otterus_core::Systems::RenderSystem>();
 		if (!renderSystem) {
 
 			OTTERUS_ERROR("Failed to create the render system.");
@@ -226,7 +227,7 @@ namespace otterus_editor {
 			return false;
 		}
 
-		auto renderShapeSystem = std::make_shared<otterus_core::Systems::RenderShapeSystem>(*m_registry);
+		auto renderShapeSystem = std::make_shared<otterus_core::Systems::RenderShapeSystem>();
 		if (!renderShapeSystem) {
 
 			OTTERUS_ERROR("Failed to create the render shape system.");
@@ -238,7 +239,7 @@ namespace otterus_editor {
 		}
 		
 
-		auto renderUISystem = std::make_shared<otterus_core::Systems::RenderUISystem>(*m_registry);
+		auto renderUISystem = std::make_shared<otterus_core::Systems::RenderUISystem>();
 		if (!renderUISystem) {
 
 			OTTERUS_ERROR("Failed to create the Render UI System.");
@@ -367,6 +368,11 @@ namespace otterus_editor {
 
 			return false;
 		}
+
+    	SCENE_MANAGER().AddScene("DefaultScene");
+    	SCENE_MANAGER().AddScene("Splash");
+    	SCENE_MANAGER().AddScene("MainMenu");
+
 		return true;
     }
 
@@ -561,7 +567,7 @@ namespace otterus_editor {
 			return false;
 		}
 
-		auto sceneDisplay = std::make_unique<SceneDisplay>(*m_registry);
+		auto sceneDisplay = std::make_unique<SceneDisplay>();
 
 		if (!sceneDisplay) {
 			OTTERUS_ERROR("Failed to create SceneDisplay.");

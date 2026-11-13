@@ -14,6 +14,12 @@ namespace otterus_core::ECS {
 		return m_registry->ctx().get<TContext>();
 	}
 
+	template <typename TContext>
+	bool Registry::RemoveContext()
+	{
+		return m_registry->ctx().erase<TContext>();
+	}
+
 	template<typename TComponent>
 	entt::runtime_view& add_component_to_view(Registry* registry, entt::runtime_view& view)
 	{

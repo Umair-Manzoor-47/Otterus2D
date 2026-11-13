@@ -29,7 +29,7 @@
 
 #include "../CoreUtilities/CoreEngineData.h"
 #include "../CoreUtilities/FollowCamera.h"
-
+#include "Core/ECS/MainRegistry.h"
 
 
 using namespace otterus_core::ECS;
@@ -293,8 +293,8 @@ namespace otterus_core::Systems {
 	{
 		otterus_core::Scripting::GLMBindings::CreateGLMBindings(lua);
 		otterus_core::InputManager::CreateLuaBindings(lua, registry);
-		AssetManager::CreateLuaAssetManager(lua, registry);
-		otterus_core::Scripting::SoundBinder::CreateSoundBind(lua, registry);
+		AssetManager::CreateLuaAssetManager(lua);
+		otterus_core::Scripting::SoundBinder::CreateSoundBind(lua);
 		otterus_core::Scripting::RendererBinder::CreateRendererBind(lua, registry);
 		otterus_core::Scripting::UserDataBinder::CreateLuaUserData(lua);
 		otterus_core::Scripting::ContactListenerBinder::CreateLuaContactListener(lua, registry.GetRegistry());
@@ -309,7 +309,7 @@ namespace otterus_core::Systems {
 		Registry::CreateLuaRegistryBind(lua, registry);
 		Entity::CreateLuaEntityBind(lua, registry);
 		TransformComponent::CreateLuaTransformBind(lua);
-		SpriteComponent::CreateStaticLuaBind(lua, registry);
+		SpriteComponent::CreateStaticLuaBind(lua);
 		AnimationComponent::CreateAnimationLuaBind(lua);
 		BoxColliderComponent::CreateBoxColliderLuaBind(lua);
 		CircleColliderComponent::CreateLuaCircleColliderBind(lua);
@@ -389,9 +389,9 @@ namespace otterus_core::Systems {
 			}
 		);
 
-		auto& assetManager = registry.GetContext<std::shared_ptr<AssetManager>>();
+		auto& assetManager = MAIN_REGISTRY().GetAssetManager();
 		lua.set_function("measure_text", [&](const std::string& text, const std::string& fontName) {
-			const auto& pFont = assetManager->GetFont(fontName);
+			const auto& pFont = assetManager.GetFont(fontName);
 			if (!pFont)
 			{
 				OTTERUS_ERROR("Failed to get font [{}] - Does not exist in asset manager!", fontName);

@@ -53,17 +53,17 @@ function PlatformerTitleState:OnEnter()
     -- Title: "Ninja Frog" (X=230, Y=170)
     self.m_TitleEntity = Entity("Title_Text", "UI")
     self.m_TitleEntity:add_component(Transform(vec2(230, 170), vec2(1, 1), 0))
-    self.m_TitleEntity:add_component(TextComponent("Ninja frog", "pixel", 0, -1.0, Color(0, 0, 0, 255)))
+    self.m_TitleEntity:add_component(TextComponent("Ninja frog", "pixel", 0, -1.0, Color(255, 255, 255, 255)))
 
     -- Option 1: "[Enter] Play Platformer" (X=170, Y=240)
     self.m_Option1Entity = Entity("Option1_Text", "UI")
     self.m_Option1Entity:add_component(Transform(vec2(170, 240), vec2(1, 1), 0))
-    self.m_Option1Entity:add_component(TextComponent("[Enter] Play Platformer", "pixel", 0, -1.0, Color(0, 0, 0, 255)))
+    self.m_Option1Entity:add_component(TextComponent("[Enter] Play Platformer", "pixel", 0, -1.0, Color(255, 255, 255, 255)))
 
     -- Option 2: "[2] Cozy Scene Showcase" (X=160, Y=290)
     self.m_Option2Entity = Entity("Option2_Text", "UI")
     self.m_Option2Entity:add_component(Transform(vec2(160, 290), vec2(1, 1), 0))
-    self.m_Option2Entity:add_component(TextComponent("[2] Cozy Scene Showcase", "pixel", 0, -1.0, Color(0, 0, 0, 255)))
+    self.m_Option2Entity:add_component(TextComponent("[2] Cozy Scene Showcase", "pixel", 0, -1.0, Color(255, 255, 255, 255)))
 end
 
 function PlatformerTitleState:OnExit()
