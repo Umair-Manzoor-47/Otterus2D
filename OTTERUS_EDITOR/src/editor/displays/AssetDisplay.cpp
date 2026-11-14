@@ -242,7 +242,7 @@ namespace otterus_editor {
 
         if ( m_SelectedType == otterus_utils::AssetType::SCENE )
         {
-            // TODO: Change the scene name
+            SCENE_MANAGER().RenameScene(sOldName, sNewName);
         }
         else
         {
@@ -260,7 +260,7 @@ namespace otterus_editor {
 
         if ( m_SelectedType == otterus_utils::AssetType::SCENE )
         {
-            // TODO: Delete scene
+            SCENE_MANAGER().DeleteScene(sAssetName);
             return false;
         }
         else
@@ -283,7 +283,7 @@ namespace otterus_editor {
 
         if ( m_SelectedType == otterus_utils::AssetType::SCENE )
         {
-            // TODO: Check is scene name already exists
+           bHasAsset = SCENE_MANAGER().HasScene(sCheckName);
         }
         else
         {
