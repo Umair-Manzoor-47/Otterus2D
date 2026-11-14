@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <map>
 #include <memory>
 #include <string>
@@ -27,6 +27,10 @@ namespace otterus_editor
         static SceneManager& GetInstance();
 
         bool AddScene( const std::string& sceneName );
+        bool DeleteScene( const std::string& sceneName );
+        bool RenameScene( const std::string& oldName, const std::string& newName );
+        bool HasScene( const std::string& sceneName ) const;
+
         std::shared_ptr<otterus_editor::SceneObject> GetScene( const std::string& sceneName );
         std::shared_ptr<otterus_editor::SceneObject> GetCurrentScene();
         std::vector<std::string> GetSceneNames() const;
