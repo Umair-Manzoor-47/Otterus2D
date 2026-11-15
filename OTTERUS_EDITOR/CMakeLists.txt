@@ -21,6 +21,11 @@ add_executable(OTTERUS_EDITOR
     src/editor/utilities/EditorUtilities.h
     src/editor/utilities/editor_textures.h
     src/editor/utilities/EditorFrameBuffer.h
+
+    #Tools
+    src/editor/tools/AbstractTool.h
+    src/editor/tools/AbstractTool.cpp
+
     src/main.cpp
 )
 
