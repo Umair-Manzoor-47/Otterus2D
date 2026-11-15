@@ -5,6 +5,8 @@
 #include <Windowing/Inputs/Keyboard.h>
 #include <Windowing/Inputs/Mouse.h>
 
+#define INPUT_MANAGER() otterus_core::InputManager::GetInstance()
+
 using namespace otterus_windowing::Inputs;
 
 namespace otterus_core {
