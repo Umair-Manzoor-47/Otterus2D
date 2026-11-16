@@ -1,4 +1,6 @@
 #pragma once
+#include "Core/ECS/Components/AllComponents.h"
+#include "physics/UserData.h"
 
 namespace otterus_editor
 {
@@ -12,6 +14,20 @@ namespace otterus_editor
     struct Canvas
     {
         int width{ 640 }, height{ 480 }, tileWidth{ 16 }, tileHeight{ 16 };
+    };
+
+    struct Tile
+    {
+        uint32_t id{ entt::null };
+        otterus_core::ECS::TransformComponent transform{};
+        otterus_core::ECS::SpriteComponent sprite{};
+        otterus_core::ECS::AnimationComponent animation{};
+        otterus_core::ECS::BoxColliderComponent boxCollider{};
+        otterus_core::ECS::CircleColliderComponent circleCollider{};
+        otterus_core::ECS::PhysicsComponent physics{};
+        otterus_physics::ObjectData objectData{};
+
+        bool hasCollider{ false }, hasAnimation{ false }, enablePhysics{ false }, isCircle{ false };
     };
 
 }

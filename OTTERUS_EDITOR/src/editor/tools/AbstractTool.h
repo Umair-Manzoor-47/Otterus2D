@@ -37,8 +37,8 @@ namespace otterus_editor {
 			LAST
 		};
 
-		otterus_core::ECS::Registry* m_pRegistry{ nullptr };
-		otterus_rendering::Camera2D* m_pCamera{ nullptr };
+		otterus_core::ECS::Registry* m_Registry{ nullptr };
+		otterus_rendering::Camera2D* m_Camera{ nullptr };
 
 	protected:
 		bool MouseBtnJustPressed( EMouseButton button );
@@ -56,7 +56,7 @@ namespace otterus_editor {
 		virtual ~AbstractTool() = default;
 
 		// NOTE: Update the tool. If overridden, ensure to call the parent update. This will make sure the
-		// mouse world coords are updated accordingly. */
+		// mouse world coords are updated accordingly.
 		virtual void Update( Canvas& canvas );
 
 		//Sets the current registry to the registry of the current scene and the camera.

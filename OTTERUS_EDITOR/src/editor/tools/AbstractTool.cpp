@@ -11,10 +11,10 @@ namespace otterus_editor
     void AbstractTool::UpdateMouseWorldCoords()
     {
         m_MouseScreenCoords = m_GUICursorCoords - m_GUIRelativeCoords;
-        if ( !m_pCamera )
+        if ( !m_Camera )
             return;
 
-        m_MouseWorldCoords = m_pCamera->ScreenCoordToWorld( m_MouseScreenCoords );
+        m_MouseWorldCoords = m_Camera->ScreenCoordToWorld( m_MouseScreenCoords );
     }
 
     void AbstractTool::CheckOutOfBounds( Canvas& canvas )
@@ -73,8 +73,8 @@ namespace otterus_editor
             return false;
         }
 
-        m_pCamera = camera;
-        m_pRegistry = registry;
+        m_Camera = camera;
+        m_Registry = registry;
 
         return true;
     }
