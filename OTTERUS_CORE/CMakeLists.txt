@@ -1,8 +1,13 @@
 add_library(OTTERUS_CORE STATIC
+    # Utils
     Core/CoreUtilities/CoreEngineData.cpp
     Core/CoreUtilities/CoreEngineData.h
+    Core/CoreUtilities/CoreUtilities.h
+    Core/CoreUtilities/CoreUtilities.cpp
     Core/CoreUtilities/FollowCamera.cpp
     Core/CoreUtilities/FollowCamera.h
+
+    # Components
     Core/ECS/Components/AnimationComponent.cpp
     Core/ECS/Components/AnimationComponent.h
     Core/ECS/Components/BoxColliderComponent.cpp
@@ -21,6 +26,9 @@ add_library(OTTERUS_CORE STATIC
     Core/ECS/Components/TextComponent.h
     Core/ECS/Components/TransformComponent.cpp
     Core/ECS/Components/TransformComponent.h
+    Core/ECS/Components/TileComponent.h
+    Core/ECS/Components/AllComponents.h
+
     Core/ECS/Entity.cpp
     Core/ECS/Entity.h
     Core/ECS/Entity.inl
@@ -31,6 +39,8 @@ add_library(OTTERUS_CORE STATIC
     Core/ECS/Registry.cpp
     Core/ECS/Registry.h
     Core/ECS/Registry.inl
+
+    # Scripting
     Core/Scripting/ContactListenerBind.cpp
     Core/Scripting/ContactListenerBind.h
     Core/Scripting/GlmLuaBindings.cpp
@@ -44,10 +54,16 @@ add_library(OTTERUS_CORE STATIC
     Core/Scripting/UserDataBindings.cpp
     Core/Scripting/UserDataBindings.h
     Core/Scripting/UserDataBindings.inl
+
+    # State Machine
     Core/States/State.cpp
     Core/States/State.h
     Core/States/StateStack.cpp
     Core/States/StateStack.h
+    Core/States/StateMachine.cpp
+    Core/States/StateMachine.h
+
+    # Systems
     Core/Systems/AnimationSystem.cpp
     Core/Systems/AnimationSystem.h
     Core/Systems/PhysicsSystem.cpp
@@ -60,11 +76,11 @@ add_library(OTTERUS_CORE STATIC
     Core/Systems/RenderUISystem.h
     Core/Systems/ScriptingSystem.cpp
     Core/Systems/ScriptingSystem.h
+
+    # Resources
     Core/Resources/AssetManager.cpp
     Core/Resources/AssetManager.h
     Core/Resources/fonts/default_font.h
-    Core/States/StateMachine.cpp
-    Core/States/StateMachine.h
 )
 
 target_include_directories(OTTERUS_CORE PUBLIC
