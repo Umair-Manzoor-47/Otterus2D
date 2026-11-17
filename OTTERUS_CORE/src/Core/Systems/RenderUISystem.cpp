@@ -24,8 +24,8 @@ namespace otterus_core::Systems {
 	{
 		auto& assetManager = MAIN_REGISTRY().GetContext<std::shared_ptr<AssetManager>>();
 
-		auto& fontShader = assetManager->GetShader("font");
-		if (fontShader.GetProgramID() == 0) {
+		auto fontShader = assetManager->GetShader("font");
+		if (!fontShader || fontShader->GetProgramID() == 0) {
 
 			OTTERUS_LOG("Failed to get font shader from AssetManager.");
 			return;
@@ -35,8 +35,8 @@ namespace otterus_core::Systems {
 		auto textView = registry.GetRegistry().view<TextComponent, TransformComponent>();
 
 
-		fontShader.Enable();
-		fontShader.SetUniformMat4("uProjection", cameraMatrix);
+		fontShader->Enable();
+		fontShader->SetUniformMat4("uProjection", cameraMatrix);
 
 
 		m_TextRenderer->Begin();
@@ -82,6 +82,6 @@ namespace otterus_core::Systems {
 		m_TextRenderer->End();
 		m_TextRenderer->Render();
 
-		fontShader.Disable();
+		fontShader->Disable();
 	}
 }
