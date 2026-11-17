@@ -1,17 +1,24 @@
 add_library(OTTERUS_SOUND STATIC
     src/Sounds/Essentials/Music.cpp
-    src/Sounds/Essentials/Music.h
     src/Sounds/Essentials/SoundFX.cpp
-    src/Sounds/Essentials/SoundFX.h
-    src/Sounds/Essentials/SoundParams.h
     src/Sounds/MusicPlayer/MusicPlayer.cpp
-    src/Sounds/MusicPlayer/MusicPlayer.h
     src/Sounds/SoundPlayer/SoundFxPlayer.cpp
-    src/Sounds/SoundPlayer/SoundFxPlayer.h
+    include/Sounds/Essentials/Music.h
+    include/Sounds/Essentials/SoundFX.h
+    include/Sounds/Essentials/SoundParams.h
+    include/Sounds/MusicPlayer/MusicPlayer.h
+    include/Sounds/SoundPlayer/SoundFxPlayer.h
 )
 
 target_include_directories(OTTERUS_SOUND PUBLIC
-    "${CMAKE_CURRENT_SOURCE_DIR}/src"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+)
+
+target_include_directories(OTTERUS_SOUND PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/Sounds"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/Sounds/Essentials"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/Sounds/MusicPlayer"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/Sounds/SoundPlayer"
 )
 
 target_link_libraries(OTTERUS_SOUND PUBLIC

@@ -1,12 +1,12 @@
 add_library(OTTERUS_LOGGER STATIC
-    Logger/Logger.cpp
-    Logger/Logger.h
-    Logger/Logger.inl
+    src/Logger/Logger.cpp
+    include/Logger/Logger.h
+    include/Logger/Logger.inl
 )
 
 target_include_directories(OTTERUS_LOGGER PUBLIC
-    "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Logger"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/Logger"
 )
 
 target_link_libraries(OTTERUS_LOGGER PUBLIC

@@ -53,7 +53,7 @@
 
 #include "editor/utilities/editor_textures.h"
 #include "editor/utilities/EditorFrameBuffer.h"
-#include "editor/Systems/GridSystem.h"
+#include "editor/systems/GridSystem.h"
 #include "editor/scene/SceneManager.h"
 
 #ifdef _WIN32

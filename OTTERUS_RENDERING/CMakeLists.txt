@@ -1,40 +1,48 @@
 add_library(OTTERUS_RENDERING STATIC
-    Rendering/Buffers/Framebuffer.cpp
-    Rendering/Buffers/Framebuffer.h
-    Rendering/Core/Batcher.h
-    Rendering/Core/BatchRenderer.cpp
-    Rendering/Core/BatchRenderer.h
-    Rendering/Core/Camera2D.cpp
-    Rendering/Core/Camera2D.h
-    Rendering/Core/CircleBatchRenderer.cpp
-    Rendering/Core/CircleBatchRenderer.h
-    Rendering/Core/LineBatchRenderer.cpp
-    Rendering/Core/LineBatchRenderer.h
-    Rendering/Core/RectBatchRenderer.cpp
-    Rendering/Core/RectBatchRenderer.h
-    Rendering/Core/Renderer.cpp
-    Rendering/Core/Renderer.h
-    Rendering/Core/TextBatchRenderer.cpp
-    Rendering/Core/TextBatchRenderer.h
-    Rendering/Essentials/BatchTypes.h
-    Rendering/Essentials/Font.cpp
-    Rendering/Essentials/Font.h
-    Rendering/Essentials/FontLoader.cpp
-    Rendering/Essentials/FontLoader.h
-    Rendering/Essentials/Primitives.h
-    Rendering/Essentials/Shader.cpp
-    Rendering/Essentials/Shader.h
-    Rendering/Essentials/ShaderLoader.cpp
-    Rendering/Essentials/ShaderLoader.h
-    Rendering/Essentials/Texture.cpp
-    Rendering/Essentials/Texture.h
-    Rendering/Essentials/TextureLoader.cpp
-    Rendering/Essentials/TextureLoader.h
-    Rendering/Essentials/Vertex.h
+    src/Rendering/Buffers/Framebuffer.cpp
+    src/Rendering/Core/BatchRenderer.cpp
+    src/Rendering/Core/Camera2D.cpp
+    src/Rendering/Core/CircleBatchRenderer.cpp
+    src/Rendering/Core/LineBatchRenderer.cpp
+    src/Rendering/Core/RectBatchRenderer.cpp
+    src/Rendering/Core/Renderer.cpp
+    src/Rendering/Core/TextBatchRenderer.cpp
+    src/Rendering/Essentials/Font.cpp
+    src/Rendering/Essentials/FontLoader.cpp
+    src/Rendering/Essentials/Shader.cpp
+    src/Rendering/Essentials/ShaderLoader.cpp
+    src/Rendering/Essentials/Texture.cpp
+    src/Rendering/Essentials/TextureLoader.cpp
+
+    include/Rendering/Buffers/Framebuffer.h
+    include/Rendering/Core/Batcher.h
+    include/Rendering/Core/BatchRenderer.h
+    include/Rendering/Core/Camera2D.h
+    include/Rendering/Core/CircleBatchRenderer.h
+    include/Rendering/Core/LineBatchRenderer.h
+    include/Rendering/Core/RectBatchRenderer.h
+    include/Rendering/Core/Renderer.h
+    include/Rendering/Core/TextBatchRenderer.h
+    include/Rendering/Essentials/BatchTypes.h
+    include/Rendering/Essentials/Font.h
+    include/Rendering/Essentials/FontLoader.h
+    include/Rendering/Essentials/Primitives.h
+    include/Rendering/Essentials/Shader.h
+    include/Rendering/Essentials/ShaderLoader.h
+    include/Rendering/Essentials/Texture.h
+    include/Rendering/Essentials/TextureLoader.h
+    include/Rendering/Essentials/Vertex.h
 )
 
 target_include_directories(OTTERUS_RENDERING PUBLIC
-    "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+)
+
+target_include_directories(OTTERUS_RENDERING PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/Rendering"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/Rendering/Buffers"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/Rendering/Core"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/Rendering/Essentials"
 )
 
 target_link_libraries(OTTERUS_RENDERING PUBLIC
