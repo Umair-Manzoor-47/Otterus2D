@@ -27,11 +27,17 @@ namespace otterus_core::Systems {
 		auto& camera = registry.GetContext<std::shared_ptr<Camera2D>>();
 		auto& assetManager = MAIN_REGISTRY().GetContext<std::shared_ptr<AssetManager>>();
 
-		auto& colorShader = assetManager->GetShader("color");
+		auto colorShader = assetManager->GetShader("color");
+		if (!colorShader)
+		{
+			OTTERUS_ERROR("Failed to get color shader from AssetManager.");
+			return;
+		}
+
 		auto cameraMatrix = camera->GetCameraMatrix();
 
-		colorShader.Enable();
-		colorShader.SetUniformMat4("projection", cameraMatrix);
+		colorShader->Enable();
+		colorShader->SetUniformMat4("uProjection", cameraMatrix);
 		m_RectBatchRenderer->Begin();
 
 		auto boxView = registry.GetRegistry().view<TransformComponent, BoxColliderComponent>();
@@ -81,14 +87,19 @@ namespace otterus_core::Systems {
 		}
 		m_RectBatchRenderer->End();
 		m_RectBatchRenderer->Render();
-		colorShader.Disable();
+		colorShader->Disable();
 
 
 		// Circle
-		auto& circleShader = assetManager->GetShader("circle");
+		auto circleShader = assetManager->GetShader("circle");
+		if (!circleShader)
+		{
+			OTTERUS_ERROR("Failed to get circle shader from AssetManager.");
+			return;
+		}
 
-		circleShader.Enable();
-		circleShader.SetUniformMat4("uProjection", cameraMatrix);
+		circleShader->Enable();
+		circleShader->SetUniformMat4("uProjection", cameraMatrix);
 		m_CircleBatchRenderer->Begin();
 
 		auto circleView = registry.GetRegistry().view<TransformComponent, CircleColliderComponent>();
@@ -108,6 +119,6 @@ namespace otterus_core::Systems {
 		}
 		m_CircleBatchRenderer->End();
 		m_CircleBatchRenderer->Render();
-		circleShader.Disable();
+		circleShader->Disable();
 	}
 }

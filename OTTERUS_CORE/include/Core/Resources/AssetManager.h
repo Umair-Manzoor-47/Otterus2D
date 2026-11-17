@@ -38,7 +38,7 @@ namespace otterus_resources {
 		bool DeleteTexture( const std::string& textureName );
 
 		bool AddShader(const std::string & shaderName, const std::string & vertexPath, const std::string & fragmentPath);
-		otterus_rendering::Shader& GetShader(const std::string& shaderName);
+		std::shared_ptr<otterus_rendering::Shader> GetShader(const std::string& shaderName);
 
 		bool AddFont(const std::string& fontName, const std::string& fontPath, float fontSize = 32.f);
 		bool AddFontFromMemory(const std::string& fontName, unsigned char* fontData, float fontSize = 32.f);

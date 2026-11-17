@@ -402,25 +402,25 @@ namespace otterus_editor {
 			return false;
 		}
 
-		auto& shader = assetManager->GetShader("basic");
-		if(shader.GetProgramID() == 0) {
+		auto shader = assetManager->GetShader("basic");
+		if(!shader || shader->GetProgramID() == 0) {
 			OTTERUS_ERROR("Failed to Get Basic Shader from AssetManager.");
 			return false;
 		}
-		auto& colorShader = assetManager->GetShader("color");
-		if (colorShader.GetProgramID() == 0) {
+		auto colorShader = assetManager->GetShader("color");
+		if (!colorShader || colorShader->GetProgramID() == 0) {
 			OTTERUS_ERROR("Failed to Get Color Shader from AssetManager.");
 			return false;
 		}
 
-		auto& circleShader = assetManager->GetShader("circle");
-		if (circleShader.GetProgramID() == 0) {
+		auto circleShader = assetManager->GetShader("circle");
+		if (!circleShader || circleShader->GetProgramID() == 0) {
 			OTTERUS_ERROR("Failed to Get Circle Shader from AssetManager.");
 			return false;
 		}
 
-		OTTERUS_LOG("Shader Log {0}", shader.GetProgramID());
-		OTTERUS_LOG("Shader Log {0}", colorShader.GetProgramID());
+		OTTERUS_LOG("Shader Log {0}", shader->GetProgramID());
+		OTTERUS_LOG("Shader Log {0}", colorShader->GetProgramID());
 
         return true;
     }

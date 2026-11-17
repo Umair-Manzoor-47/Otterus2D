@@ -15,9 +15,11 @@ namespace otterus_editor {
         auto& assetManager = MAIN_REGISTRY().GetAssetManager();
         auto camMat = camera.GetCameraMatrix();
 
-        auto& colorShader = assetManager.GetShader("color");
-        colorShader.Enable();
-        colorShader.SetUniformMat4("projection", camMat);
+        auto colorShader = assetManager.GetShader("color");
+        if (!colorShader)
+            return;
+        colorShader->Enable();
+        colorShader->SetUniformMat4("uProjection", camMat);
         m_RectBatchRenderer->Begin();
 
         constexpr int tileSize {32};
@@ -54,6 +56,6 @@ namespace otterus_editor {
         m_RectBatchRenderer->End();
         m_RectBatchRenderer->Render();
 
-        colorShader.Disable();
+        colorShader->Disable();
     }
 }

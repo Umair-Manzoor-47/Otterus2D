@@ -105,17 +105,16 @@ namespace otterus_resources {
         return true;
     }
 
-    otterus_rendering::Shader& AssetManager::GetShader(const std::string& shaderName)
+    std::shared_ptr<otterus_rendering::Shader> AssetManager::GetShader(const std::string& shaderName)
     {
         auto shaderItr = m_mapShaders.find(shaderName);
         if (shaderItr == m_mapShaders.end()) {
 
             OTTERUS_ERROR("Failed to get shader [{0}] -- Does not exist.", shaderName);
-            static otterus_rendering::Shader s_emptyShader{};
-            return s_emptyShader;
+            return nullptr;
         }
 
-        return *shaderItr->second;
+        return shaderItr->second;
     }
     bool AssetManager::AddMusic(const std::string& musicName, const std::string& filePath)
     {

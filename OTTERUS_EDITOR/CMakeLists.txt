@@ -27,6 +27,8 @@ add_executable(OTTERUS_EDITOR
     src/editor/tools/AbstractTool.cpp
     src/editor/tools/TileTool.h
     src/editor/tools/TileTool.cpp
+    src/editor/tools/CreateTileTool.h
+    src/editor/tools/CreateTileTool.cpp
 
     src/main.cpp
 )

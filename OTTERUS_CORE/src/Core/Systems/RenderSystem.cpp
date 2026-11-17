@@ -24,17 +24,17 @@ namespace otterus_core::Systems {
 
 		auto& assetManager = MAIN_REGISTRY().GetContext<std::shared_ptr<otterus_resources::AssetManager>>();
 
-		auto& spriteShader = assetManager->GetShader("basic");
+		auto spriteShader = assetManager->GetShader("basic");
 		auto cameraMatrix = camera->GetCameraMatrix();
 	
-		if (spriteShader.GetProgramID() == 0) {
+		if (!spriteShader || spriteShader->GetProgramID() == 0) {
 		
 			OTTERUS_LOG("Sprite shader program id has not been set correctly");
 			return;
 		}
 
-		spriteShader.Enable();
-		spriteShader.SetUniformMat4("uProjection", cameraMatrix);
+		spriteShader->Enable();
+		spriteShader->SetUniformMat4("uProjection", cameraMatrix);
 
 
 		m_batchRenderer->Begin();
@@ -69,7 +69,7 @@ namespace otterus_core::Systems {
 		m_batchRenderer->End();
 		m_batchRenderer->Render();
 
-		spriteShader.Disable();
+		spriteShader->Disable();
 
 	}
 }
