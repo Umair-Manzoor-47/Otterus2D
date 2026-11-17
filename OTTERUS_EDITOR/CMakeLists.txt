@@ -1,8 +1,8 @@
 add_executable(OTTERUS_EDITOR
     src/Application.cpp
     src/Application.h
-    src/editor/Systems/GridSystem.h
-    src/editor/Systems/GridSystem.cpp
+    src/editor/systems/GridSystem.h
+    src/editor/systems/GridSystem.cpp
     src/editor/displays/IDisplay.h
     src/editor/displays/LogDisplay.cpp
     src/editor/displays/LogDisplay.h
