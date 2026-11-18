@@ -71,7 +71,7 @@ namespace otterus_editor {
 		inline const glm::vec2& GetMouseWorldCoords() const { return m_MouseWorldCoords; }
 
 		inline void Activate() { m_Activated = true; }
-		inline void DeActivate() { m_Activated = false; }
+		inline void Deactivate() { m_Activated = false; }
 		inline const bool IsActivated() const { return m_Activated; }
 		inline const bool OutOfBounds() const { return m_OutOfBounds; }
 	};
