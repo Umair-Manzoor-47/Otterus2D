@@ -58,12 +58,12 @@ function PlatformerTitleState:OnEnter()
     -- Option 1: "[Enter] Play Platformer" (X=170, Y=240)
     self.m_Option1Entity = Entity("Option1_Text", "UI")
     self.m_Option1Entity:add_component(Transform(vec2(170, 240), vec2(1, 1), 0))
-    self.m_Option1Entity:add_component(TextComponent("[Enter] Play Platformer", "pixel", 0, -1.0, Color(255, 255, 255, 255)))
+    self.m_Option1Entity:add_component(TextComponent("[Enter] Play Platformer", "pixel", 0, -1.0, Color(255, 200, 0, 255)))
 
     -- Option 2: "[2] Cozy Scene Showcase" (X=160, Y=290)
     self.m_Option2Entity = Entity("Option2_Text", "UI")
     self.m_Option2Entity:add_component(Transform(vec2(160, 290), vec2(1, 1), 0))
-    self.m_Option2Entity:add_component(TextComponent("[2] Cozy Scene Showcase", "pixel", 0, -1.0, Color(255, 255, 255, 255)))
+    self.m_Option2Entity:add_component(TextComponent("[2] Cozy Scene Showcase", "pixel", 0, -1.0, Color(100, 100, 100, 255)))
 end
 
 function PlatformerTitleState:OnExit()

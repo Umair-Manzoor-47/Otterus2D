@@ -288,7 +288,7 @@ namespace otterus_editor {
         else
         {
             auto& assetManager = MAIN_REGISTRY().GetAssetManager();
-            if ( assetManager.CheckHasAsset( sCheckName, m_SelectedType ) )
+            if ( assetManager.HasAsset( sCheckName, m_SelectedType ) )
                 bHasAsset = true;
         }
 

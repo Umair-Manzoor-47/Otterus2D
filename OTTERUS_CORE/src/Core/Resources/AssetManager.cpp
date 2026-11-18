@@ -289,13 +289,13 @@ namespace otterus_resources {
         return false;
     }
 
-    bool AssetManager::CheckHasAsset(const std::string &nameCheck, otterus_utils::AssetType assetType) {
+    bool AssetManager::HasAsset(const std::string &assetID, otterus_utils::AssetType assetType) const {
         switch ( assetType )
         {
-            case otterus_utils::AssetType::TEXTURE: return m_mapTextures.contains( nameCheck );
-            case otterus_utils::AssetType::FONT: return m_mapFonts.contains( nameCheck );
-            case otterus_utils::AssetType::SOUNDFX: return m_mapSoundFX.contains( nameCheck );
-            case otterus_utils::AssetType::MUSIC: return m_mapMusic.contains( nameCheck );
+            case otterus_utils::AssetType::TEXTURE: return m_mapTextures.contains( assetID );
+            case otterus_utils::AssetType::FONT: return m_mapFonts.contains( assetID );
+            case otterus_utils::AssetType::SOUNDFX: return m_mapSoundFX.contains( assetID );
+            case otterus_utils::AssetType::MUSIC: return m_mapMusic.contains( assetID );
             default: OTTERUS_ASSERT( false && "Cannot get this type!" );
         }
 
@@ -379,6 +379,17 @@ namespace otterus_resources {
     void AssetManager::CreateLuaAssetManager(sol::state& lua) {
         auto& assetManager = MAIN_REGISTRY().GetAssetManager();
 
+        lua.new_enum<otterus_utils::AssetType>(
+            "AssetType", {
+                { "TEXTURE", otterus_utils::AssetType::TEXTURE },
+                { "FONT",    otterus_utils::AssetType::FONT },
+                { "SOUNDFX", otterus_utils::AssetType::SOUNDFX },
+                { "MUSIC",   otterus_utils::AssetType::MUSIC },
+                { "SCENE",   otterus_utils::AssetType::SCENE },
+                { "NO_TYPE", otterus_utils::AssetType::NO_TYPE }
+            }
+        );
+
         lua.new_usertype<AssetManager>(
             "AssetManager",
             sol::no_constructor,
@@ -397,10 +408,11 @@ namespace otterus_resources {
                 return assetManager.AddSoundFX(soundFXName, filepath);
             },
             "add_font", [&](const std::string& fontName, const std::string& fontPath, float fontSize) {
-            
                 return assetManager.AddFont(fontName, fontPath, fontSize);
+            },
+            "has_asset", [&](const std::string& assetID, otterus_utils::AssetType assetType) {
+                return assetManager.HasAsset(assetID, assetType);
             }
-        
         );
     }
 }

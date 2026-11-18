@@ -210,7 +210,7 @@ AmbientEffectsManager.__index = AmbientEffectsManager
 function AmbientEffectsManager:Create()
     local this = {
         thunder = ThunderController:Create(),
-        leaves  = LeafRustleController:Create(7)
+        leaves  = LeafRustleController:Create(10)
     }
     setmetatable(this, self)
     return this

@@ -16,7 +16,10 @@ function AssetLoader.Load(assets)
     if assets.textures then
         for _, v in pairs(assets.textures) do
             local tileset = v.tileset or false
-            if AssetManager.add_texture(v.name, v.path, v.pixel_art, tileset) then
+            if AssetManager.has_asset and AssetManager.has_asset(v.name, AssetType.TEXTURE) then
+                AssetLoader.Loaded.textures[v.name] = true
+                OT_log("Texture [%s] already loaded in AssetManager", v.name)
+            elseif AssetManager.add_texture(v.name, v.path, v.pixel_art, tileset) then
                 AssetLoader.Loaded.textures[v.name] = true
                 OT_log("Loaded texture [%s]", v.name)
             else
@@ -28,7 +31,10 @@ function AssetLoader.Load(assets)
 
     if assets.music then
         for _, v in pairs(assets.music) do
-            if AssetManager.add_music(v.name, v.path) then
+            if AssetManager.has_asset and AssetManager.has_asset(v.name, AssetType.MUSIC) then
+                AssetLoader.Loaded.music[v.name] = true
+                OT_log("Music [%s] already loaded in AssetManager", v.name)
+            elseif AssetManager.add_music(v.name, v.path) then
                 AssetLoader.Loaded.music[v.name] = true
                 OT_log("Added music [%s]", v.name)
             else
@@ -40,7 +46,10 @@ function AssetLoader.Load(assets)
 
     if assets.sfx then
         for _, v in pairs(assets.sfx) do
-            if AssetManager.add_sound(v.name, v.path) then
+            if AssetManager.has_asset and AssetManager.has_asset(v.name, AssetType.SOUNDFX) then
+                AssetLoader.Loaded.sfx[v.name] = true
+                OT_log("SFX [%s] already loaded in AssetManager", v.name)
+            elseif AssetManager.add_sound(v.name, v.path) then
                 AssetLoader.Loaded.sfx[v.name] = true
                 OT_log("Added sfx [%s]", v.name)
             else
@@ -52,7 +61,10 @@ function AssetLoader.Load(assets)
 
     if assets.fonts then
         for _, v in pairs(assets.fonts) do
-            if AssetManager.add_font(v.name, v.path, v.size) then
+            if AssetManager.has_asset and AssetManager.has_asset(v.name, AssetType.FONT) then
+                AssetLoader.Loaded.fonts[v.name] = true
+                OT_log("Font [%s] already loaded in AssetManager", v.name)
+            elseif AssetManager.add_font(v.name, v.path, v.size) then
                 AssetLoader.Loaded.fonts[v.name] = true
                 OT_log("Added font [%s]", v.name)
             else
@@ -64,19 +76,47 @@ function AssetLoader.Load(assets)
 end
 
 function AssetLoader.HasTexture(name)
-    return AssetLoader.Loaded.textures[name] == true
+    if AssetLoader.Loaded.textures[name] == true then
+        return true
+    end
+    if AssetManager and AssetManager.has_asset and AssetManager.has_asset(name, AssetType.TEXTURE) then
+        AssetLoader.Loaded.textures[name] = true
+        return true
+    end
+    return false
 end
 
 function AssetLoader.HasMusic(name)
-    return AssetLoader.Loaded.music[name] == true
+    if AssetLoader.Loaded.music[name] == true then
+        return true
+    end
+    if AssetManager and AssetManager.has_asset and AssetManager.has_asset(name, AssetType.MUSIC) then
+        AssetLoader.Loaded.music[name] = true
+        return true
+    end
+    return false
 end
 
 function AssetLoader.HasSound(name)
-    return AssetLoader.Loaded.sfx[name] == true
+    if AssetLoader.Loaded.sfx[name] == true then
+        return true
+    end
+    if AssetManager and AssetManager.has_asset and AssetManager.has_asset(name, AssetType.SOUNDFX) then
+        AssetLoader.Loaded.sfx[name] = true
+        return true
+    end
+    return false
 end
 
 function AssetLoader.HasFont(name)
-    return AssetLoader.Loaded.fonts[name] == true
+    if AssetLoader.Loaded.fonts[name] == true then
+        return true
+    end
+    if AssetManager and AssetManager.has_asset and AssetManager.has_asset(name, AssetType.FONT) then
+        AssetLoader.Loaded.fonts[name] = true
+        return true
+    end
+    return false
 end
 
 function AssetLoader.PlayMusic(name, loops)
