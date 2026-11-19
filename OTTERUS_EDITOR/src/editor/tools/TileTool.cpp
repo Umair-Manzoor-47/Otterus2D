@@ -104,7 +104,7 @@ namespace otterus_editor
         }
         else
         {
-            transform.position = isOffset ? mouseWorldPos - m_MouseRect * 0.f : mouseWorldPos;
+            transform.position = isOffset ? mouseWorldPos - m_MouseRect * 0.5f : mouseWorldPos;
         }
     }
 

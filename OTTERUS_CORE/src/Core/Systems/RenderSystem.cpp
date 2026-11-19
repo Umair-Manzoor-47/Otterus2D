@@ -20,6 +20,10 @@ namespace otterus_core::Systems {
 	}
 	void RenderSystem::Update(Registry& registry)
 	{
+		auto view = registry.GetRegistry().view<SpriteComponent, TransformComponent>();
+		if ( view.size_hint() < 1 )
+			return;
+
 		auto& camera = registry.GetContext<std::shared_ptr<Camera2D>>();
 
 		auto& assetManager = MAIN_REGISTRY().GetContext<std::shared_ptr<otterus_resources::AssetManager>>();
@@ -38,8 +42,6 @@ namespace otterus_core::Systems {
 
 
 		m_batchRenderer->Begin();
-		
-		auto view = registry.GetRegistry().view<SpriteComponent, TransformComponent>();
 
 		for (const auto entity : view)
 		{
