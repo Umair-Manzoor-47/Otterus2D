@@ -5,14 +5,16 @@
 #include <Core/Resources/AssetManager.h>
 #include <Rendering/Essentials/Vertex.h>
 #include <Rendering/Essentials/Primitives.h>
+#include "editor/scene/SceneObject.h"
 
 namespace otterus_editor {
     GridSystem::GridSystem()
         : m_RectBatchRenderer{ std::make_unique<otterus_rendering::RectBatchRenderer>()}
     {}
 
-    void GridSystem::Update(otterus_rendering::Camera2D &camera) {
+    void GridSystem::Update(SceneObject& currentScene, otterus_rendering::Camera2D &camera) {
         auto& assetManager = MAIN_REGISTRY().GetAssetManager();
+        const auto& canvas = currentScene.GetCanvas();
         auto camMat = camera.GetCameraMatrix();
 
         auto colorShader = assetManager.GetShader("color");
@@ -22,8 +24,8 @@ namespace otterus_editor {
         colorShader->SetUniformMat4("uProjection", camMat);
         m_RectBatchRenderer->Begin();
 
-        constexpr int tileSize {32};
-        int tileWidth{tileSize}, tileHeight{tileSize}, canvasWidth{ 640 }, canvasHeight { 480 };
+        int tileWidth{ canvas.tileWidth }, tileHeight{ canvas.tileHeight };
+        int canvasWidth{ canvas.width }, canvasHeight { canvas.height };
 
         int cols = canvasWidth / tileWidth;
         int rows = canvasHeight / tileHeight;

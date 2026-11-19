@@ -16,6 +16,6 @@ namespace otterus_editor {
         GridSystem();
         ~GridSystem() = default;
 
-        void Update(otterus_rendering::Camera2D& camera);
+        void Update(class SceneObject& currentScene, otterus_rendering::Camera2D& camera);
     };
 }

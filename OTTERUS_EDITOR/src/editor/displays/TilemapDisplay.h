@@ -16,6 +16,7 @@ namespace otterus_editor
 
     private:
         void RenderTilemap();
+        void LoadNewScene();
 
     public:
         TilemapDisplay();

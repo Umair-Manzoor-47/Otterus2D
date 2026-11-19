@@ -2,6 +2,8 @@
 #include "SceneObject.h"
 #include "OtterusUtilities/OtterusUtilities.h"
 #include "Logger.h"
+#include "editor/tools/TileTool.h"
+#include "editor/tools/ToolManager.h"
 
 namespace otterus_editor
 {
@@ -19,7 +21,7 @@ namespace otterus_editor
             return false;
         }
 
-        auto [itr, success] = m_mapScenes.emplace( sceneName, std::move( std::make_shared<otterus_editor::SceneObject>( sceneName ) ) );
+        auto [itr, success] = m_mapScenes.emplace( sceneName, std::move( std::make_shared<SceneObject>( sceneName ) ) );
         return success;
     }
 
@@ -127,5 +129,26 @@ namespace otterus_editor
     std::vector<std::string> SceneManager::GetSceneNames() const
     {
         return otterus_utils::GetKeys( m_mapScenes );
+    }
+
+    ToolManager& SceneManager::GetToolManager()
+    {
+        if (!m_ToolManager)
+            m_ToolManager = std::make_unique<ToolManager>();
+        OTTERUS_ASSERT(m_ToolManager && "Tool Manager must be valid.");
+        return *m_ToolManager;
+    }
+
+    void SceneManager::SetCurrentTileset(const std::string& tilesetID)
+    {
+        m_CurrentTileset = tilesetID;
+
+        if (!m_ToolManager)
+            return;
+
+        if (const auto activeTool = m_ToolManager->GetActiveTool())
+        {
+            activeTool->LoadSpriteTextureData(m_CurrentTileset);
+        }
     }
 }

@@ -1,10 +1,14 @@
 #include "TilesetDisplay.h"
+#include "editor/scene/SceneManager.h"
 #include <Core/Resources/AssetManager.h>
 #include <Core/ECS/MainRegistry.h>
 #include <Logger/Logger.h>
 #include <OtterusUtilities/OtterusUtilities.h>
 
 #include <imgui.h>
+
+#include "editor/tools/TileTool.h"
+#include "editor/tools/ToolManager.h"
 
 namespace otterus_editor {
     void TilesetDisplay::Draw() {
@@ -25,7 +29,10 @@ namespace otterus_editor {
             for (const auto& tileset : tilesets) {
                 bool isSelected = m_Tileset == tileset;
                 if (ImGui::Selectable(tileset.c_str(), isSelected))
+                {
                     m_Tileset = tileset;
+                    SCENE_MANAGER().SetCurrentTileset(m_Tileset);
+                }
                 if (isSelected)
                     ImGui::SetItemDefaultFocus();
 
@@ -88,7 +95,11 @@ namespace otterus_editor {
                         ImVec2{ u0, v0 }, ImVec2{ u1, v1 }))
                     {
                         m_Selected = id;
-                        OTTERUS_LOG("startX: {}, startY: {}", j, i);
+                        auto activeTool = SCENE_MANAGER().GetToolManager().GetActiveTool();
+                        if (activeTool)
+                        {
+                            activeTool->SetSpriteUVs(j, i);
+                        }
                     }
 
                     ImGui::PopID();
