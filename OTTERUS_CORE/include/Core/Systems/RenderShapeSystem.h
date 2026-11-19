@@ -1,9 +1,13 @@
 #pragma once
 
 #include "../ECS/Registry.h"
-#include <Rendering/Core/RectBatchRenderer.h>
-#include <Rendering/Core/CircleBatchRenderer.h>
 
+namespace otterus_rendering
+{
+	class Camera2D;
+	class RectBatchRenderer;
+	class CircleBatchRenderer;
+}
 
 namespace otterus_core::Systems {
 	class RenderShapeSystem
@@ -17,7 +21,7 @@ namespace otterus_core::Systems {
 		RenderShapeSystem();
 		~RenderShapeSystem() = default;
 
-		void Update(ECS::Registry& registry);
+		void Update(ECS::Registry& registry,  otterus_rendering::Camera2D& camera);
 	};
 
 }

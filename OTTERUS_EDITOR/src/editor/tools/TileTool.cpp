@@ -83,24 +83,24 @@ namespace otterus_editor
         const auto& mouseWorldPos = GetMouseWorldCoords();
         auto& transform = m_MouseTile->transform;
 
-        const float cameraScale = m_Camera->GetScale();
+
         bool isOffset{ true };
 
         if ( m_GridSnap )
         {
-            glm::vec2 mouseGrid{ 0.f };
-            if ( mouseWorldPos.x >= 0.f )
-                mouseGrid.x = static_cast<int>( ( mouseWorldPos.x / ( m_MouseRect.x * transform.scale.x ) * cameraScale ) );
-            if ( mouseWorldPos.y >= 0.f )
-                mouseGrid.y = static_cast<int>( ( mouseWorldPos.y / ( m_MouseRect.y * transform.scale.y ) * cameraScale ) );
 
-            transform.position.x = std::floor( ( mouseGrid.x / cameraScale ) ) * m_MouseRect.x * transform.scale.x;
-            transform.position.y = std::floor( ( mouseGrid.y / cameraScale ) ) * m_MouseRect.y * transform.scale.y;
-
-            m_GridCoords.x = mouseGrid.x / cameraScale;
-            m_GridCoords.y = mouseGrid.y / cameraScale;
-
+            float tileWidth  = m_MouseRect.x * transform.scale.x;
+            float tileHeight = m_MouseRect.y * transform.scale.y;
+            glm::vec2 mouseGrid{
+                mouseWorldPos.x / tileWidth,
+                mouseWorldPos.y / tileHeight
+            };
+            transform.position.x = std::floor( mouseGrid.x ) * tileWidth;
+            transform.position.y = std::floor( mouseGrid.y ) * tileHeight;
+            m_GridCoords.x = std::floor( mouseGrid.x );
+            m_GridCoords.y = std::floor( mouseGrid.y );
             SetMouseWorldCoords( transform.position );
+
         }
         else
         {

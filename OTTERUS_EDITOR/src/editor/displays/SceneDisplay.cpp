@@ -224,11 +224,11 @@ namespace otterus_editor {
     void SceneDisplay::RenderScene() {
 		auto& mainRegistry = MAIN_REGISTRY();
 		auto& editorFramebuffers = mainRegistry.GetContext<std::shared_ptr<EditorFramebuffers>>();
-		auto& renderer = mainRegistry.GetContext<std::shared_ptr<otterus_rendering::Renderer>>();
+		auto& renderer = mainRegistry.GetContext<std::shared_ptr<Renderer>>();
 
-		auto& renderSystem = mainRegistry.GetContext<std::shared_ptr<otterus_core::Systems::RenderSystem>>();
-		auto& renderUISystem = mainRegistry.GetContext<std::shared_ptr<otterus_core::Systems::RenderUISystem>>();
-		auto& renderShapeSystem = mainRegistry.GetContext<std::shared_ptr<otterus_core::Systems::RenderShapeSystem>>();
+		auto& renderSystem = mainRegistry.GetContext<std::shared_ptr<RenderSystem>>();
+		auto& renderUISystem = mainRegistry.GetContext<std::shared_ptr<RenderUISystem>>();
+		auto& renderShapeSystem = mainRegistry.GetContext<std::shared_ptr<RenderShapeSystem>>();
 
 		const auto& fb = editorFramebuffers->mapFramebuffers[ FramebufferType::SCENE ];
 
@@ -243,8 +243,9 @@ namespace otterus_editor {
 		if (currentScene && m_PlayScene)
 		{
 			auto& runtimeRegistry = currentScene->GetRuntimeRegistry();
-			renderSystem->Update(runtimeRegistry);
-			renderShapeSystem->Update(runtimeRegistry);
+			auto& camera = runtimeRegistry.GetContext<std::shared_ptr<Camera2D>>();
+			renderSystem->Update(runtimeRegistry, *camera);
+			renderShapeSystem->Update(runtimeRegistry, *camera);
 			renderUISystem->Update( runtimeRegistry );
 		}
 
@@ -264,14 +265,14 @@ namespace otterus_editor {
 
 		auto& coreGlobals = CORE_GLOBALS();
 
-		auto& camera = runtimeRegistry.GetContext<std::shared_ptr<otterus_rendering::Camera2D>>();
+		auto& camera = runtimeRegistry.GetContext<std::shared_ptr<Camera2D>>();
 		if (!camera) {
 			OTTERUS_ERROR("Failed to get Camera2D from Registry.");
 			return;
 		}
 		camera->Update();
 
-		auto& scriptSystem = runtimeRegistry.GetContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>();
+		auto& scriptSystem = runtimeRegistry.GetContext<std::shared_ptr<ScriptingSystem>>();
 		scriptSystem->Update();
 
 		if (coreGlobals.IsPhysicsEnabled())
@@ -281,10 +282,10 @@ namespace otterus_editor {
 			physicsWorld->ClearForces();
 		}
 
-		auto& physicsSystem = runtimeRegistry.GetContext<std::shared_ptr<otterus_core::Systems::PhysicsSystem>>();
+		auto& physicsSystem = runtimeRegistry.GetContext<std::shared_ptr<PhysicsSystem>>();
 		physicsSystem->Update(runtimeRegistry.GetRegistry());
 
-		auto& animationSystem = runtimeRegistry.GetContext<std::shared_ptr<otterus_core::Systems::AnimationSystem>>();
+		auto& animationSystem = runtimeRegistry.GetContext<std::shared_ptr<AnimationSystem>>();
 		animationSystem->Update();
 
         IDisplay::Update();

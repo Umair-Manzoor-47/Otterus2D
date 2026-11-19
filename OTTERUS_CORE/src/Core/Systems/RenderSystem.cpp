@@ -3,6 +3,7 @@
 #include "../ECS/Components/SpriteComponent.h"
 #include "../ECS/Components/TransformComponent.h"
 #include <Rendering/Core/Camera2D.h>
+#include <Rendering/Core/BatchRenderer.h>
 #include <Rendering/Essentials/Shader.h>
 
 #include <logger/Logger.h>
@@ -16,20 +17,19 @@ namespace otterus_core::Systems {
 	RenderSystem::RenderSystem():
 		m_batchRenderer{nullptr}
 	{
-		m_batchRenderer = std::make_unique<otterus_rendering::SpriteBatchRenderer>();
+		m_batchRenderer = std::make_unique<SpriteBatchRenderer>();
 	}
-	void RenderSystem::Update(Registry& registry)
+	void RenderSystem::Update(Registry& registry, Camera2D& camera)
 	{
 		auto view = registry.GetRegistry().view<SpriteComponent, TransformComponent>();
 		if ( view.size_hint() < 1 )
 			return;
 
-		auto& camera = registry.GetContext<std::shared_ptr<Camera2D>>();
 
 		auto& assetManager = MAIN_REGISTRY().GetContext<std::shared_ptr<otterus_resources::AssetManager>>();
 
 		auto spriteShader = assetManager->GetShader("basic");
-		auto cameraMatrix = camera->GetCameraMatrix();
+		auto cameraMatrix = camera.GetCameraMatrix();
 	
 		if (!spriteShader || spriteShader->GetProgramID() == 0) {
 		
@@ -61,7 +61,7 @@ namespace otterus_core::Systems {
 			glm::vec4 spriteRect{transform.position.x, transform.position.y, sprite.width, sprite.height};
 			glm::vec4 uvRect{sprite.uvs.u, sprite.uvs.v, sprite.uvs.uv_width, sprite.uvs.uv_height};
 		
-			if (!EntityInView(transform, sprite.width, sprite.height, *camera))
+			if (!EntityInView(transform, sprite.width, sprite.height, camera))
 				continue;
 			glm::mat4 model = RSTModel(transform, sprite.width, sprite.height);
 			m_batchRenderer->AddSprite(spriteRect, uvRect, texture->GetID(), sprite.layer, model, sprite.color);

@@ -1,8 +1,12 @@
 #pragma once
 
 #include "../ECS/Registry.h"
-#include <Rendering/Core/BatchRenderer.h>
 
+namespace otterus_rendering
+{
+	class Camera2D;
+	class SpriteBatchRenderer;
+}
 
 namespace otterus_core::Systems {
 	class RenderSystem
@@ -14,7 +18,7 @@ namespace otterus_core::Systems {
 		RenderSystem();
 		~RenderSystem() = default;
 
-		void Update(ECS::Registry& registry);
+		void Update(ECS::Registry& registry, otterus_rendering::Camera2D& camera);
 	};
 
 }
