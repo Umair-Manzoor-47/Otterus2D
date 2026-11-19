@@ -59,7 +59,7 @@ namespace otterus_resources {
 		std::vector<std::string> GetAssetKeyNames(otterus_utils::AssetType AssetType);
 
 		bool ChangeAssetName( const std::string& oldName, const std::string& newName, otterus_utils::AssetType assetType );
-		bool CheckHasAsset( const std::string& nameCheck, otterus_utils::AssetType assetType );
+		bool HasAsset( const std::string& assetID, otterus_utils::AssetType assetType ) const;
 		bool DeleteAsset( const std::string& assetName, otterus_utils::AssetType assetType );
 		inline bool RemoveAsset( const std::string& assetName, otterus_utils::AssetType assetType ) { return DeleteAsset( assetName, assetType ); }
 

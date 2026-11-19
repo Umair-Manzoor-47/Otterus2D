@@ -61,7 +61,10 @@ function CozySceneShowcase:init()
         end
     end
 
-    self.rainGen = RainGenerator:Create()
+    self.rainGen = RainGenerator:Create({
+        x_offset = 24,
+        y_offset = 24
+    })
     self.ambientEffects = AmbientEffectsManager:Create()
 
     -- Title banner
