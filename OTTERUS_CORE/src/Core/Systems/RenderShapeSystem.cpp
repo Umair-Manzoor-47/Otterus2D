@@ -9,6 +9,8 @@
 #include <Logger/Logger.h>
 #include "../ECS/Components/PhysicsComponent.h"
 #include "Core/ECS/MainRegistry.h"
+#include <Rendering/Core/RectBatchRenderer.h>
+#include <Rendering/Core/CircleBatchRenderer.h>
 
 using namespace otterus_core::ECS;
 using namespace otterus_rendering;
@@ -19,12 +21,11 @@ namespace otterus_core::Systems {
 		m_CircleBatchRenderer{ std::make_unique<CircleBatchRenderer>() }
 	{}
 
-	void RenderShapeSystem::Update(Registry& registry)
+	void RenderShapeSystem::Update(Registry& registry, Camera2D& camera)
 	{
 		if (!CoreEngineData::GetInstance().RenderCollidersEnabled())
 			return;
 
-		auto& camera = registry.GetContext<std::shared_ptr<Camera2D>>();
 		auto& assetManager = MAIN_REGISTRY().GetContext<std::shared_ptr<AssetManager>>();
 
 		auto colorShader = assetManager->GetShader("color");
@@ -34,7 +35,7 @@ namespace otterus_core::Systems {
 			return;
 		}
 
-		auto cameraMatrix = camera->GetCameraMatrix();
+		auto cameraMatrix = camera.GetCameraMatrix();
 
 		colorShader->Enable();
 		colorShader->SetUniformMat4("uProjection", cameraMatrix);

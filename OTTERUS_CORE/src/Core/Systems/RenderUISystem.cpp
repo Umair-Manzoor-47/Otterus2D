@@ -2,6 +2,9 @@
 #include "../Resources/AssetManager.h"
 #include "../ECS/Components/TextComponent.h"
 #include "../ECS/Components/TransformComponent.h"
+#include <Rendering/Core/BatchRenderer.h>
+#include <Rendering/Core/TextBatchRenderer.h>
+#include <Rendering/Core/Camera2D.h>
 #include <Rendering/Essentials/Font.h>
 #include <Logger/Logger.h>
 #include "Core/ECS/MainRegistry.h"
@@ -19,6 +22,9 @@ namespace otterus_core::Systems {
 		m_UICamera = std::make_unique<otterus_rendering::Camera2D>(640, 480);
 		m_UICamera->Update();
 	}
+
+	RenderUISystem::~RenderUISystem()
+	{}
 
 	void RenderUISystem::Update(Registry& registry)
 	{

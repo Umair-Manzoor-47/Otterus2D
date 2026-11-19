@@ -19,7 +19,28 @@ namespace otterus_editor
 
     void AbstractTool::CheckOutOfBounds( Canvas& canvas )
     {
-        // TODO: Ensure mouse cursor is within desired location
+        float boundsWidth  = canvas.width  - ( canvas.tileWidth  * 0.5f );
+        float boundsHeight = canvas.height - ( canvas.tileHeight * 0.5f );
+        // 1. Is the mouse physically inside the ImGui window and viewport?
+        bool insideWindow =
+            m_GUICursorCoords.x >= m_WindowPos.x &&
+            m_GUICursorCoords.x <= m_WindowPos.x + m_WindowSize.x &&
+            m_GUICursorCoords.y >= m_WindowPos.y &&
+            m_GUICursorCoords.y <= m_WindowPos.y + m_WindowSize.y &&
+            m_MouseScreenCoords.x > 0.f && m_MouseScreenCoords.x < m_WindowSize.x &&
+            m_MouseScreenCoords.y > 0.f && m_MouseScreenCoords.y < m_WindowSize.y;
+        // 2. Is the mouse within the canvas grid boundaries (accounting for half-tile snap)?
+        bool insideCanvas =
+            m_MouseWorldCoords.x >= 0.f && m_MouseWorldCoords.x <= boundsWidth &&
+            m_MouseWorldCoords.y >= 0.f && m_MouseWorldCoords.y <= boundsHeight;
+        if ( insideWindow && insideCanvas )
+        {
+            m_OutOfBounds = false;
+        }
+        else
+        {
+            m_OutOfBounds = true;
+        }
     }
 
     bool AbstractTool::MouseBtnJustPressed( EMouseButton button )
@@ -56,8 +77,8 @@ namespace otterus_editor
 
     void AbstractTool::Update( Canvas& canvas )
     {
-        CheckOutOfBounds( canvas );
         UpdateMouseWorldCoords();
+        CheckOutOfBounds( canvas );
     }
 
     bool AbstractTool::SetupTool( otterus_core::ECS::Registry* registry, otterus_rendering::Camera2D* camera )

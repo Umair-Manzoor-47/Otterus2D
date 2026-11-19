@@ -35,6 +35,7 @@ void TilemapDisplay::RenderTilemap()
 
 	const auto& fb = editorFramebuffers->mapFramebuffers[ FramebufferType::TILEMAP ];
 
+	fb->CheckResize();
 	fb->Bind();
 	renderer->SetViewport( 0, 0, fb->GetWidth(), fb->GetHeight() );
 
@@ -47,9 +48,9 @@ void TilemapDisplay::RenderTilemap()
 	auto& gridSystem = mainRegistry.GetContext<std::shared_ptr<GridSystem>>();
 	gridSystem->Update( *currentScene, *m_pTilemapCam );
 
-	renderSystem->Update(currentScene->GetRegistry());
-	renderShapeSystem->Update(currentScene->GetRegistry());
-	renderUISystem->Update( currentScene->GetRegistry() );
+	renderSystem->Update(currentScene->GetRegistry(), *m_pTilemapCam);
+	renderShapeSystem->Update(currentScene->GetRegistry(), *m_pTilemapCam);
+	renderUISystem->Update( currentScene->GetRegistry());
 
 	auto activeTool = SCENE_MANAGER().GetToolManager().GetActiveTool();
 	if (activeTool)
@@ -58,7 +59,6 @@ void TilemapDisplay::RenderTilemap()
 	}
 
 	fb->Unbind();
-	fb->CheckResize();
 
 	renderer->SetClearColor( 0.f, 0.f, 0.f, 1.f );
 	renderer->ClearBuffers( true, true, false );
@@ -136,11 +136,16 @@ void TilemapDisplay::Draw()
 			{
 				SCENE_MANAGER().SetCurrentScene( std::string{ (const char*)payload->Data } );
 				LoadNewScene();
+				m_pTilemapCam->Reset();
 			}
 			ImGui::EndDragDropTarget();
 		}
 
-
+		if ( fb->GetWidth() != static_cast<int>( windowSize.x ) || fb->GetHeight() != static_cast<int>( windowSize.y ) )
+		{
+			fb->Resize( static_cast<int>( windowSize.x ), static_cast<int>( windowSize.y ) );
+			m_pTilemapCam->Resize(static_cast<int>( windowSize.x ), static_cast<int>( windowSize.y ));
+		}
 		ImGui::EndChild();
 	}
 	ImGui::End();
