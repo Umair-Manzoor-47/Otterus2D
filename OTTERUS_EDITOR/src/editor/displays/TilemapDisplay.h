@@ -2,6 +2,8 @@
 #include "IDisplay.h"
 #include <string>
 
+#include "glm/vec2.hpp"
+
 namespace otterus_rendering
 {
     class Camera2D;
@@ -17,6 +19,7 @@ namespace otterus_editor
     private:
         void RenderTilemap();
         void LoadNewScene();
+        void PanZoomCamera(const glm::vec2& mousePos);
 
     public:
         TilemapDisplay();
