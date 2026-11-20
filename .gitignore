@@ -15,6 +15,7 @@ x86/
 build/
 out/
 cmake-build-*/
+vcpkg_installed/
 CMakeUserPresets.json
 
 ## --- IDE & Editor Files ---
