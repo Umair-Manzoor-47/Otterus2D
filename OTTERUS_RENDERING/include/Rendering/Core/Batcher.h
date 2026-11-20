@@ -116,8 +116,8 @@ namespace otterus_rendering {
 	inline Batcher<TBatch, TGlyph>::~Batcher()
 	{
 		if (m_VAO) glDeleteVertexArrays(1, &m_VAO);
-		if (m_IBO) glDeleteBuffers(1, &m_VBO);
-		if (m_VBO) glDeleteBuffers(1, &m_IBO);
+		if (m_IBO) glDeleteBuffers(1, &m_IBO);
+		if (m_VBO) glDeleteBuffers(1, &m_VBO);
 	}
 
 	template<typename TBatch, typename TGlyph>
