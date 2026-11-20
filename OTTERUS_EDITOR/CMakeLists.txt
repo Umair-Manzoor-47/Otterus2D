@@ -14,6 +14,8 @@ add_executable(OTTERUS_EDITOR
     src/editor/displays/TilemapDisplay.cpp
     src/editor/displays/AssetDisplay.h
     src/editor/displays/AssetDisplay.cpp
+    src/editor/displays/MenuDisplay.h
+    src/editor/displays/MenuDisplay.cpp
     src/editor/scene/SceneObject.h
     src/editor/scene/SceneObject.cpp
     src/editor/scene/SceneManager.h
@@ -44,6 +46,7 @@ target_include_directories(OTTERUS_EDITOR PRIVATE
 
 target_link_libraries(OTTERUS_EDITOR PRIVATE
     OTTERUS_CORE
+    OTTERUS_FILESYSTEM
     ImGui
 )
 

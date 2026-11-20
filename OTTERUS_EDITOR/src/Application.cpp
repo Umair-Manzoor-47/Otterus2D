@@ -46,6 +46,8 @@
 #include "editor/displays/TilesetDisplay.h"
 #include "editor/displays/TilemapDisplay.h"
 #include "editor/displays/AssetDisplay.h"
+#include "editor/displays/MenuDisplay.h"
+
 #include <Physics/ContactListener.h>
 #include <Core/ECS/MainRegistry.h>
 
@@ -599,6 +601,12 @@ namespace otterus_editor {
     		OTTERUS_ERROR( "Failed to Create AssetDisplay!" );
     		return false;
     	}
+    	auto menuDisplay = std::make_unique<MenuDisplay>();
+    	if ( !menuDisplay )
+    	{
+    		OTTERUS_ERROR( "Failed to Create Menu Display!" );
+    		return false;
+    	}
 		// TODO: Other displays as needed
 
 		displayHolder->displays.push_back(std::move(sceneDisplay));
@@ -606,6 +614,7 @@ namespace otterus_editor {
 		displayHolder->displays.push_back(std::move(tilesetDisplay));
     	displayHolder->displays.push_back(std::move(tilemapDisplay));
     	displayHolder->displays.push_back(std::move(assetDisplay));
+    	displayHolder->displays.push_back( std::move(menuDisplay));
 
 		return true;
 	}
