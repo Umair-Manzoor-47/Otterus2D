@@ -21,11 +21,11 @@ namespace otterus_editor {
 		glm::vec2 m_GUICursorCoords, m_GUIRelativeCoords;
 		glm::vec2 m_WindowPos, m_WindowSize;
 
-		bool m_Activated, m_OutOfBounds;
+		bool m_Activated, m_OutOfBounds, m_OverTilemapWindow;
 
 	private:
 		void UpdateMouseWorldCoords();
-		void CheckOutOfBounds( Canvas& canvas );
+		void CheckOutOfBounds( const Canvas& canvas );
 
 	protected:
 		enum class EMouseButton
@@ -69,9 +69,11 @@ namespace otterus_editor {
 
 		inline const glm::vec2& GetMouseScreenCoords() const { return m_MouseScreenCoords; }
 		inline const glm::vec2& GetMouseWorldCoords() const { return m_MouseWorldCoords; }
+		inline const bool IsOverTilemapWindow() const { return m_OverTilemapWindow; }
 
 		inline void Activate() { m_Activated = true; }
 		inline void Deactivate() { m_Activated = false; }
+		inline void SetOverTilemapWindow( bool bOverWindow ) { m_OverTilemapWindow = bOverWindow; }
 		inline const bool IsActivated() const { return m_Activated; }
 		inline const bool OutOfBounds() const { return m_OutOfBounds; }
 	};

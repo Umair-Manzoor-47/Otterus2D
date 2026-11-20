@@ -2,21 +2,31 @@
 #include "Core/ECS/Components/AllComponents.h"
 
 bool otterus_core::EntityInView( const ECS::TransformComponent& transform, float width, float height,
-                               const otterus_rendering::Camera2D& camera )
+                                 const otterus_rendering::Camera2D& camera )
 {
-    const auto& cameraPos = camera.GetPosition();
-    const auto& cameraWidth = camera.GetWidth();
-    const auto& cameraHeight = camera.GetHeight();
-    const auto& cameraScale = camera.GetScale();
-
-    if ( ( transform.position.x <= ( ( cameraPos.x - ( width * transform.scale.x * cameraScale ) ) / cameraScale ) ||
-           transform.position.x >= ( ( cameraPos.x + cameraWidth ) / cameraScale ) ) ||
-         ( transform.position.y <= ( ( cameraPos.y - ( height * transform.scale.y * cameraScale ) ) / cameraScale ) ||
-           transform.position.y >= ( ( cameraPos.y + cameraHeight ) / cameraScale ) ) )
-        return false;
-
-    // Sprite is in view
-    return true;
+    if ( camera.GetWidth() <= 0 || camera.GetHeight() <= 0 )
+        return true;
+    // Convert screen corners (0,0) and (width, height) to world coordinates
+    const glm::vec2 camTopLeft = camera.ScreenCoordToWorld( glm::vec2{ 0.f, 0.f } );
+    const glm::vec2 camBottomRight = camera.ScreenCoordToWorld( glm::vec2{
+        static_cast<float>( camera.GetWidth() ),
+        static_cast<float>( camera.GetHeight() )
+    } );
+    const float minX = std::min( camTopLeft.x, camBottomRight.x );
+    const float maxX = std::max( camTopLeft.x, camBottomRight.x );
+    const float minY = std::min( camTopLeft.y, camBottomRight.y );
+    const float maxY = std::max( camTopLeft.y, camBottomRight.y );
+    const float spriteWidth  = std::abs( width  * transform.scale.x );
+    const float spriteHeight = std::abs( height * transform.scale.y );
+    // Standard AABB overlap check
+    if ( ( transform.position.x + spriteWidth <= minX ) ||
+         ( transform.position.x >= maxX ) ||
+         ( transform.position.y + spriteHeight <= minY ) ||
+         ( transform.position.y >= maxY ) )
+    {
+        return false; // Outside camera view
+    }
+    return true; // Inside camera view
 }
 
 glm::mat4 otterus_core::RSTModel( const ECS::TransformComponent& transform, float width, float height )
