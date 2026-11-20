@@ -41,7 +41,7 @@ namespace otterus_core::Scripting {
 	{
 		using namespace entt::literals;
 
-		entt::meta<DATA>()
+		entt::meta_factory<DATA>{}
 			.type(entt::type_hash<DATA>::value())
 			.template func<&create_user_data<DATA>>("create_user_data"_hs)
 			.template func<&get_user_data<DATA>>("get_user_data"_hs)

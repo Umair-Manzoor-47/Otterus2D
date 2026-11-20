@@ -74,7 +74,7 @@ namespace otterus_core::ECS {
 	inline void Entity::RegisterMetaComponent()
 	{
 		using namespace entt::literals;
-		entt::meta<TComponent>()
+		entt::meta_factory<TComponent>{}
 			.type(entt::type_hash<TComponent>::value())
 			.template func<&add_component<TComponent>>("add_component"_hs)
 			.template func<&has_component<TComponent>>("has_component"_hs)

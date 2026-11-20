@@ -52,19 +52,11 @@ target_link_libraries(OTTERUS_EDITOR PRIVATE
 
 
 # Copy runtime DLLs to output directory
-set(SDL_RUNTIME_DLLS
-    "${CMAKE_SOURCE_DIR}/Dependencies/SDL/lib/SDL2.dll"
-    "${CMAKE_SOURCE_DIR}/Dependencies/SDL/lib/SDL2_mixer.dll"
-    "${CMAKE_SOURCE_DIR}/Dependencies/SDL/lib/optional/libmodplug-1.dll"
-    "${CMAKE_SOURCE_DIR}/Dependencies/SDL/lib/optional/libogg-0.dll"
-    "${CMAKE_SOURCE_DIR}/Dependencies/SDL/lib/optional/libopus-0.dll"
-    "${CMAKE_SOURCE_DIR}/Dependencies/SDL/lib/optional/libopusfile-0.dll"
-)
-
 add_custom_command(TARGET OTTERUS_EDITOR POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${SDL_RUNTIME_DLLS}
+        $<TARGET_RUNTIME_DLLS:OTTERUS_EDITOR>
         "$<TARGET_FILE_DIR:OTTERUS_EDITOR>"
+    COMMAND_EXPAND_LISTS
     COMMENT "Copying runtime DLLs to output directory..."
 )
 set_target_properties(OTTERUS_EDITOR PROPERTIES
