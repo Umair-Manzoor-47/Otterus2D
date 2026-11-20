@@ -79,6 +79,15 @@ set_target_properties(Sol3::Sol3 PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/Dependencies/sol3"
 )
 
+# tinyfiledialogs
+add_library(tinyfiledialogs STATIC
+        "${CMAKE_SOURCE_DIR}/Dependencies/tinyfiledialogs/tinyfiledialogs.c"
+        "${CMAKE_SOURCE_DIR}/Dependencies/tinyfiledialogs/tinyfiledialogs.h"
+)
+target_include_directories(tinyfiledialogs PUBLIC
+        "${CMAKE_SOURCE_DIR}/Dependencies/tinyfiledialogs"
+)
+
 # -----------------------------------------------------------------------------
 # Subprojects (in dependency order)
 # -----------------------------------------------------------------------------
@@ -103,3 +112,4 @@ add_subdirectory(OTTERUS_RENDERING)
 add_subdirectory(OTTERUS_PHYSICS)
 add_subdirectory(OTTERUS_CORE)
 add_subdirectory(OTTERUS_EDITOR)
+add_subdirectory(OTTERUS_FILESYSTEM)
