@@ -223,4 +223,9 @@ namespace otterus_editor
     {
         return !m_MouseTile->sprite.texture_name.empty();
     }
+
+    const bool TileTool::CanDrawOrCreate() const
+    {
+        return IsActivated() && !OutOfBounds() && IsOverTilemapWindow() && SpriteValid();
+    }
 }

@@ -33,7 +33,7 @@ namespace otterus_rendering {
 	{
 		glDeleteFramebuffers(1, &m_FboID);
 		if (m_UseRbo)
-			glDeleteFramebuffers(1, &m_RboID);
+			glDeleteRenderbuffers(1, &m_RboID);
 
 		if (m_Texture)
 		{
@@ -48,7 +48,7 @@ namespace otterus_rendering {
 	
 	Framebuffer::Framebuffer(int width, int height, bool useRbo)
 		: m_FboID{ 0 }, m_RboID{ 0 }, m_Texture{ nullptr },
-		m_Width{ width }, m_Height{ height }, m_UseRbo{ useRbo }
+		m_Width{ width }, m_Height{ height }, m_ShouldResize{ false }, m_UseRbo{ useRbo }
 	{
 		m_Texture = std::move(TextureLoader::Create(Texture::TextureType::FRAMEBUFFER, width, height));
 
