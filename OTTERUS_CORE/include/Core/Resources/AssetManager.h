@@ -11,7 +11,6 @@
 #include <Sounds/Essentials/Music.h>
 #include <Sounds/Essentials/SoundFX.h>
 #include <sol/sol.hpp>
-#include "../ECS/Registry.h"
 
 namespace otterus_utils{ enum class AssetType; }
 
@@ -24,6 +23,7 @@ namespace otterus_resources {
 		std::map<std::string, std::shared_ptr<otterus_rendering::Font>> m_mapFonts;
 		std::map<std::string, std::shared_ptr<otterus_sounds::Music>> m_mapMusic;
 		std::map<std::string, std::shared_ptr<otterus_sounds::SoundFX>> m_mapSoundFX;
+		std::shared_ptr<otterus_rendering::Texture> m_defaultTexture{ nullptr };
 
 	public:
 		AssetManager() = default;
@@ -35,6 +35,7 @@ namespace otterus_resources {
 		bool AddTextureFromMemory( const std::string& textureName, const unsigned char* imageData, size_t length,
 										 bool pixelArt = true, bool tileset = false );
 		std::shared_ptr<otterus_rendering::Texture> GetTexture( const std::string& textureName );
+		std::shared_ptr<otterus_rendering::Texture> GetDefaultTexture();
 		bool DeleteTexture( const std::string& textureName );
 
 		bool AddShader(const std::string & shaderName, const std::string & vertexPath, const std::string & fragmentPath);

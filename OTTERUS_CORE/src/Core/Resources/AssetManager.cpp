@@ -71,8 +71,35 @@ namespace otterus_resources {
         return true;
     }
 
+    std::shared_ptr<otterus_rendering::Texture> AssetManager::GetDefaultTexture()
+    {
+        if (!m_defaultTexture)
+        {
+            GLuint texID{ 0 };
+            glGenTextures(1, &texID);
+            glBindTexture(GL_TEXTURE_2D, texID);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+            uint32_t whitePixel = 0xFFFFFFFF;
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &whitePixel);
+            glBindTexture(GL_TEXTURE_2D, 0);
+
+            m_defaultTexture = std::make_shared<otterus_rendering::Texture>(
+                texID, 1, 1, otterus_rendering::Texture::TextureType::PIXEL, "default_white", false
+            );
+        }
+
+        return m_defaultTexture;
+    }
+
     std::shared_ptr<otterus_rendering::Texture> AssetManager::GetTexture( const std::string& textureName )
     {
+        if ( textureName == "default" || textureName == "default_white" )
+            return GetDefaultTexture();
+
         auto texItr = m_mapTextures.find( textureName );
         if ( texItr == m_mapTextures.end() )
         {

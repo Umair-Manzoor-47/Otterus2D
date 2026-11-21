@@ -2,29 +2,28 @@ AssetDefs = {
 
 	textures = {
 	
-		--{ name = "collider", path = "assets/textures/tilemap_test/collider.png", pixel_art = true },
-		{ name = "ground_tiles", path = "assets/textures/tilemap_test/tiles/tiles.png", pixel_art = true, tileset = true },
-		{ name = "bunny_baby", path = "assets/textures/tilemap_test/tiles/bunny_baby animation.png", pixel_art = true },
-		{ name = "bunny_baby_grey", path = "assets/textures/tilemap_test/tiles/bunny_baby_grey animation.png", pixel_art = true },
-		{ name = "chicken_baby", path = "assets/textures/tilemap_test/tiles/chicken_baby animation.png", pixel_art = true },
-		{ name = "chicken_brown", path = "assets/textures/tilemap_test/tiles/chicken_brown animation.png", pixel_art = true },
-		{ name = "cow", path = "assets/textures/tilemap_test/tiles/cow animation.png", pixel_art = true },
-		{ name = "rain", path = "assets/textures/rain.png", pixel_art = true},
-		{ name = "ball", path = "assets/textures/ball.png", pixel_art = true },
-		{ name = "otterus2d_logo", path = "assets/textures/tilemap_test/tiles/otterus2D_word.png", pixel_art = true },
-		{ name = "title_panel", path = "assets/textures/tilemap_test/tiles/panel.png", pixel_art = true },
-		{ name = "leaf_particles", path = "assets/textures/tilemap_test/tiles/leaf_particles.png", pixel_art = true },
-		{ name = "white_flash", path = "assets/textures/white_flash.png", pixel_art = true },
-		{ name = "font_O", path = "assets/textures/tilemap_test/tiles/font/letter_O_upper.png", pixel_art = true },
-		{ name = "font_t", path = "assets/textures/tilemap_test/tiles/font/letter_t.png", pixel_art = true },
-		{ name = "font_e", path = "assets/textures/tilemap_test/tiles/font/letter_e.png", pixel_art = true },
-		{ name = "font_r", path = "assets/textures/tilemap_test/tiles/font/letter_r.png", pixel_art = true },
-		{ name = "font_u", path = "assets/textures/tilemap_test/tiles/font/letter_u.png", pixel_art = true },
-		{ name = "font_s", path = "assets/textures/tilemap_test/tiles/font/letter_s.png", pixel_art = true },
-		{ name = "font_2", path = "assets/textures/tilemap_test/tiles/font/letter_2.png", pixel_art = true },
-		{ name = "font_D", path = "assets/textures/tilemap_test/tiles/font/letter_D_upper.png", pixel_art = true },
+		-- Cozy Scene
+		{ name = "ground_tiles", path = "assets/textures/CozyScene/tiles/tiles.png", pixel_art = true, tileset = true },
+		{ name = "bunny_baby", path = "assets/textures/CozyScene/tiles/bunny_baby animation.png", pixel_art = true },
+		{ name = "bunny_baby_grey", path = "assets/textures/CozyScene/tiles/bunny_baby_grey animation.png", pixel_art = true },
+		{ name = "chicken_baby", path = "assets/textures/CozyScene/tiles/chicken_baby animation.png", pixel_art = true },
+		{ name = "chicken_brown", path = "assets/textures/CozyScene/tiles/chicken_brown animation.png", pixel_art = true },
+		{ name = "cow", path = "assets/textures/CozyScene/tiles/cow animation.png", pixel_art = true },
+		{ name = "rain", path = "assets/textures/CozyScene/rain.png", pixel_art = true},
+		{ name = "otterus2d_logo", path = "assets/textures/CozyScene/tiles/otterus2D_word.png", pixel_art = true },
+		{ name = "title_panel", path = "assets/textures/CozyScene/tiles/panel.png", pixel_art = true },
+		{ name = "leaf_particles", path = "assets/textures/CozyScene/tiles/leaf_particles.png", pixel_art = true },
+		{ name = "white_flash", path = "assets/textures/CozyScene/white_flash.png", pixel_art = true },
+		{ name = "font_O", path = "assets/textures/CozyScene/tiles/font/letter_O_upper.png", pixel_art = true },
+		{ name = "font_t", path = "assets/textures/CozyScene/tiles/font/letter_t.png", pixel_art = true },
+		{ name = "font_e", path = "assets/textures/CozyScene/tiles/font/letter_e.png", pixel_art = true },
+		{ name = "font_r", path = "assets/textures/CozyScene/tiles/font/letter_r.png", pixel_art = true },
+		{ name = "font_u", path = "assets/textures/CozyScene/tiles/font/letter_u.png", pixel_art = true },
+		{ name = "font_s", path = "assets/textures/CozyScene/tiles/font/letter_s.png", pixel_art = true },
+		{ name = "font_2", path = "assets/textures/CozyScene/tiles/font/letter_2.png", pixel_art = true },
+		{ name = "font_D", path = "assets/textures/CozyScene/tiles/font/letter_D_upper.png", pixel_art = true },
 
-		-- Ninja Frog player animations
+		-- Platformer Scene
 		{ name = "nf_idle", path = "assets/textures/Platformer/Players/Ninja Frog/Idle (32x32).png",  pixel_art = true },
 		{ name = "nf_run",  path = "assets/textures/Platformer/Players/Ninja Frog/Run (32x32).png",   pixel_art = true },
 		{ name = "nf_jump", path = "assets/textures/Platformer/Players/Ninja Frog/Jump (32x32).png",  pixel_art = true },
@@ -32,9 +31,10 @@ AssetDefs = {
 		{ name = "nf_fall", path = "assets/textures/Platformer/Players/Ninja Frog/Fall (32x32).png",  pixel_art = true },
 		{ name = "nf_hit",  path = "assets/textures/Platformer/Players/Ninja Frog/Hit (32x32).png",   pixel_art = true },
 		{ name = "nf_wall_jump", path = "assets/textures/Platformer/Players/Ninja Frog/Wall Jump (32x32).png", pixel_art = true },
+		{ name = "Terrain", path = "assets/textures/Platformer/Terrain/Terrain (16x16).png", pixel_art = true, tileset = true },
 
-		-- Platformer Terrain tileset
-		{ name = "Terrain", path = "assets/textures/platformer/Terrain/Terrain (16x16).png", pixel_art = true, tileset = true },
+		-- Shared Assets
+		{ name = "ball", path = "assets/textures/shared/ball.png", pixel_art = true },
 	},
 
 	music = {{ name = "bgm", path = "assets/music/bgm.mp3" }},

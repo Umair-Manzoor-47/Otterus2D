@@ -51,20 +51,25 @@ namespace otterus_core::Systems {
 			if (sprite.texture_name.empty()) continue;
 
 			const auto& texture = assetManager->GetTexture(sprite.texture_name);
+			GLuint textureID = 0;
+			glm::vec4 uvRect{sprite.uvs.u, sprite.uvs.v, sprite.uvs.uv_width, sprite.uvs.uv_height};
 
-			if (texture->GetID() == 0) {
-			
-				OTTERUS_ERROR("texture [{0}] was not created correctly.", sprite.texture_name);
-				return;
+			if (!texture || texture->GetID() == 0) {
+				auto defaultTex = assetManager->GetDefaultTexture();
+				if (!defaultTex || defaultTex->GetID() == 0)
+					continue;
+				textureID = defaultTex->GetID();
+				uvRect = glm::vec4{0.0f, 0.0f, 1.0f, 1.0f};
+			} else {
+				textureID = texture->GetID();
 			}
 
 			glm::vec4 spriteRect{transform.position.x, transform.position.y, sprite.width, sprite.height};
-			glm::vec4 uvRect{sprite.uvs.u, sprite.uvs.v, sprite.uvs.uv_width, sprite.uvs.uv_height};
 		
 			if (!EntityInView(transform, sprite.width, sprite.height, camera))
 				continue;
 			glm::mat4 model = RSTModel(transform, sprite.width, sprite.height);
-			m_batchRenderer->AddSprite(spriteRect, uvRect, texture->GetID(), sprite.layer, model, sprite.color);
+			m_batchRenderer->AddSprite(spriteRect, uvRect, textureID, sprite.layer, model, sprite.color);
 
 		}
 

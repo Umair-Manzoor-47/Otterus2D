@@ -1,7 +1,7 @@
 -- State machine test
 
-run_script("assets/scripts/state_machine_test/game_state.lua")
-run_script("assets/scripts/state_machine_test/title_state.lua")
+run_script("assets/scripts/shared/tests/state_machine_test/game_state.lua")
+run_script("assets/scripts/shared/tests/state_machine_test/title_state.lua")
 
 StateMachineTest = {}
 StateMachineTest.__index = StateMachineTest
