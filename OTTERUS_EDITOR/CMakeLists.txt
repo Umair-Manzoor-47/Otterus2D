@@ -51,13 +51,16 @@ target_link_libraries(OTTERUS_EDITOR PRIVATE
 )
 
 
-# Copy runtime DLLs to output directory
+# Copy runtime DLLs and assets to output directory
 add_custom_command(TARGET OTTERUS_EDITOR POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_RUNTIME_DLLS:OTTERUS_EDITOR>
         "$<TARGET_FILE_DIR:OTTERUS_EDITOR>"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/assets"
+        "$<TARGET_FILE_DIR:OTTERUS_EDITOR>/assets"
     COMMAND_EXPAND_LISTS
-    COMMENT "Copying runtime DLLs to output directory..."
+    COMMENT "Copying runtime DLLs and assets to output directory..."
 )
 set_target_properties(OTTERUS_EDITOR PROPERTIES
         VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
