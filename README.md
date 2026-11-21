@@ -110,9 +110,9 @@ cmake --build build --config Release
 2. Go to **Settings &rarr; Build, Execution, Deployment &rarr; CMake**.
 3. Under **CMake options**, set:
    ```
-   -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows
+   -DCMAKE_TOOLCHAIN_FILE=path//to//%VCPKG_ROOT% -DVCPKG_TARGET_TRIPLET=x64-windows
    ```
-   *(Or point to your `%VCPKG_ROOT%` path)*.
+
 4. Select `OTTERUS_EDITOR` and click **Run** (`Shift + F10`).
 
 ---
