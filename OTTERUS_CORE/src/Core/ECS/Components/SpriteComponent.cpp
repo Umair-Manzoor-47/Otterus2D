@@ -103,8 +103,9 @@ namespace otterus_core::ECS {
 				auto& assetManager = MAIN_REGISTRY().GetAssetManager();
 				auto texture = assetManager.GetTexture(sprite.texture_name);
 
-				if (texture->GetID() == 0) {
+				if (!texture || texture->GetID() == 0) {
 					OTTERUS_ERROR("Failed to generate UVS texture [{0}] does not exists or invalid.", sprite.texture_name);
+					sprite.uvs = UVs{ .u = 0.0f, .v = 0.0f, .uv_width = 1.0f, .uv_height = 1.0f };
 					return;
 				}
 

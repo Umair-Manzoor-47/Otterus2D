@@ -60,10 +60,14 @@ function PlatformerTitleState:OnEnter()
     self.m_Option1Entity:add_component(Transform(vec2(170, 240), vec2(1, 1), 0))
     self.m_Option1Entity:add_component(TextComponent("[Enter] Play Platformer", "pixel", 0, -1.0, Color(255, 200, 0, 255)))
 
-    -- Option 2: "[2] Cozy Scene Showcase" (X=160, Y=290)
+    -- Option 2: Cozy Scene Showcase
+    local hasCozyAssets = AssetLoader.HasTexture("ground_tiles") and (CozySceneState ~= nil)
+    local option2Text = hasCozyAssets and "[2] Cozy Scene Showcase"
+    local option2Color = hasCozyAssets and Color(255, 255, 255, 255) or Color(120, 120, 120, 255)
+
     self.m_Option2Entity = Entity("Option2_Text", "UI")
     self.m_Option2Entity:add_component(Transform(vec2(160, 290), vec2(1, 1), 0))
-    self.m_Option2Entity:add_component(TextComponent("[2] Cozy Scene Showcase", "pixel", 0, -1.0, Color(100, 100, 100, 255)))
+    self.m_Option2Entity:add_component(TextComponent(option2Text, "pixel", 0, -1.0, option2Color))
 end
 
 function PlatformerTitleState:OnExit()
@@ -97,10 +101,14 @@ function PlatformerTitleState:HandleInputs()
         end
         self.m_Stack:change_state(PlatformerGameState:Create(self.m_Stack, self.m_Platformer))
     elseif Keyboard.just_released(KEY_2) or Keyboard.just_pressed(KEY_2) then
-        if self.m_Platformer then
-            self.m_Platformer:destroy()
-            self.m_Platformer = nil
+        if AssetLoader.HasTexture("ground_tiles") and CozySceneState then
+            if self.m_Platformer then
+                self.m_Platformer:destroy()
+                self.m_Platformer = nil
+            end
+            self.m_Stack:change_state(CozySceneState:Create(self.m_Stack, nil))
+        else
+            OT_warn("Cozy Scene assets are not installed.")
         end
-        self.m_Stack:change_state(CozySceneState:Create(self.m_Stack, nil))
     end
 end

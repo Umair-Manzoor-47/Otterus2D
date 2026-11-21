@@ -66,3 +66,6 @@ Dependencies/**/*.dll
 Dependencies/**/*.so
 Dependencies/**/*.dylib
 Dependencies
+
+## ---Assets---
+**/CozyScene/
