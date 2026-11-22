@@ -9,7 +9,7 @@ namespace otterus_windowing::Inputs {
         {OT_KEY_EXCLAIM, Button{}}, {OT_KEY_QUOTEDBL, Button{}}, {OT_KEY_HASH, Button{}}, {OT_KEY_DOLLAR, Button{}},
         {OT_KEY_AMPERSAND, Button{}}, {OT_KEY_QUOTE, Button{}}, {OT_KEY_LEFTPAREN, Button{}}, {OT_KEY_RIGHTPAREN, Button{}},
         {OT_KEY_ASTERISK, Button{}}, {OT_KEY_PLUS, Button{}}, {OT_KEY_COMMA, Button{}}, {OT_KEY_PERIOD, Button{}},
-        {OT_KEY_SLASH, Button{}}, {OT_KEY_0, Button{}}, {OT_KEY_2, Button{}}, {OT_KEY_3, Button{}},
+        {OT_KEY_SLASH, Button{}}, {OT_KEY_0, Button{}}, {OT_KEY_1, Button{}}, {OT_KEY_2, Button{}}, {OT_KEY_3, Button{}},
         {OT_KEY_4, Button{}}, {OT_KEY_5, Button{}}, {OT_KEY_6, Button{}}, {OT_KEY_7, Button{}},
         {OT_KEY_8, Button{}}, {OT_KEY_9, Button{}}, {OT_KEY_COLON, Button{}}, {OT_KEY_SEMICOLON, Button{}},
         {OT_KEY_LESS, Button{}}, {OT_KEY_EQUALS, Button{}}, {OT_KEY_GREATER, Button{}}, {OT_KEY_QUESTION, Button{}},

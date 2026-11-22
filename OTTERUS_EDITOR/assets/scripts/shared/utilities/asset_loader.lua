@@ -10,66 +10,91 @@ AssetLoader = {
     }
 }
 
+local function resolve_asset_path(path)
+    if not path or path == "" then return path end
+    local f = io.open(path, "r")
+    if f ~= nil then
+        f:close()
+        return path
+    end
+    local candidates = {
+        "../" .. path,
+        "OTTERUS_EDITOR/" .. path,
+        path:gsub("^%.%./Games/", "assets/Games/"),
+        path:gsub("^Games/", "assets/Games/"),
+        path:gsub("^assets/textures/Platformer/", "assets/Games/Platformer/textures/"),
+        path:gsub("^assets/textures/CozyScene/", "assets/Games/CozyScene/textures/"),
+        path:gsub("^assets/textures/asteroids/", "assets/Games/asteroids/textures/"),
+        "assets/Games/" .. path,
+        "../assets/Games/" .. path,
+        "assets/" .. path
+    }
+    for _, cand in ipairs(candidates) do
+        local fc = io.open(cand, "r")
+        if fc ~= nil then
+            fc:close()
+            return cand
+        end
+    end
+    return path
+end
+
 function AssetLoader.Load(assets)
     if not assets then return end
 
     if assets.textures then
         for _, v in pairs(assets.textures) do
             local tileset = v.tileset or false
+            local resolvedPath = resolve_asset_path(v.path)
             if AssetManager.has_asset and AssetManager.has_asset(v.name, AssetType.TEXTURE) then
                 AssetLoader.Loaded.textures[v.name] = true
-                OT_log("Texture [%s] already loaded in AssetManager", v.name)
-            elseif AssetManager.add_texture(v.name, v.path, v.pixel_art, tileset) then
+            elseif AssetManager.add_texture(v.name, resolvedPath, v.pixel_art, tileset) then
                 AssetLoader.Loaded.textures[v.name] = true
-                OT_log("Loaded texture [%s]", v.name)
             else
                 AssetLoader.Loaded.textures[v.name] = nil
-                OT_warn("Failed to load texture [%s] at path [%s]", v.name, v.path)
+                OT_warn("Failed to load texture [%s] at path [%s]", v.name, resolvedPath)
             end
         end
     end
 
     if assets.music then
         for _, v in pairs(assets.music) do
+            local resolvedPath = resolve_asset_path(v.path)
             if AssetManager.has_asset and AssetManager.has_asset(v.name, AssetType.MUSIC) then
                 AssetLoader.Loaded.music[v.name] = true
-                OT_log("Music [%s] already loaded in AssetManager", v.name)
-            elseif AssetManager.add_music(v.name, v.path) then
+            elseif AssetManager.add_music(v.name, resolvedPath) then
                 AssetLoader.Loaded.music[v.name] = true
-                OT_log("Added music [%s]", v.name)
             else
                 AssetLoader.Loaded.music[v.name] = nil
-                OT_error("Failed to add music [%s] at path [%s]", v.name, v.path)
+                OT_error("Failed to add music [%s] at path [%s]", v.name, resolvedPath)
             end
         end
     end
 
     if assets.sfx then
         for _, v in pairs(assets.sfx) do
+            local resolvedPath = resolve_asset_path(v.path)
             if AssetManager.has_asset and AssetManager.has_asset(v.name, AssetType.SOUNDFX) then
                 AssetLoader.Loaded.sfx[v.name] = true
-                OT_log("SFX [%s] already loaded in AssetManager", v.name)
-            elseif AssetManager.add_sound(v.name, v.path) then
+            elseif AssetManager.add_sound(v.name, resolvedPath) then
                 AssetLoader.Loaded.sfx[v.name] = true
-                OT_log("Added sfx [%s]", v.name)
             else
                 AssetLoader.Loaded.sfx[v.name] = nil
-                OT_error("Failed to add sfx [%s] at path [%s]", v.name, v.path)
+                OT_error("Failed to add sfx [%s] at path [%s]", v.name, resolvedPath)
             end
         end
     end
 
     if assets.fonts then
         for _, v in pairs(assets.fonts) do
+            local resolvedPath = resolve_asset_path(v.path)
             if AssetManager.has_asset and AssetManager.has_asset(v.name, AssetType.FONT) then
                 AssetLoader.Loaded.fonts[v.name] = true
-                OT_log("Font [%s] already loaded in AssetManager", v.name)
-            elseif AssetManager.add_font(v.name, v.path, v.size) then
+            elseif AssetManager.add_font(v.name, resolvedPath, v.size) then
                 AssetLoader.Loaded.fonts[v.name] = true
-                OT_log("Added font [%s]", v.name)
             else
                 AssetLoader.Loaded.fonts[v.name] = nil
-                OT_error("Failed to add font [%s] at path [%s]", v.name, v.path)
+                OT_error("Failed to add font [%s] at path [%s]", v.name, resolvedPath)
             end
         end
     end

@@ -480,9 +480,6 @@ namespace otterus_editor {
 				m_isRunning = false;
 				break;
 			case SDL_KEYDOWN:
-				if (m_event.key.keysym.sym == SDLK_ESCAPE) {
-					m_isRunning = false;
-				}
 				keyboard.OnKeyPressed(m_event.key.keysym.sym);
 				break;
 

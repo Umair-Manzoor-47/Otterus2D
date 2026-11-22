@@ -59,13 +59,6 @@ imgui.ini
 *.tlog
 *.lastbuildstate
 
-# --- Ignore third-party compiled binaries in Dependencies folder
-Dependencies/**/lib/
-Dependencies/**/*.lib
-Dependencies/**/*.dll
-Dependencies/**/*.so
-Dependencies/**/*.dylib
-Dependencies
-
+/Dependencies/
 ## ---Assets---
 **/CozyScene/

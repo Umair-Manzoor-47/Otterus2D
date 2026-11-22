@@ -1,0 +1,106 @@
+AsteroidDefs = {
+    asteroid_big = {
+        tag = "asteroid_big",
+        group = "asteroids",
+        components = {
+            transform = {
+                position = { x = 50, y = 100 },
+                scale = { x = 1, y = 1 },
+                rotation = 0
+            },
+            sprite = {
+                asset_name = "ast2",
+                width = 101,
+                height = 84,
+                start_x = 0,
+                start_y = 0,
+                layer = 2
+            },
+            circle_collider = {
+                radius = 40
+            }
+        },
+        type = "big",
+        min_speed = -1.5,
+        max_speed = 1.5,
+        score = 20
+    },
+    asteroid_small = {
+        tag = "asteroid_small",
+        group = "asteroids",
+        components = {
+            transform = {
+                position = { x = 200, y = 200 },
+                scale = { x = 1, y = 1 },
+                rotation = 0
+            },
+            sprite = {
+                asset_name = "ast1",
+                width = 43,
+                height = 43,
+                start_x = 0,
+                start_y = 0,
+                layer = 2
+            },
+            circle_collider = {
+                radius = 20
+            }
+        },
+        type = "small",
+        min_speed = -2.5,
+        max_speed = 2.5,
+        score = 50
+    }
+}
+
+ShipDefs = {
+    red_ship = {
+        tag = "ship",
+        group = "player",
+        components = {
+            transform = {
+                position = { x = 320, y = 240 },
+                scale = { x = 0.65, y = 0.65 },
+                rotation = -90
+            },
+            sprite = {
+                asset_name = "ship",
+                width = 75,
+                height = 112,
+                start_x = 0,
+                start_y = 0,
+                layer = 2
+            },
+            circle_collider = {
+                radius = 26
+            }
+        }
+    }
+}
+
+ProjectileDefs = {
+    proj_1 = {
+        tag = "laser",
+        group = "projectiles",
+        components = {
+            transform = {
+                position = { x = 0, y = 0 },
+                scale = { x = 1, y = 1 },
+                rotation = 0
+            },
+            sprite = {
+                asset_name = "laser",
+                width = 37,
+                height = 13,
+                start_x = 0,
+                start_y = 0,
+                layer = 2
+            },
+            circle_collider = {
+                radius = 10
+            }
+        },
+        speed = 15,
+        life_time = 1200
+    }
+}
