@@ -29,9 +29,11 @@ namespace otterus_editor
                     }
                 }
 
-                if ( ImGui::MenuItem( "Save", "Ctrl + S" ) )
+                otterus_filesystem::FileDialog fd{};
+                auto file = fd.SaveFileDialog( "Save Tilemap test", SDL_GetBasePath(), { "*.json" } );
+                if (!file.empty())
                 {
-                    OTTERUS_LOG( "SAVE PRESSED" );
+                    // TODO: Save the tilemap!!!
                 }
 
                 if ( ImGui::MenuItem( "Exit") )
