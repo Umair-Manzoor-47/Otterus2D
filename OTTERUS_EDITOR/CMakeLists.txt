@@ -37,6 +37,12 @@ add_executable(OTTERUS_EDITOR
     src/editor/tools/ToolManager.h
     src/editor/tools/ToolManager.cpp
 
+    "src/editor/utilities/ImGuiUtils.h"
+    "src/editor/utilities/ImGuiUtils.cpp"
+    "src/editor/Utilities/DrawComponentUtils.h"
+    "src/editor/Utilities/DrawComponentUtils.inl"
+    "src/editor/Utilities/DrawComponentUtils.cpp"
+
     src/main.cpp
 )
 
