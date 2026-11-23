@@ -160,11 +160,11 @@ namespace otterus_core::ECS {
 			"entityID", &ObjectData::entityId
 		);
 
-		lua.new_enum<RigidbodyType>(
+		lua.new_enum<RigidBodyType>(
 			"BodyType", {
-				{ "STATIC", RigidbodyType::STATIC },
-				{ "KINEMATIC", RigidbodyType::KINEMATIC },
-				{ "DYNAMIC", RigidbodyType::DYNAMIC }
+				{ "STATIC", RigidBodyType::STATIC },
+				{ "KINEMATIC", RigidBodyType::KINEMATIC },
+				{ "DYNAMIC", RigidBodyType::DYNAMIC }
 			}
 		);
 		
@@ -177,7 +177,7 @@ namespace otterus_core::ECS {
 				},
 				[](const sol::table& physicsAttribs) {
 					return PhysicsAttributes{
-						.type					= physicsAttribs["type"].get_or(RigidbodyType::STATIC),
+						.type					= physicsAttribs["type"].get_or(RigidBodyType::STATIC),
 						.density				= physicsAttribs["density"].get_or(1.f),
 						.friction				= physicsAttribs["friction"].get_or(0.2f),
 						.restitution			= physicsAttribs["restitution"].get_or(0.2f),
