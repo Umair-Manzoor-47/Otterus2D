@@ -7,7 +7,7 @@
 
 namespace otterus_core::ECS {
 	
-	enum class RigidbodyType {
+	enum class RigidBodyType {
 		STATIC = 0,
 		KINEMATIC,
 		DYNAMIC
@@ -15,7 +15,7 @@ namespace otterus_core::ECS {
 
 	struct PhysicsAttributes
 	{
-		RigidbodyType type{RigidbodyType::STATIC};
+		RigidBodyType type{RigidBodyType::STATIC};
 		float density{ 1.f }, friction{ 0.2f }, restitution{ 0.2f };
 		float restitutionThreshold{ 1.f }, radius{ 0.f }, gravityScale{ 1.f };
 
@@ -43,6 +43,7 @@ namespace otterus_core::ECS {
 
 		void Init(otterus_physics::PhysicsWorld physicsWorld, int windowWidth, int windowHeight);
 		b2Body* GetBody() { return m_RigidBody.get(); };
+		const PhysicsAttributes& GetAttributes() const { return m_InitialAttribs; }
 		otterus_physics::UserData* GetUserData() { return m_UserData.get(); };
 		const bool IsSensor() const;
 

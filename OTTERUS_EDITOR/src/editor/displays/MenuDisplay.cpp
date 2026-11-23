@@ -1,5 +1,8 @@
 ﻿#include "MenuDisplay.h"
 #include "Logger/Logger.h"
+#include "Core/Loaders/TilemapLoader.h"
+#include "editor/scene/SceneManager.h"
+#include "editor/scene/SceneObject.h"
 #include <imgui.h>
 #include <SDL.h>
 
@@ -21,19 +24,46 @@ namespace otterus_editor
                 if ( ImGui::MenuItem( "Open", "Ctrl + O" ) )
                 {
                     otterus_filesystem::FileDialog fd{};
-                    auto file = fd.OpenFileDialog( "Open tests", SDL_GetBasePath(), { "*.png", "*.jpg" } );
+                    auto file = fd.OpenFileDialog( "Open tilemap test", SDL_GetBasePath(), { "*.json" } );
 
                     if (!file.empty())
                     {
-                        OTTERUS_LOG( "FILE OPENED: {}", file );
+                        auto currentScene = SCENE_MANAGER().GetCurrentScene();
+                        if ( currentScene )
+                        {
+                            otterus_core::Loaders::TilemapLoader tl{};
+                            if ( !tl.LoadTilemap( currentScene->GetRegistry(), file, true ) )
+                            {
+                                OTTERUS_ERROR( "Failed to load tilemap." );
+                            }
+                        }
+                        else
+                        {
+                            OTTERUS_ERROR( "Failed to load tilemap. No active scene." );
+                        }
                     }
                 }
 
-                otterus_filesystem::FileDialog fd{};
-                auto file = fd.SaveFileDialog( "Save Tilemap test", SDL_GetBasePath(), { "*.json" } );
-                if (!file.empty())
+                if ( ImGui::MenuItem( "Save", "Ctrl + S" ) )
                 {
-                    // TODO: Save the tilemap!!!
+                    otterus_filesystem::FileDialog fd{};
+                    auto file = fd.SaveFileDialog( "Save Tilemap test", SDL_GetBasePath(), { "*.json" } );
+                    if (!file.empty())
+                    {
+                        auto currentScene = SCENE_MANAGER().GetCurrentScene();
+                        if (currentScene)
+                        {
+                            otterus_core::Loaders::TilemapLoader tl{};
+                            if (!tl.SaveTilemap(currentScene->GetRegistry(), file, true))
+                            {
+                                OTTERUS_ERROR( "Failed to save tilemap." );
+                            }
+                        }
+                        else
+                        {
+                            OTTERUS_ERROR( "Failed to save tilemap. No active scene." );
+                        }
+                    }
                 }
 
                 if ( ImGui::MenuItem( "Exit") )

@@ -7,11 +7,11 @@ namespace otterus_filesystem
     class JSONSerializer;
 }
 
-#define SERIALIZE_COMPONENT( serializer, component )                                                                   \
+#define SERIALIZE_COMPONENT( serializer, component )                           \
 otterus_core::ECS::ComponentSerializer::Serialize( serializer, component )
 
-#define DESERIALIZE_COMPONENT( COMP, serializer ) otterus_core::ECS::ComponentSerializer::Deserialize<COMP>( serializer )
-
+#define DESERIALIZE_COMPONENT( table, compref )                                \
+otterus_core::ECS::ComponentSerializer::Deserialize( table, compref )
 
 namespace otterus_core::ECS
 {
@@ -24,7 +24,7 @@ namespace otterus_core::ECS
         static void Serialize( TSerializer& serializer, const TComponent& component );
 
         template <typename TComponent, typename TTable>
-        static auto Deserialize( const TTable& table );
+        static void Deserialize( const TTable& table, TComponent& component );;
     private:
         static void SerializeComponent( otterus_filesystem::JSONSerializer& serializer, const TransformComponent& transform );
         static void SerializeComponent( otterus_filesystem::JSONSerializer& serializer, const SpriteComponent& sprite );
@@ -37,14 +37,14 @@ namespace otterus_core::ECS
         static void SerializeComponent( otterus_filesystem::JSONSerializer& serializer, const PhysicsComponent& physics );
         static void SerializeComponent( otterus_filesystem::JSONSerializer& serializer, const RigidBodyComponent& rigidBody );
 
-        static TransformComponent DeserializeTransform( const rapidjson::Value& jsonValue );
-        static SpriteComponent DeserializeSprite( const rapidjson::Value& jsonValue );
-        static AnimationComponent DeserializeAnimation( const rapidjson::Value& jsonValue );
-        static BoxColliderComponent DeserializeBoxCollider( const rapidjson::Value& jsonValue );
-        static CircleColliderComponent DeserializeCircleCollider( const rapidjson::Value& jsonValue );
-        static TextComponent DeserializeTextComponent( const rapidjson::Value& jsonValue );
-        static PhysicsComponent DeserializePhysics( const rapidjson::Value& jsonValue );
-        static RigidBodyComponent DeserializeRigidBody( const rapidjson::Value& jsonValue );
+        static void DeserializeComponent( const rapidjson::Value& jsonValue, TransformComponent& transform );
+        static void DeserializeComponent( const rapidjson::Value& jsonValue, SpriteComponent& sprite );
+        static void DeserializeComponent( const rapidjson::Value& jsonValue, AnimationComponent& animation );
+        static void DeserializeComponent( const rapidjson::Value& jsonValue, BoxColliderComponent& boxCollider );
+        static void DeserializeComponent( const rapidjson::Value& jsonValue, CircleColliderComponent& circleCollider );
+        static void DeserializeComponent( const rapidjson::Value& jsonValue, TextComponent& text );
+        static void DeserializeComponent( const rapidjson::Value& jsonValue, PhysicsComponent& physics );
+        static void DeserializeComponent( const rapidjson::Value& jsonValue, RigidBodyComponent& rigidBody );
 
     };
 
