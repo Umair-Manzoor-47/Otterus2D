@@ -9,4 +9,5 @@ namespace otterus_core
 
     std::string GetRigidBodyTypeString( ECS::RigidBodyType eRigidType );
     ECS::RigidBodyType GetRigidBodyTypeByString( const std::string sRigidType );
+    void GenerateUVs( ECS::SpriteComponent& sprite, int textureWidth, int textureHeight );
 }
