@@ -29,6 +29,13 @@ add_library(OTTERUS_CORE STATIC
     include/Core/ECS/Components/TransformComponent.h
     include/Core/ECS/Components/AllComponents.h
 
+    src/Core/ECS/Components/ComponentSerializer.cpp
+    include/Core/ECS/Components/ComponentSerializer.h
+    include/Core/ECS/Components/ComponentSerializer.inl
+
+    src/Core/Loaders/TilemapLoader.cpp
+    include/Core/Loaders/TilemapLoader.h
+
     src/Core/ECS/Entity.cpp
     src/Core/ECS/MainRegistry.cpp
     src/Core/ECS/MetaUtilities.cpp
@@ -100,6 +107,7 @@ target_include_directories(OTTERUS_CORE PRIVATE
 
 target_link_libraries(OTTERUS_CORE PUBLIC
     OTTERUS_LOGGER
+    OTTERUS_FILESYSTEM
     OTTERUS_UTILITIES
     OTTERUS_WINDOW
     OTTERUS_SOUND
