@@ -3,6 +3,7 @@ add_executable(OTTERUS_EDITOR
     src/Application.h
     src/editor/systems/GridSystem.h
     src/editor/systems/GridSystem.cpp
+
     src/editor/displays/IDisplay.h
     src/editor/displays/LogDisplay.cpp
     src/editor/displays/LogDisplay.h
@@ -16,13 +17,22 @@ add_executable(OTTERUS_EDITOR
     src/editor/displays/AssetDisplay.cpp
     src/editor/displays/MenuDisplay.h
     src/editor/displays/MenuDisplay.cpp
+    src/editor/displays/TileDetailsDisplay.h
+    src/editor/displays/TileDetailsDisplay.cpp
+
     src/editor/scene/SceneObject.h
     src/editor/scene/SceneObject.cpp
     src/editor/scene/SceneManager.h
     src/editor/scene/SceneManager.cpp
+
     src/editor/utilities/EditorUtilities.h
     src/editor/utilities/editor_textures.h
     src/editor/utilities/EditorFrameBuffer.h
+    src/editor/utilities/ImGuiUtils.h
+    src/editor/utilities/ImGuiUtils.cpp
+    src/editor/Utilities/DrawComponentUtils.h
+    src/editor/Utilities/DrawComponentUtils.inl
+    src/editor/Utilities/DrawComponentUtils.cpp
 
     #Tools
     src/editor/tools/AbstractTool.h
@@ -36,12 +46,6 @@ add_executable(OTTERUS_EDITOR
     src/editor/tools/ToolAccessories.h
     src/editor/tools/ToolManager.h
     src/editor/tools/ToolManager.cpp
-
-    "src/editor/utilities/ImGuiUtils.h"
-    "src/editor/utilities/ImGuiUtils.cpp"
-    "src/editor/Utilities/DrawComponentUtils.h"
-    "src/editor/Utilities/DrawComponentUtils.inl"
-    "src/editor/Utilities/DrawComponentUtils.cpp"
 
     src/main.cpp
 )

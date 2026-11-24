@@ -3,6 +3,7 @@ add_library(OTTERUS_UTILITIES STATIC
     src/OtterusUtilities/SDL_wrappers.cpp
     src/OtterusUtilities/Timer.cpp
     include/OtterusUtilities/OtterusUtilities.h
+    include/OtterusUtilities/HelperUtilities.h
     include/OtterusUtilities/RandomGenerator.h
     include/OtterusUtilities/SDL_wrappers.h
     include/OtterusUtilities/Timer.h

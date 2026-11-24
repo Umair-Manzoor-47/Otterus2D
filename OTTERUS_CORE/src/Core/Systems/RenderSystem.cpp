@@ -9,6 +9,7 @@
 #include <logger/Logger.h>
 #include "Core/ECS/MainRegistry.h"
 #include "Core/CoreUtilities/CoreUtilities.h"
+#include <ranges>
 
 using namespace otterus_rendering;
 using namespace otterus_core::ECS;
@@ -19,12 +20,13 @@ namespace otterus_core::Systems {
 	{
 		m_batchRenderer = std::make_unique<SpriteBatchRenderer>();
 	}
-	void RenderSystem::Update(Registry& registry, Camera2D& camera)
-	{
-		auto view = registry.GetRegistry().view<SpriteComponent, TransformComponent>();
-		if ( view.size_hint() < 1 )
-			return;
 
+	RenderSystem::~RenderSystem()
+	{}
+
+	void RenderSystem::Update( Registry& registry, Camera2D& camera,
+	                           const std::vector<otterus_utils::SpriteLayerParams>& layerFilters )
+	{
 
 		auto& assetManager = MAIN_REGISTRY().GetContext<std::shared_ptr<otterus_resources::AssetManager>>();
 
@@ -43,10 +45,35 @@ namespace otterus_core::Systems {
 
 		m_batchRenderer->Begin();
 
-		for (const auto entity : view)
+		auto spriteView = registry.GetRegistry().view<SpriteComponent, TransformComponent>();
+		std::function<bool( entt::entity )> filterFunc;
+
+		// Check to see if the layers are visible, if not, filter them out.
+		if ( layerFilters.empty() )
 		{
-			const auto& transform = view.get<TransformComponent>(entity);
-			const auto& sprite = view.get<SpriteComponent>(entity);
+			filterFunc = []( entt::entity ) { return true; };
+		}
+		else
+		{
+			filterFunc = [ & ]( entt::entity entity ) {
+				// We only want to filter tiles
+				if ( !registry.GetRegistry().all_of<TileComponent>( entity ) )
+					return true;
+
+				const auto& sprite = spriteView.get<SpriteComponent>( entity );
+				if ( sprite.layer >= 0 && sprite.layer < layerFilters.size() )
+				{
+					return layerFilters[ sprite.layer ].visible;
+				}
+
+				return false;
+			};
+		}
+
+		for ( const auto& entity : std::views::filter( spriteView, filterFunc ) )
+		{
+			const auto& transform = spriteView.get<TransformComponent>(entity);
+			const auto& sprite = spriteView.get<SpriteComponent>(entity);
 
 			if (sprite.texture_name.empty()) continue;
 

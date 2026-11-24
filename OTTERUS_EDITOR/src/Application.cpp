@@ -47,6 +47,7 @@
 #include "editor/displays/TilemapDisplay.h"
 #include "editor/displays/AssetDisplay.h"
 #include "editor/displays/MenuDisplay.h"
+#include "editor/displays/TileDetailsDisplay.h"
 
 #include <Physics/ContactListener.h>
 #include <Core/ECS/MainRegistry.h>
@@ -604,6 +605,12 @@ namespace otterus_editor {
     		OTTERUS_ERROR( "Failed to Create Menu Display!" );
     		return false;
     	}
+    	auto tileDetailsDisplay = std::make_unique<TileDetailsDisplay>();
+    	if ( !tileDetailsDisplay )
+    	{
+    		OTTERUS_ERROR( "Failed to Create TileDetailsDisplay!" );
+    		return false;
+    	}
 		// TODO: Other displays as needed
 
 		displayHolder->displays.push_back(std::move(sceneDisplay));
@@ -612,6 +619,7 @@ namespace otterus_editor {
     	displayHolder->displays.push_back(std::move(tilemapDisplay));
     	displayHolder->displays.push_back(std::move(assetDisplay));
     	displayHolder->displays.push_back( std::move(menuDisplay));
+    	displayHolder->displays.push_back( std::move(tileDetailsDisplay));
 
 		return true;
 	}
@@ -690,6 +698,8 @@ namespace otterus_editor {
 			auto centerNodeId = dockSpaceId;
 			const auto leftNodeId =
 				ImGui::DockBuilderSplitNode(centerNodeId, ImGuiDir_Left, 0.2f, nullptr, &centerNodeId);
+			const auto rightNodeId =
+				ImGui::DockBuilderSplitNode(centerNodeId, ImGuiDir_Right, 0.2f, nullptr, &centerNodeId);
 
 			const auto bottomNodeId = ImGui::DockBuilderSplitNode(centerNodeId, ImGuiDir_Down, 0.25f, nullptr, &centerNodeId);
 			ImGui::DockBuilderDockWindow("Dear ImGui Demo", leftNodeId);
@@ -698,6 +708,7 @@ namespace otterus_editor {
 			ImGui::DockBuilderDockWindow("Assets", bottomNodeId);
 			ImGui::DockBuilderDockWindow("Console", bottomNodeId);
 			ImGui::DockBuilderDockWindow("Tileset", bottomNodeId);
+			ImGui::DockBuilderDockWindow("Tile Details", rightNodeId);
 
 			ImGui::DockBuilderFinish(dockSpaceId);
 		}
