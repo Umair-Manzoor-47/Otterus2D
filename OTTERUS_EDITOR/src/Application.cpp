@@ -48,11 +48,13 @@
 #include "editor/displays/AssetDisplay.h"
 #include "editor/displays/MenuDisplay.h"
 #include "editor/displays/TileDetailsDisplay.h"
+#include "editor/displays/SceneHierarchyDisplay.h"
 
 #include <Physics/ContactListener.h>
 #include <Core/ECS/MainRegistry.h>
 
 #include <Core/CoreUtilities/CoreEngineData.h>
+#include "editor/utilities/DrawComponentUtils.h"
 
 #include "editor/utilities/editor_textures.h"
 #include "editor/utilities/EditorFrameBuffer.h"
@@ -372,6 +374,17 @@ namespace otterus_editor {
 			return false;
 		}
 
+    	DrawComponentUtils::RegisterUIComponent<otterus_core::ECS::Identification>();
+    	DrawComponentUtils::RegisterUIComponent<otterus_core::ECS::TransformComponent>();
+    	DrawComponentUtils::RegisterUIComponent<otterus_core::ECS::SpriteComponent>();
+    	DrawComponentUtils::RegisterUIComponent<otterus_core::ECS::AnimationComponent>();
+    	DrawComponentUtils::RegisterUIComponent<otterus_core::ECS::PhysicsComponent>();
+    	DrawComponentUtils::RegisterUIComponent<otterus_core::ECS::TextComponent>();
+    	DrawComponentUtils::RegisterUIComponent<otterus_core::ECS::RigidBodyComponent>();
+    	DrawComponentUtils::RegisterUIComponent<otterus_core::ECS::BoxColliderComponent>();
+    	DrawComponentUtils::RegisterUIComponent<otterus_core::ECS::CircleColliderComponent>();
+
+
     	SCENE_MANAGER().AddScene("DefaultScene");
     	SCENE_MANAGER().AddScene("Splash");
     	SCENE_MANAGER().AddScene("MainMenu");
@@ -611,6 +624,12 @@ namespace otterus_editor {
     		OTTERUS_ERROR( "Failed to Create TileDetailsDisplay!" );
     		return false;
     	}
+    	auto sceneHierarchyDisplay = std::make_unique<SceneHierarchyDisplay>();
+    	if ( !sceneHierarchyDisplay )
+    	{
+    		OTTERUS_ERROR( "Failed to Create Scene Hierarchy Display!" );
+    		return false;
+    	}
 		// TODO: Other displays as needed
 
 		displayHolder->displays.push_back(std::move(sceneDisplay));
@@ -620,6 +639,7 @@ namespace otterus_editor {
     	displayHolder->displays.push_back(std::move(assetDisplay));
     	displayHolder->displays.push_back( std::move(menuDisplay));
     	displayHolder->displays.push_back( std::move(tileDetailsDisplay));
+    	displayHolder->displays.push_back( std::move(sceneHierarchyDisplay));
 
 		return true;
 	}
@@ -702,13 +722,14 @@ namespace otterus_editor {
 				ImGui::DockBuilderSplitNode(centerNodeId, ImGuiDir_Right, 0.2f, nullptr, &centerNodeId);
 
 			const auto bottomNodeId = ImGui::DockBuilderSplitNode(centerNodeId, ImGuiDir_Down, 0.25f, nullptr, &centerNodeId);
-			ImGui::DockBuilderDockWindow("Dear ImGui Demo", leftNodeId);
 			ImGui::DockBuilderDockWindow("Scene", centerNodeId);
+			ImGui::DockBuilderDockWindow("Scene Hierarchy", leftNodeId);
 			ImGui::DockBuilderDockWindow("Tilemap Editor", centerNodeId);
 			ImGui::DockBuilderDockWindow("Assets", bottomNodeId);
 			ImGui::DockBuilderDockWindow("Console", bottomNodeId);
 			ImGui::DockBuilderDockWindow("Tileset", bottomNodeId);
 			ImGui::DockBuilderDockWindow("Tile Details", rightNodeId);
+			ImGui::DockBuilderDockWindow("Inspector", rightNodeId);
 
 			ImGui::DockBuilderFinish(dockSpaceId);
 		}
@@ -721,7 +742,6 @@ namespace otterus_editor {
 			display->Draw();
 		}
 
-		ImGui::ShowDemoWindow();
 	}
 
     Application::Application():
