@@ -60,5 +60,7 @@ namespace otterus_editor
         inline void EnableGridSnap () {m_GridSnap = true; }
         inline void DisableGridSnap () {m_GridSnap = false;}
         const bool CanDrawOrCreate() const;
+
+        inline Tile& GetTileData() { return *m_MouseTile; }
     };
 }
