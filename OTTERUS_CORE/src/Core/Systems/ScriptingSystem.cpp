@@ -1,4 +1,5 @@
 #include "ScriptingSystem.h"
+#include "Identification.h"
 #include "../ECS/Components/ScriptComponent.h"
 #include "../ECS/Components/TransformComponent.h"
 #include "../ECS/Components/SpriteComponent.h"
@@ -317,6 +318,7 @@ namespace otterus_core::Systems {
 		TextComponent::CreateLuaTextBindings(lua);
 		RigidBodyComponent::CreateRigidBodyBind(lua);
 
+		Entity::RegisterMetaComponent<Identification>();
 		Entity::RegisterMetaComponent<TransformComponent>();
 		Entity::RegisterMetaComponent<SpriteComponent>();
 		Entity::RegisterMetaComponent<AnimationComponent>();
