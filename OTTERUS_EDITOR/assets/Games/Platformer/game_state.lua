@@ -40,11 +40,19 @@ function PlatformerGameState:OnEnter()
     if self.m_Platformer then
         self.m_Platformer:set_ui_visible(true)
     end
+    if SceneLighting then
+        SceneLighting.set_enabled(true)
+        SceneLighting.set_ambient_color(Color(145, 155, 195, 255))
+    end
 end
 
 function PlatformerGameState:OnExit()
     if self.m_Platformer then
         self.m_Platformer:set_ui_visible(false)
+    end
+    if SceneLighting then
+        SceneLighting.set_ambient_color(Color(255, 255, 255, 255))
+        SceneLighting.set_enabled(true)
     end
 end
 

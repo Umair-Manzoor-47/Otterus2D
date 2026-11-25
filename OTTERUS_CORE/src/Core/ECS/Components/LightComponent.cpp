@@ -14,14 +14,14 @@ namespace otterus_core::ECS
                 []() {
                     return LightComponent{};
                 },
-                [](glm::vec4 color, float intensity, float radius) {
+                [](const otterus_rendering::Color& color, float intensity, float radius) {
                     return LightComponent{
                         .color = color,
                         .intensity = intensity,
                         .radius = radius
                     };
                 },
-                [](glm::vec4 color, float intensity, float radius, float falloff) {
+                [](const otterus_rendering::Color& color, float intensity, float radius, float falloff) {
                     return LightComponent{
                         .color = color,
                         .intensity = intensity,
@@ -29,15 +29,25 @@ namespace otterus_core::ECS
                         .falloff = falloff
                     };
                 },
-                [](float r, float g, float b, float a, float intensity, float radius) {
+                [](const otterus_rendering::Color& color, float intensity, float radius, float falloff, const glm::vec2& offset) {
                     return LightComponent{
-                        .color = glm::vec4{ r, g, b, a },
+                        .color = color,
+                        .offset = offset,
+                        .intensity = intensity,
+                        .radius = radius,
+                        .falloff = falloff
+                    };
+                },
+                [](GLubyte r, GLubyte g, GLubyte b, GLubyte a, float intensity, float radius) {
+                    return LightComponent{
+                        .color = otterus_rendering::Color{ r, g, b, a },
                         .intensity = intensity,
                         .radius = radius
                     };
                 }
             ),
             "color", &LightComponent::color,
+            "offset", &LightComponent::offset,
             "intensity", &LightComponent::intensity,
             "radius", &LightComponent::radius,
             "falloff", &LightComponent::falloff,
@@ -54,7 +64,11 @@ namespace otterus_core::ECS
         std::stringstream ss;
         ss <<
             "==== Light Component ==== \n" << std::boolalpha <<
-            "Color: [ r = " << color.r << ", g = " << color.g << ", b = " << color.b << ", a = " << color.a << " ]\n" <<
+            "Color: [ r = " << static_cast<int>(color.r)
+            << ", g = " << static_cast<int>(color.g)
+            << ", b = " << static_cast<int>(color.b)
+            << ", a = " << static_cast<int>(color.a) << " ]\n" <<
+            "Offset: [ x = " << offset.x << ", y = " << offset.y << " ]\n" <<
             "Intensity: " << intensity << "\n" <<
             "Radius: " << radius << "\n" <<
             "Falloff: " << falloff << "\n" <<

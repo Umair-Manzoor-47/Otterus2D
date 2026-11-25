@@ -27,6 +27,9 @@ function PlayerFactory.CreatePlayer(x, y)
 
     local anim = player:add_component(Animation(11, 10, 0, false, true))
 
+    -- Centered warm light attached to the player (32x32 sprite -> offset 16, 16)
+    player:add_component(Light(Color(255, 217, 166, 255), 1.0, 180.0, 2.0, vec2(16, 16)))
+
     return player, physics, sprite, anim
 end
 

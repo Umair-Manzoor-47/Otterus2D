@@ -1,5 +1,6 @@
 #include "RendererBindings.h"
 #include <Rendering/Essentials/Primitives.h>
+#include <Rendering/Essentials/SceneLighting.h>
 #include <Rendering/Core/Camera2D.h>
 #include <Rendering/Core/Renderer.h>
 #include "../ECS/Registry.h"
@@ -205,4 +206,36 @@ void otterus_core::Scripting::RendererBinder::CreateRendererBind(sol::state& lua
 		}
 	
 	);
+
+	if (registry.GetRegistry().ctx().contains<std::shared_ptr<SceneLighting>>())
+	{
+		auto lighting = registry.GetContext<std::shared_ptr<SceneLighting>>();
+		lua.new_usertype<SceneLighting>(
+			"SceneLighting",
+			sol::no_constructor,
+			"get", [lighting]() -> SceneLighting& {
+				return *lighting;
+			},
+			"ambient_color", sol::property(
+				[](const SceneLighting& l) { return l.ambientColor; },
+				[](SceneLighting& l, const Color& color) { l.ambientColor = color; }
+			),
+			"enabled", sol::property(
+				[](const SceneLighting& l) { return l.enabled; },
+				[](SceneLighting& l, bool enabled) { l.enabled = enabled; }
+			),
+			"set_ambient_color", [lighting](const Color& color) {
+				lighting->ambientColor = color;
+			},
+			"get_ambient_color", [lighting]() {
+				return lighting->ambientColor;
+			},
+			"set_enabled", [lighting](bool enabled) {
+				lighting->enabled = enabled;
+			},
+			"is_enabled", [lighting]() {
+				return lighting->enabled;
+			}
+		);
+	}
 }

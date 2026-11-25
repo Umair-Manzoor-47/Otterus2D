@@ -167,10 +167,14 @@ namespace otterus_core::ECS
 	{
 		serializer.StartNewObject( "light" )
 			.StartNewObject( "color" )
-			.AddKeyValuePair( "r", light.color.r )
-			.AddKeyValuePair( "g", light.color.g )
-			.AddKeyValuePair( "b", light.color.b )
-			.AddKeyValuePair( "a", light.color.a )
+			.AddKeyValuePair( "r", static_cast<int>( light.color.r ) )
+			.AddKeyValuePair( "g", static_cast<int>( light.color.g ) )
+			.AddKeyValuePair( "b", static_cast<int>( light.color.b ) )
+			.AddKeyValuePair( "a", static_cast<int>( light.color.a ) )
+			.EndObject()
+			.StartNewObject( "offset" )
+			.AddKeyValuePair( "x", light.offset.x )
+			.AddKeyValuePair( "y", light.offset.y )
 			.EndObject()
 			.AddKeyValuePair( "intensity", light.intensity )
 			.AddKeyValuePair( "radius", light.radius )
@@ -258,10 +262,16 @@ namespace otterus_core::ECS
 	void ComponentSerializer::DeserializeComponent( const rapidjson::Value& jsonValue, LightComponent& light )
 	{
 		const auto& color = jsonValue[ "color" ];
-		light.color.r = color[ "r" ].GetFloat();
-		light.color.g = color[ "g" ].GetFloat();
-		light.color.b = color[ "b" ].GetFloat();
-		light.color.a = color[ "a" ].GetFloat();
+		light.color.r = static_cast<GLubyte>( color[ "r" ].GetInt() );
+		light.color.g = static_cast<GLubyte>( color[ "g" ].GetInt() );
+		light.color.b = static_cast<GLubyte>( color[ "b" ].GetInt() );
+		light.color.a = static_cast<GLubyte>( color[ "a" ].GetInt() );
+
+		if ( jsonValue.HasMember( "offset" ) )
+		{
+			const auto& offset = jsonValue[ "offset" ];
+			light.offset = glm::vec2{ offset[ "x" ].GetFloat(), offset[ "y" ].GetFloat() };
+		}
 
 		light.intensity = jsonValue[ "intensity" ].GetFloat();
 		light.radius = jsonValue[ "radius" ].GetFloat();

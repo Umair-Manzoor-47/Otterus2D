@@ -1,15 +1,14 @@
 #version 450 core
 in vec2 fragUVs;
+in vec4 fragColor;
+flat in float fragIntensity;
+flat in float fragFalloff;
+flat in vec2 fragDirection;
+flat in float fragInnerCos;
+flat in float fragOuterCos;
+flat in float fragIsSpotlight;
+
 out vec4 color;
-
-uniform vec4 uLightColor;
-uniform float uIntensity;
-uniform float uFalloff;
-
-uniform bool uIsSpotlight;
-uniform vec2 uDirection;
-uniform float uInnerCos;
-uniform float uOuterCos;
 
 void main()
 {
@@ -19,15 +18,14 @@ void main()
     if (dist >= 1.0)
         discard;
 
-    float atten = pow(1.0 - dist, uFalloff);
+    float atten = pow(1.0 - dist, fragFalloff);
 
-    if (uIsSpotlight && dist > 0.0001)
+    if (fragIsSpotlight > 0.5 && dist > 0.0001)
     {
-        // uDirection is expected to be normalized on the CPU; reuse dist instead of calling normalize(offset)
-        float theta = dot(offset / dist, uDirection);
-        float spot = clamp((theta - uOuterCos) / max(uInnerCos - uOuterCos, 0.0001), 0.0, 1.0);
+        float theta = dot(offset / dist, fragDirection);
+        float spot = clamp((theta - fragOuterCos) / max(fragInnerCos - fragOuterCos, 0.0001), 0.0, 1.0);
         atten *= spot;
     }
 
-    color = vec4(uLightColor.rgb * uLightColor.a * uIntensity * atten, 1.0);
+    color = vec4(fragColor.rgb * fragColor.a * fragIntensity * atten, 1.0);
 }

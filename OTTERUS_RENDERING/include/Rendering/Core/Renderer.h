@@ -37,15 +37,19 @@ namespace otterus_rendering {
 		std::unique_ptr<TextBatchRenderer> m_TextBatch;
 		std::unique_ptr<RectBatchRenderer> m_RectBatch;
 
+		GLuint m_ScreenVAO{ 0 }, m_ScreenVBO{ 0 };
+		void InitializeScreenQuad();
+
 	public:
 		Renderer();
-		~Renderer() = default;
+		~Renderer();
 
 		// OPENGL Render function wrappers
 		void SetClearColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat aplha);
 		void ClearBuffers(bool color = true, bool depth = true, bool stencil = false);
 
 		void SetBlendCapabilitiy(BlendingFactors sFactor, BlendingFactors dFactor);
+		void SetBlendCapabilitySeparate(BlendingFactors srcRGB, BlendingFactors dstRGB, BlendingFactors srcAlpha, BlendingFactors dstAlpha);
 		void SetViewport(GLint x, GLint y, GLsizei width, GLsizei height);
 
 		void SetCapability(GLCapabilities capability, bool enabled);
@@ -71,6 +75,7 @@ namespace otterus_rendering {
 		void DrawFilledRects(class Shader& shader, class Camera2D& camera);
 		void DrawCircles(class Shader& shader, class Camera2D& camera);
 		void DrawAllText(class Shader& shader, class Camera2D& camera);
+		void DrawCompositeQuad(class Shader& shader, GLuint sceneTextureID, GLuint lightTextureID);
 
 		void ClearPrimitives();
 

@@ -49,6 +49,7 @@ namespace otterus_editor {
 		const auto& canvas = currentScene->GetCanvas();
 
 		runtimeRegistry.AddToContext<std::shared_ptr<Camera2D>>(std::make_shared<Camera2D>(canvas.width, canvas.height));
+		runtimeRegistry.AddToContext<std::shared_ptr<SceneLighting>>(std::make_shared<SceneLighting>(currentScene->GetLighting()));
 
 		auto physicsWorld =
 			runtimeRegistry.AddToContext<otterus_physics::PhysicsWorld>(std::make_shared<b2World>( b2Vec2{0.f, 9.8f} ));
@@ -103,6 +104,7 @@ namespace otterus_editor {
 		m_PlayScene = false;
 		runtimeRegistry.ClearRegistry();
 		runtimeRegistry.RemoveContext<std::shared_ptr<Camera2D>>();
+		runtimeRegistry.RemoveContext<std::shared_ptr<SceneLighting>>();
 		runtimeRegistry.RemoveContext<std::shared_ptr<sol::state>>();
 		runtimeRegistry.RemoveContext<std::shared_ptr<otterus_physics::PhysicsWorld>>();
 		runtimeRegistry.RemoveContext<std::shared_ptr<otterus_physics::ContactListener>>();
@@ -187,9 +189,24 @@ namespace otterus_editor {
 
 			if ( ImGui::BeginPopup( "SceneLightingPopup" ) )
 			{
-				auto& lighting = currentScene->GetLighting();
+				auto& runtimeRegistry = currentScene->GetRuntimeRegistry();
+				auto& lighting = ( m_SceneLoaded && m_PlayScene && runtimeRegistry.GetRegistry().ctx().contains<std::shared_ptr<SceneLighting>>() )
+					? *runtimeRegistry.GetContext<std::shared_ptr<SceneLighting>>()
+					: currentScene->GetLighting();
 				ImGui::Checkbox( "Enable Lighting", &lighting.enabled );
-				ImGui::ColorEdit4( "Ambient Color", &lighting.ambientColor.x );
+				float col[4] = {
+					lighting.ambientColor.r / 255.f,
+					lighting.ambientColor.g / 255.f,
+					lighting.ambientColor.b / 255.f,
+					lighting.ambientColor.a / 255.f
+				};
+				if ( ImGui::ColorEdit4( "Ambient Color", col ) )
+				{
+					lighting.ambientColor.r = static_cast<GLubyte>( col[0] * 255.f );
+					lighting.ambientColor.g = static_cast<GLubyte>( col[1] * 255.f );
+					lighting.ambientColor.b = static_cast<GLubyte>( col[2] * 255.f );
+					lighting.ambientColor.a = static_cast<GLubyte>( col[3] * 255.f );
+				}
 				ImGui::EndPopup();
 			}
 		}
@@ -261,15 +278,17 @@ namespace otterus_editor {
 		{
 			auto& runtimeRegistry = currentScene->GetRuntimeRegistry();
 			auto& camera = runtimeRegistry.GetContext<std::shared_ptr<Camera2D>>();
-			const auto& lighting = currentScene->GetLighting();
+			const bool lightingEnabled = runtimeRegistry.GetRegistry().ctx().contains<std::shared_ptr<SceneLighting>>()
+				? runtimeRegistry.GetContext<std::shared_ptr<SceneLighting>>()->enabled
+				: currentScene->GetLighting().enabled;
 
-			if ( lighting.enabled )
+			if ( lightingEnabled )
 				lightingSystem->BeginScenePass( fb->GetWidth(), fb->GetHeight() );
 
 			renderSystem->Update( runtimeRegistry, *camera );
 
-			if ( lighting.enabled )
-				lightingSystem->Update( *fb, runtimeRegistry, *camera, lighting );
+			if ( lightingEnabled )
+				lightingSystem->Update( *fb, runtimeRegistry, *camera );
 
 			renderShapeSystem->Update(runtimeRegistry, *camera);
 			renderUISystem->Update( runtimeRegistry );

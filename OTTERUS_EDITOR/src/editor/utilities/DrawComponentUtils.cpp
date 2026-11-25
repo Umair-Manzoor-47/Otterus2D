@@ -359,10 +359,27 @@ void DrawComponentUtils::DrawImGuiComponent( LightComponent& light )
 	ImGui::PushID( entt::type_hash<LightComponent>::value() );
 	if ( ImGui::TreeNodeEx( "##LightTree", ImGuiTreeNodeFlags_DefaultOpen ) )
 	{
-		ImGui::PushItemWidth( 160.f );
-
+		ImVec4 col = { light.color.r / 255.f, light.color.g / 255.f, light.color.b / 255.f, light.color.a / 255.f };
 		ImGui::InlineLabel( "color" );
-		ImGui::ColorEdit4( "##light_color", &light.color.x );
+		if ( ImGui::ColorEdit4( "##light_color", &col.x, IMGUI_COLOR_PICKER_FLAGS ) )
+		{
+			light.color.r = static_cast<GLubyte>( col.x * 255.f );
+			light.color.g = static_cast<GLubyte>( col.y * 255.f );
+			light.color.b = static_cast<GLubyte>( col.z * 255.f );
+			light.color.a = static_cast<GLubyte>( col.w * 255.f );
+		}
+
+		ImGui::PushItemWidth( 120.f );
+		ImGui::InlineLabel( "offset" );
+		ImGui::ColoredLabel( "x", LABEL_SINGLE_SIZE, LABEL_RED );
+		ImGui::SameLine();
+		ImGui::InputFloat( "##light_offset_x", &light.offset.x, 1.f, 5.f, "%.1f" );
+		ImGui::SameLine();
+		ImGui::ColoredLabel( "y", LABEL_SINGLE_SIZE, LABEL_GREEN );
+		ImGui::SameLine();
+		ImGui::InputFloat( "##light_offset_y", &light.offset.y, 1.f, 5.f, "%.1f" );
+
+		ImGui::PushItemWidth( 160.f );
 
 		ImGui::InlineLabel( "intensity" );
 		if ( ImGui::InputFloat( "##light_intensity", &light.intensity, 0.1f, 0.5f, "%.2f" ) )
@@ -398,6 +415,7 @@ void DrawComponentUtils::DrawImGuiComponent( LightComponent& light )
 		ImGui::InlineLabel( "cast shadows" );
 		ImGui::Checkbox( "##light_cast_shadows", &light.castShadows );
 
+		ImGui::PopItemWidth();
 		ImGui::PopItemWidth();
 		ImGui::TreePop();
 	}
