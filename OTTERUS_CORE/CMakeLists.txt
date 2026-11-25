@@ -74,12 +74,14 @@ add_library(OTTERUS_CORE STATIC
 
     # Systems
     src/Core/Systems/AnimationSystem.cpp
+    src/Core/Systems/LightingSystem.cpp
     src/Core/Systems/PhysicsSystem.cpp
     src/Core/Systems/RenderShapeSystem.cpp
     src/Core/Systems/RenderSystem.cpp
     src/Core/Systems/RenderUISystem.cpp
     src/Core/Systems/ScriptingSystem.cpp
     include/Core/Systems/AnimationSystem.h
+    include/Core/Systems/LightingSystem.h
     include/Core/Systems/PhysicsSystem.h
     include/Core/Systems/RenderShapeSystem.h
     include/Core/Systems/RenderSystem.h

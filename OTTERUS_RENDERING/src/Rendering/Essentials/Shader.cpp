@@ -44,6 +44,26 @@ namespace otterus_rendering {
 		glUniform1i(GetUniformLocation(name), value);
 	}
 
+	void Shader::SetUniformFloat(const std::string& name, float value)
+	{
+		glUniform1f(GetUniformLocation(name), value);
+	}
+
+	void Shader::SetUniformBool(const std::string& name, bool value)
+	{
+		glUniform1i(GetUniformLocation(name), static_cast<int>(value));
+	}
+
+	void Shader::SetUniformVec2(const std::string& name, const glm::vec2& vec)
+	{
+		glUniform2f(GetUniformLocation(name), vec.x, vec.y);
+	}
+
+	void Shader::SetUniformVec4(const std::string& name, const glm::vec4& vec)
+	{
+		glUniform4f(GetUniformLocation(name), vec.x, vec.y, vec.z, vec.w);
+	}
+
 	void Shader::SetUniformMat4(const std::string& name, glm::mat4 mat)
 	{
 		glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &mat[0][0]);

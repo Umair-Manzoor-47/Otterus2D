@@ -16,6 +16,7 @@
 
 
 #include <Core/Systems/ScriptingSystem.h>
+#include <Core/Systems/LightingSystem.h>
 #include <Core/Systems/RenderSystem.h>
 #include <Core/Systems/AnimationSystem.h>
 #include <Core/Systems/PhysicsSystem.h>
@@ -232,6 +233,16 @@ namespace otterus_editor {
 			return false;
 		}
 
+		auto lightingSystem = std::make_shared<otterus_core::Systems::LightingSystem>();
+		if (!lightingSystem) {
+			OTTERUS_ERROR("Failed to create the lighting system.");
+			return false;
+		}
+		if (!mainRegistry.AddToContext<std::shared_ptr<otterus_core::Systems::LightingSystem>>(lightingSystem)) {
+			OTTERUS_ERROR("Failed to add Lighting System into registry context.");
+			return false;
+		}
+
 		auto renderShapeSystem = std::make_shared<otterus_core::Systems::RenderShapeSystem>();
 		if (!renderShapeSystem) {
 
@@ -421,6 +432,18 @@ namespace otterus_editor {
 			return false;
 		}
 
+		if (!assetManager->AddShader("light", "assets/shaders/light_shader.vert", "assets/shaders/light_shader.frag")) {
+
+			OTTERUS_ERROR("Failed to add Light Shader to AssetManager.");
+			return false;
+		}
+
+		if (!assetManager->AddShader("composite", "assets/shaders/composite_shader.vert", "assets/shaders/composite_shader.frag")) {
+
+			OTTERUS_ERROR("Failed to add Composite Shader to AssetManager.");
+			return false;
+		}
+
 		auto shader = assetManager->GetShader("basic");
 		if(!shader || shader->GetProgramID() == 0) {
 			OTTERUS_ERROR("Failed to Get Basic Shader from AssetManager.");
@@ -435,6 +458,18 @@ namespace otterus_editor {
 		auto circleShader = assetManager->GetShader("circle");
 		if (!circleShader || circleShader->GetProgramID() == 0) {
 			OTTERUS_ERROR("Failed to Get Circle Shader from AssetManager.");
+			return false;
+		}
+
+		auto lightShader = assetManager->GetShader("light");
+		if (!lightShader || lightShader->GetProgramID() == 0) {
+			OTTERUS_ERROR("Failed to Get Light Shader from AssetManager.");
+			return false;
+		}
+
+		auto compositeShader = assetManager->GetShader("composite");
+		if (!compositeShader || compositeShader->GetProgramID() == 0) {
+			OTTERUS_ERROR("Failed to Get Composite Shader from AssetManager.");
 			return false;
 		}
 
