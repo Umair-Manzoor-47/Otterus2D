@@ -353,4 +353,55 @@ void DrawComponentUtils::DrawImGuiComponent( Identification& identification )
 	ImGui::PopID();
 }
 
+void DrawComponentUtils::DrawImGuiComponent( LightComponent& light )
+{
+	ImGui::SeparatorText( "Light" );
+	ImGui::PushID( entt::type_hash<LightComponent>::value() );
+	if ( ImGui::TreeNodeEx( "##LightTree", ImGuiTreeNodeFlags_DefaultOpen ) )
+	{
+		ImGui::PushItemWidth( 160.f );
+
+		ImGui::InlineLabel( "color" );
+		ImGui::ColorEdit4( "##light_color", &light.color.x );
+
+		ImGui::InlineLabel( "intensity" );
+		if ( ImGui::InputFloat( "##light_intensity", &light.intensity, 0.1f, 0.5f, "%.2f" ) )
+			light.intensity = std::max( light.intensity, 0.0f );
+
+		ImGui::InlineLabel( "radius" );
+		if ( ImGui::InputFloat( "##light_radius", &light.radius, 5.f, 25.f, "%.1f" ) )
+			light.radius = std::max( light.radius, 1.0f );
+
+		ImGui::InlineLabel( "falloff" );
+		if ( ImGui::InputFloat( "##light_falloff", &light.falloff, 0.1f, 0.5f, "%.2f" ) )
+			light.falloff = std::max( light.falloff, 0.1f );
+
+		ImGui::InlineLabel( "spotlight" );
+		ImGui::Checkbox( "##light_spotlight", &light.isSpotlight );
+
+		if ( light.isSpotlight )
+		{
+			ImGui::InlineLabel( "inner angle" );
+			if ( ImGui::InputFloat( "##light_inner_angle", &light.innerAngle, 1.f, 5.f, "%.1f" ) )
+			{
+				light.innerAngle = std::clamp( light.innerAngle, 0.0f, 180.0f );
+				light.outerAngle = std::max( light.outerAngle, light.innerAngle );
+			}
+
+			ImGui::InlineLabel( "outer angle" );
+			if ( ImGui::InputFloat( "##light_outer_angle", &light.outerAngle, 1.f, 5.f, "%.1f" ) )
+			{
+				light.outerAngle = std::clamp( light.outerAngle, light.innerAngle, 180.0f );
+			}
+		}
+
+		ImGui::InlineLabel( "cast shadows" );
+		ImGui::Checkbox( "##light_cast_shadows", &light.castShadows );
+
+		ImGui::PopItemWidth();
+		ImGui::TreePop();
+	}
+	ImGui::PopID();
+}
+
 }

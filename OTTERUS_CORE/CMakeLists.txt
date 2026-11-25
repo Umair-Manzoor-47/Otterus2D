@@ -16,6 +16,7 @@ add_library(OTTERUS_CORE STATIC
     src/Core/ECS/Components/SpriteComponent.cpp
     src/Core/ECS/Components/TextComponent.cpp
     src/Core/ECS/Components/TransformComponent.cpp
+    src/Core/ECS/Components/LightComponent.cpp
     include/Core/ECS/Components/AnimationComponent.h
     include/Core/ECS/Components/BoxColliderComponent.h
     include/Core/ECS/Components/CircleColliderComponent.h
@@ -27,6 +28,7 @@ add_library(OTTERUS_CORE STATIC
     include/Core/ECS/Components/TextComponent.h
     include/Core/ECS/Components/TileComponent.h
     include/Core/ECS/Components/TransformComponent.h
+    include/Core/ECS/Components/LightComponent.h
     include/Core/ECS/Components/AllComponents.h
 
     src/Core/ECS/Components/ComponentSerializer.cpp

@@ -27,6 +27,7 @@ add_library(OTTERUS_RENDERING STATIC
     include/Rendering/Essentials/Font.h
     include/Rendering/Essentials/FontLoader.h
     include/Rendering/Essentials/Primitives.h
+    include/Rendering/Essentials/SceneLighting.h
     include/Rendering/Essentials/Shader.h
     include/Rendering/Essentials/ShaderLoader.h
     include/Rendering/Essentials/Texture.h

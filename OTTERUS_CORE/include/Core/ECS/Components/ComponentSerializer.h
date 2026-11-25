@@ -36,6 +36,7 @@ namespace otterus_core::ECS
         static void SerializeComponent( otterus_filesystem::JSONSerializer& serializer, const TextComponent& text );
         static void SerializeComponent( otterus_filesystem::JSONSerializer& serializer, const PhysicsComponent& physics );
         static void SerializeComponent( otterus_filesystem::JSONSerializer& serializer, const RigidBodyComponent& rigidBody );
+        static void SerializeComponent( otterus_filesystem::JSONSerializer& serializer, const LightComponent& light );
 
         static void DeserializeComponent( const rapidjson::Value& jsonValue, TransformComponent& transform );
         static void DeserializeComponent( const rapidjson::Value& jsonValue, SpriteComponent& sprite );
@@ -45,6 +46,7 @@ namespace otterus_core::ECS
         static void DeserializeComponent( const rapidjson::Value& jsonValue, TextComponent& text );
         static void DeserializeComponent( const rapidjson::Value& jsonValue, PhysicsComponent& physics );
         static void DeserializeComponent( const rapidjson::Value& jsonValue, RigidBodyComponent& rigidBody );
+        static void DeserializeComponent( const rapidjson::Value& jsonValue, LightComponent& light );
 
     };
 
