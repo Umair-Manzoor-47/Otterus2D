@@ -26,6 +26,10 @@ namespace otterus_rendering {
 
 		// TODO: Add Setters as per need
 		void SetUniformInt(const std::string& name, int value);
+		void SetUniformFloat(const std::string& name, float value);
+		void SetUniformBool(const std::string& name, bool value);
+		void SetUniformVec2(const std::string& name, const glm::vec2& vec);
+		void SetUniformVec4(const std::string& name, const glm::vec4& vec);
 		void SetUniformMat4(const std::string& name, glm::mat4 mat);
 
 		// TODO: Add the Getters for uniform

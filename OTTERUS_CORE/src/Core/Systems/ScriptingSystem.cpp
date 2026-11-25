@@ -28,7 +28,7 @@
 #include <OtterusUtilities/Timer.h>
 #include <OtterusUtilities/RandomGenerator.h>
 
-#include "LightComponent.h"
+#include "Core/ECS/Components/LightComponent.h"
 #include "../CoreUtilities/CoreEngineData.h"
 #include "../CoreUtilities/FollowCamera.h"
 #include "Core/ECS/MainRegistry.h"
@@ -38,7 +38,7 @@ using namespace otterus_core::ECS;
 using namespace otterus_resources;
 
 namespace otterus_core::Systems {
-	ScriptingSystem::ScriptingSystem(otterus_core::ECS::Registry& registry)
+	ScriptingSystem::ScriptingSystem(Registry& registry)
 		: m_registry(registry), m_mainLoaded{false}
 	{}
 	bool ScriptingSystem::LoadMainScript(sol::state & lua)
@@ -79,9 +79,9 @@ namespace otterus_core::Systems {
 		sol::table render_script = main_lua[2];
 		sol::function render = render_script["render"];
 
-		otterus_core::ECS::Entity mainLuaScript{m_registry, "main_script", ""};
-		mainLuaScript.AddComponent<otterus_core::ECS::ScriptComponent>(
-			otterus_core::ECS::ScriptComponent{
+		Entity mainLuaScript{m_registry, "main_script", ""};
+		mainLuaScript.AddComponent<ScriptComponent>(
+			ScriptComponent{
 			.update = update,
 			.render = render
 			}

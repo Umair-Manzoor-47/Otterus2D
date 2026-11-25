@@ -16,6 +16,7 @@
 #include <ImGui.h>
 
 #include "core/Systems/RenderShapeSystem.h"
+#include "Core/Systems/LightingSystem.h"
 #include "Core/Systems/RenderSystem.h"
 #include "core/Systems/RenderUISystem.h"
 #include "editor/scene/SceneManager.h"
@@ -161,8 +162,6 @@ namespace otterus_editor {
 			ImGui::PushStyleColor( ImGuiCol_ButtonActive, ImVec4{ 0.f, 0.9f, 0.f, 0.3 } );
 		}
 
-		RenderScene();
-
 		if ( ImGui::ImageButton( "##StopButton",
 								 (ImTextureID)stopTexture->GetID(),
 								 ImVec2{
@@ -179,6 +178,23 @@ namespace otterus_editor {
 
 		if ( ImGui::IsItemHovered( ImGuiHoveredFlags_DelayNormal ) )
 			ImGui::SetTooltip( "Stop Scene" );
+
+		if ( auto currentScene = SCENE_MANAGER().GetCurrentScene() )
+		{
+			ImGui::SameLine();
+			if ( ImGui::Button( "Lighting" ) )
+				ImGui::OpenPopup( "SceneLightingPopup" );
+
+			if ( ImGui::BeginPopup( "SceneLightingPopup" ) )
+			{
+				auto& lighting = currentScene->GetLighting();
+				ImGui::Checkbox( "Enable Lighting", &lighting.enabled );
+				ImGui::ColorEdit4( "Ambient Color", &lighting.ambientColor.x );
+				ImGui::EndPopup();
+			}
+		}
+
+		RenderScene();
 
         if (ImGui::BeginChild("##SceneChild", ImVec2{ 0.f, 0.f }, false, ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar))
         {
@@ -226,6 +242,7 @@ namespace otterus_editor {
 		auto& editorFramebuffers = mainRegistry.GetContext<std::shared_ptr<EditorFramebuffers>>();
 		auto& renderer = mainRegistry.GetContext<std::shared_ptr<Renderer>>();
 
+		auto& lightingSystem = mainRegistry.GetContext<std::shared_ptr<LightingSystem>>();
 		auto& renderSystem = mainRegistry.GetContext<std::shared_ptr<RenderSystem>>();
 		auto& renderUISystem = mainRegistry.GetContext<std::shared_ptr<RenderUISystem>>();
 		auto& renderShapeSystem = mainRegistry.GetContext<std::shared_ptr<RenderShapeSystem>>();
@@ -244,7 +261,16 @@ namespace otterus_editor {
 		{
 			auto& runtimeRegistry = currentScene->GetRuntimeRegistry();
 			auto& camera = runtimeRegistry.GetContext<std::shared_ptr<Camera2D>>();
-			renderSystem->Update(runtimeRegistry, *camera);
+			const auto& lighting = currentScene->GetLighting();
+
+			if ( lighting.enabled )
+				lightingSystem->BeginScenePass( fb->GetWidth(), fb->GetHeight() );
+
+			renderSystem->Update( runtimeRegistry, *camera );
+
+			if ( lighting.enabled )
+				lightingSystem->Update( *fb, runtimeRegistry, *camera, lighting );
+
 			renderShapeSystem->Update(runtimeRegistry, *camera);
 			renderUISystem->Update( runtimeRegistry );
 		}
