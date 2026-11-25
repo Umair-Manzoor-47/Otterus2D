@@ -97,14 +97,14 @@ namespace otterus_core::Systems {
 			return;
 		}
 
-		auto view = m_registry.GetRegistry().view<otterus_core::ECS::ScriptComponent>();
+		auto view = m_registry.GetRegistry().view<ScriptComponent>();
 
 		for (const auto& entity : view) {
 		
-			otterus_core::ECS::Entity ent{ m_registry, entity };
+			Entity ent{ m_registry, entity };
 			if (ent.GetName() != "main_script") continue;
 
-			auto& script = ent.GetComponent<otterus_core::ECS::ScriptComponent>();
+			auto& script = ent.GetComponent<ScriptComponent>();
 			auto err = script.update(entity);
 			if (!err.valid()) {
 				sol::error error = err;
@@ -124,14 +124,14 @@ namespace otterus_core::Systems {
 			OTTERUS_ERROR("Main script has not been loaded.");
 			return;
 		}
-		auto view = m_registry.GetRegistry().view<otterus_core::ECS::ScriptComponent>();
+		auto view = m_registry.GetRegistry().view<ScriptComponent>();
 
 		for (const auto& entity : view) {
 
-			otterus_core::ECS::Entity ent{ m_registry, entity };
+			Entity ent{ m_registry, entity };
 			if (ent.GetName() != "main_script") continue;
 
-			auto& script = ent.GetComponent<otterus_core::ECS::ScriptComponent>();
+			auto& script = ent.GetComponent<ScriptComponent>();
 			auto err = script.render(entity);
 			if (!err.valid()) {
 				sol::error error = err;
@@ -290,19 +290,19 @@ namespace otterus_core::Systems {
 			)");
 	};
 
-	void ScriptingSystem::RegisterLuaBindings(sol::state& lua, otterus_core::ECS::Registry& registry)
+	void ScriptingSystem::RegisterLuaBindings(sol::state& lua, Registry& registry)
 	{
-		otterus_core::Scripting::GLMBindings::CreateGLMBindings(lua);
-		otterus_core::InputManager::CreateLuaBindings(lua, registry);
+		Scripting::GLMBindings::CreateGLMBindings(lua);
+		InputManager::CreateLuaBindings(lua, registry);
 		AssetManager::CreateLuaAssetManager(lua);
-		otterus_core::Scripting::SoundBinder::CreateSoundBind(lua);
-		otterus_core::Scripting::RendererBinder::CreateRendererBind(lua, registry);
-		otterus_core::Scripting::UserDataBinder::CreateLuaUserData(lua);
-		otterus_core::Scripting::ContactListenerBinder::CreateLuaContactListener(lua, registry.GetRegistry());
-		otterus_core::State::CreateLuaStateBind(lua);
-		otterus_core::StateStack::CreateLuaStateStackBind(lua);
-		otterus_core::StateMachine::CreateLuaStateMachine(lua);
-		otterus_core::FollowCamera::CreateLuaFollowCamera(lua, registry);
+		Scripting::SoundBinder::CreateSoundBind(lua);
+		Scripting::RendererBinder::CreateRendererBind(lua, registry);
+		Scripting::UserDataBinder::CreateLuaUserData(lua);
+		Scripting::ContactListenerBinder::CreateLuaContactListener(lua, registry.GetRegistry());
+		State::CreateLuaStateBind(lua);
+		StateStack::CreateLuaStateStackBind(lua);
+		StateMachine::CreateLuaStateMachine(lua);
+		FollowCamera::CreateLuaFollowCamera(lua, registry);
 
 		create_timer(lua);
 		create_lua_logger(lua);
@@ -318,29 +318,8 @@ namespace otterus_core::Systems {
 		TextComponent::CreateLuaTextBindings(lua);
 		RigidBodyComponent::CreateRigidBodyBind(lua);
 
-		Entity::RegisterMetaComponent<Identification>();
-		Entity::RegisterMetaComponent<TransformComponent>();
-		Entity::RegisterMetaComponent<SpriteComponent>();
-		Entity::RegisterMetaComponent<AnimationComponent>();
-		Entity::RegisterMetaComponent<BoxColliderComponent>();
-		Entity::RegisterMetaComponent<CircleColliderComponent>();
-		Entity::RegisterMetaComponent<PhysicsComponent>();
-		Entity::RegisterMetaComponent<TextComponent>();
-		Entity::RegisterMetaComponent<RigidBodyComponent>();
-
-		Registry::RegisterMetaComponent<TransformComponent>();
-		Registry::RegisterMetaComponent<SpriteComponent>();
-		Registry::RegisterMetaComponent<AnimationComponent>();
-		Registry::RegisterMetaComponent<BoxColliderComponent>();
-		Registry::RegisterMetaComponent<CircleColliderComponent>();
-		Registry::RegisterMetaComponent<PhysicsComponent>();
-		Registry::RegisterMetaComponent<TextComponent>();
-		Registry::RegisterMetaComponent<RigidBodyComponent>();
-
-		// TODO: Register any required UserData types
-		otterus_core::Scripting::UserDataBinder::register_meta_user_data<ObjectData>();
 	}
-	void ScriptingSystem::RegisterLuaFunctions(sol::state& lua, otterus_core::ECS::Registry& registry)
+	void ScriptingSystem::RegisterLuaFunctions(sol::state& lua, Registry& registry)
 	{
 		lua.set_function(
 			"run_script", [&](const std::string& path) {

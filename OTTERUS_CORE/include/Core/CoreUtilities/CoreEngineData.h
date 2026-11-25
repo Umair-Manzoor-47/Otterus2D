@@ -27,6 +27,8 @@ namespace otterus_core {
 		void SetWindowWidth(int windowWidth);
 		void SetWindowHeight(int windowHeight);
 
+		static void RegisterMetaFunctions();
+
 		const float MetersToPixels() const;
 		const float PixelsToMeters() const;
 

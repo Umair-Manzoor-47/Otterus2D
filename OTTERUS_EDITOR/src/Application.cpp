@@ -384,7 +384,9 @@ namespace otterus_editor {
     	DrawComponentUtils::RegisterUIComponent<otterus_core::ECS::BoxColliderComponent>();
     	DrawComponentUtils::RegisterUIComponent<otterus_core::ECS::CircleColliderComponent>();
 
+    	otterus_core::CoreEngineData::RegisterMetaFunctions();
 
+    	//TODO: REMOVE
     	SCENE_MANAGER().AddScene("DefaultScene");
     	SCENE_MANAGER().AddScene("Splash");
     	SCENE_MANAGER().AddScene("MainMenu");
