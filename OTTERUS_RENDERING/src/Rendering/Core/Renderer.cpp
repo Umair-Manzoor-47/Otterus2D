@@ -10,7 +10,44 @@ namespace otterus_rendering {
 		m_TextBatch{ std::make_unique<TextBatchRenderer>() },
 		m_CircleBatch{ std::make_unique<CircleBatchRenderer>() },
 		m_RectBatch { std::make_unique<RectBatchRenderer>() }
-	{}
+	{
+		InitializeScreenQuad();
+	}
+
+	Renderer::~Renderer()
+	{
+		if (m_ScreenVAO != 0) glDeleteVertexArrays(1, &m_ScreenVAO);
+		if (m_ScreenVBO != 0) glDeleteBuffers(1, &m_ScreenVBO);
+	}
+
+	void Renderer::InitializeScreenQuad()
+	{
+		constexpr float screenVertices[] = {
+			-1.0f,  1.0f,  0.0f, 1.0f,
+			-1.0f, -1.0f,  0.0f, 0.0f,
+			 1.0f, -1.0f,  1.0f, 0.0f,
+
+			-1.0f,  1.0f,  0.0f, 1.0f,
+			 1.0f, -1.0f,  1.0f, 0.0f,
+			 1.0f,  1.0f,  1.0f, 1.0f
+		};
+
+		glGenVertexArrays(1, &m_ScreenVAO);
+		glGenBuffers(1, &m_ScreenVBO);
+
+		glBindVertexArray(m_ScreenVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, m_ScreenVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(screenVertices), screenVertices, GL_STATIC_DRAW);
+
+		constexpr GLsizei stride = 4 * sizeof(float);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, stride, (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)(2 * sizeof(float)));
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
 
 	void Renderer::SetClearColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat aplha)
 	{
@@ -43,6 +80,18 @@ namespace otterus_rendering {
 			static_cast<GLenum>(dFactor)
 		);
 
+	}
+
+	void Renderer::SetBlendCapabilitySeparate(BlendingFactors srcRGB, BlendingFactors dstRGB, BlendingFactors srcAlpha, BlendingFactors dstAlpha)
+	{
+		glEnable(static_cast<GLenum>(GLCapabilities::BLEND));
+
+		glBlendFuncSeparate(
+			static_cast<GLenum>(srcRGB),
+			static_cast<GLenum>(dstRGB),
+			static_cast<GLenum>(srcAlpha),
+			static_cast<GLenum>(dstAlpha)
+		);
 	}
 
 	void Renderer::SetViewport(GLint x, GLint y, GLsizei width, GLsizei height)
@@ -232,6 +281,30 @@ namespace otterus_rendering {
 
 		m_TextBatch->End();
 		m_TextBatch->Render();
+		shader.Disable();
+	}
+
+	void Renderer::DrawCompositeQuad(Shader& shader, GLuint sceneTextureID, GLuint lightTextureID)
+	{
+		shader.Enable();
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, sceneTextureID);
+		shader.SetUniformInt("uSceneTexture", 0);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, lightTextureID);
+		shader.SetUniformInt("uLightTexture", 1);
+
+		glBindVertexArray(m_ScreenVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindVertexArray(0);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
 		shader.Disable();
 	}
 

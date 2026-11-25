@@ -98,6 +98,7 @@ namespace otterus_core::ECS {
 			"start_y", &SpriteComponent::start_y,
 			"layer", &SpriteComponent::layer,
 			"color", &SpriteComponent::color,
+			"isHidden", &SpriteComponent::isHidden,
 			"uvs", &SpriteComponent::uvs,
 			"generate_uvs", [&](SpriteComponent& sprite) {
 				auto& assetManager = MAIN_REGISTRY().GetAssetManager();

@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <Rendering/Essentials/Vertex.h>
 #include <glm/glm.hpp>
 #include <sol/sol.hpp>
 #include <string>
@@ -7,7 +8,8 @@ namespace otterus_core::ECS
 {
     struct LightComponent
     {
-        glm::vec4 color{ 1.0f, 1.0f, 1.0f, 1.0f };
+        otterus_rendering::Color color{ 255, 255, 255, 255 };
+        glm::vec2 offset{ 0.0f, 0.0f };
 
         float intensity{ 1.0f };
         float radius{ 150.0f };

@@ -75,7 +75,7 @@ namespace otterus_core::Systems {
 			const auto& transform = spriteView.get<TransformComponent>(entity);
 			const auto& sprite = spriteView.get<SpriteComponent>(entity);
 
-			if (sprite.texture_name.empty()) continue;
+			if (sprite.isHidden || sprite.texture_name.empty()) continue;
 
 			const auto& texture = assetManager->GetTexture(sprite.texture_name);
 			GLuint textureID = 0;

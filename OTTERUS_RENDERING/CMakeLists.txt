@@ -3,6 +3,7 @@ add_library(OTTERUS_RENDERING STATIC
     src/Rendering/Core/BatchRenderer.cpp
     src/Rendering/Core/Camera2D.cpp
     src/Rendering/Core/CircleBatchRenderer.cpp
+    src/Rendering/Core/LightBatchRenderer.cpp
     src/Rendering/Core/LineBatchRenderer.cpp
     src/Rendering/Core/RectBatchRenderer.cpp
     src/Rendering/Core/Renderer.cpp
@@ -19,6 +20,7 @@ add_library(OTTERUS_RENDERING STATIC
     include/Rendering/Core/BatchRenderer.h
     include/Rendering/Core/Camera2D.h
     include/Rendering/Core/CircleBatchRenderer.h
+    include/Rendering/Core/LightBatchRenderer.h
     include/Rendering/Core/LineBatchRenderer.h
     include/Rendering/Core/RectBatchRenderer.h
     include/Rendering/Core/Renderer.h

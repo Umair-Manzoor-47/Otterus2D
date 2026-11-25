@@ -30,6 +30,16 @@ namespace otterus_rendering {
 		CircleVertex topLeft, bottomLeft, topRight, bottomRight;
 	};
 
+	struct LightBatch
+	{
+		GLuint numIndices{ 0 }, offset{ 0 };
+	};
+
+	struct LightGlyph
+	{
+		LightVertex topLeft, bottomLeft, topRight, bottomRight;
+	};
+
 	struct SpriteGlyph
 	{
 		Vertex topLeft, bottomLeft, topRight, bottomRight;

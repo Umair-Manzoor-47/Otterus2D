@@ -129,9 +129,6 @@ function PlatformerController:init()
 
     self.m_Deaths = 0
     self.m_UIEntity, self.m_UIText = PlayerFactory.CreateUI()
-
-    -- Single test light attached to the player in Platformer
-    self.m_Player:add_component(Light(vec4(1.0, 0.85, 0.65, 1.0), 1.35, 180.0))
 end
 
 function PlatformerController:set_ui_visible(visible)

@@ -1,11 +1,11 @@
 #pragma once
-#include <glm/glm.hpp>
+#include "Vertex.h"
 
 namespace otterus_rendering
 {
 	struct SceneLighting
 	{
-		glm::vec4 ambientColor{ 1.0f, 1.0f, 1.0f, 1.0f };
+		Color ambientColor{ .r = 255, .g = 255, .b = 255, .a = 255 };
 		bool enabled{ true };
 	};
 }

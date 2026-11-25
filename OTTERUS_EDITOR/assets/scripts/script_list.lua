@@ -80,6 +80,7 @@ local cozy_scripts = {
     "assets/Games/CozyScene/rain_generator.lua",
     "assets/Games/CozyScene/animal_wander.lua",
     "assets/Games/CozyScene/ambient_effects.lua",
+    "assets/Games/CozyScene/day_night_cycle.lua",
     "assets/Games/CozyScene/cozy_scene.lua",
     "assets/Games/CozyScene/cozy_scene_state.lua",
 }

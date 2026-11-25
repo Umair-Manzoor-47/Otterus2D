@@ -41,4 +41,16 @@ namespace otterus_rendering {
 		float lineThickness;
 	};
 
+	struct LightVertex
+	{
+		glm::vec2 position{ 0.f }, uvs{ 0.f };
+		Color color{ .r = 255, .g = 255, .b = 255, .a = 255 };
+		float intensity{ 1.f };
+		float falloff{ 2.f };
+		glm::vec2 direction{ 1.f, 0.f };
+		float innerCos{ 1.f };
+		float outerCos{ 1.f };
+		float isSpotlight{ 0.f };
+	};
+
 }
