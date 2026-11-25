@@ -56,6 +56,7 @@ namespace otterus_core {
 		Entity::RegisterMetaComponent<PhysicsComponent>();
 		Entity::RegisterMetaComponent<TextComponent>();
 		Entity::RegisterMetaComponent<RigidBodyComponent>();
+		Entity::RegisterMetaComponent<LightComponent>();
 
 		Registry::RegisterMetaComponent<TransformComponent>();
 		Registry::RegisterMetaComponent<SpriteComponent>();
@@ -65,6 +66,7 @@ namespace otterus_core {
 		Registry::RegisterMetaComponent<PhysicsComponent>();
 		Registry::RegisterMetaComponent<TextComponent>();
 		Registry::RegisterMetaComponent<RigidBodyComponent>();
+		Registry::RegisterMetaComponent<LightComponent>();
 
 		// Register User Data Types
 		Scripting::UserDataBinder::register_meta_user_data<ObjectData>();

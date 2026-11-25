@@ -28,6 +28,7 @@
 #include <OtterusUtilities/Timer.h>
 #include <OtterusUtilities/RandomGenerator.h>
 
+#include "LightComponent.h"
 #include "../CoreUtilities/CoreEngineData.h"
 #include "../CoreUtilities/FollowCamera.h"
 #include "Core/ECS/MainRegistry.h"
@@ -317,6 +318,7 @@ namespace otterus_core::Systems {
 		PhysicsComponent::CreatePhysicsLuaBind(lua, registry.GetRegistry());
 		TextComponent::CreateLuaTextBindings(lua);
 		RigidBodyComponent::CreateRigidBodyBind(lua);
+		LightComponent::CreateLuaLightBind(lua);
 
 	}
 	void ScriptingSystem::RegisterLuaFunctions(sol::state& lua, Registry& registry)

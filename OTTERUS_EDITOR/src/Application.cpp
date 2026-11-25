@@ -383,6 +383,7 @@ namespace otterus_editor {
     	DrawComponentUtils::RegisterUIComponent<otterus_core::ECS::RigidBodyComponent>();
     	DrawComponentUtils::RegisterUIComponent<otterus_core::ECS::BoxColliderComponent>();
     	DrawComponentUtils::RegisterUIComponent<otterus_core::ECS::CircleColliderComponent>();
+    	DrawComponentUtils::RegisterUIComponent<otterus_core::ECS::LightComponent>();
 
     	otterus_core::CoreEngineData::RegisterMetaFunctions();
 

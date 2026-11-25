@@ -162,6 +162,26 @@ namespace otterus_core::ECS
 			.EndObject(); // End rigid body table
 	}
 
+	void ComponentSerializer::SerializeComponent( otterus_filesystem::JSONSerializer& serializer,
+												  const LightComponent& light )
+	{
+		serializer.StartNewObject( "light" )
+			.StartNewObject( "color" )
+			.AddKeyValuePair( "r", light.color.r )
+			.AddKeyValuePair( "g", light.color.g )
+			.AddKeyValuePair( "b", light.color.b )
+			.AddKeyValuePair( "a", light.color.a )
+			.EndObject()
+			.AddKeyValuePair( "intensity", light.intensity )
+			.AddKeyValuePair( "radius", light.radius )
+			.AddKeyValuePair( "falloff", light.falloff )
+			.AddKeyValuePair( "isSpotlight", light.isSpotlight )
+			.AddKeyValuePair( "innerAngle", light.innerAngle )
+			.AddKeyValuePair( "outerAngle", light.outerAngle )
+			.AddKeyValuePair( "castShadows", light.castShadows )
+			.EndObject();
+	}
+
 	void ComponentSerializer::DeserializeComponent( const rapidjson::Value& jsonValue, TransformComponent& transform )
 	{
 		transform.position =
@@ -233,5 +253,22 @@ namespace otterus_core::ECS
 	{
 		rigidBody.velocity.x = jsonValue[ "velocity" ][ "x" ].GetFloat();
 		rigidBody.velocity.y = jsonValue[ "velocity" ][ "y" ].GetFloat();
+	}
+
+	void ComponentSerializer::DeserializeComponent( const rapidjson::Value& jsonValue, LightComponent& light )
+	{
+		const auto& color = jsonValue[ "color" ];
+		light.color.r = color[ "r" ].GetFloat();
+		light.color.g = color[ "g" ].GetFloat();
+		light.color.b = color[ "b" ].GetFloat();
+		light.color.a = color[ "a" ].GetFloat();
+
+		light.intensity = jsonValue[ "intensity" ].GetFloat();
+		light.radius = jsonValue[ "radius" ].GetFloat();
+		light.falloff = jsonValue[ "falloff" ].GetFloat();
+		light.isSpotlight = jsonValue[ "isSpotlight" ].GetBool();
+		light.innerAngle = jsonValue[ "innerAngle" ].GetFloat();
+		light.outerAngle = jsonValue[ "outerAngle" ].GetFloat();
+		light.castShadows = jsonValue[ "castShadows" ].GetBool();
 	}
 }

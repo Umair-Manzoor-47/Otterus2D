@@ -9,6 +9,7 @@ namespace otterus_editor
         , m_RuntimeRegistry{}
         , m_SceneName{sceneName}
         , m_Canvas{}
+        , m_Lighting{}
     {}
 
     SceneObject::~SceneObject()
