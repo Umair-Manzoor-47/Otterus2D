@@ -19,6 +19,8 @@ add_executable(OTTERUS_EDITOR
     src/editor/displays/MenuDisplay.cpp
     src/editor/displays/TileDetailsDisplay.h
     src/editor/displays/TileDetailsDisplay.cpp
+    src/editor/displays/SceneHierarchyDisplay.h
+    src/editor/displays/SceneHierarchyDisplay.cpp
 
     src/editor/scene/SceneObject.h
     src/editor/scene/SceneObject.cpp
