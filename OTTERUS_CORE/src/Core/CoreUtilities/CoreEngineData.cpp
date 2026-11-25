@@ -1,4 +1,10 @@
 #include "CoreEngineData.h"
+#include "Core/ECS/Entity.h"
+#include "Core/ECS/Registry.h"
+#include "Core/ECS/Components/AllComponents.h"
+#include "Core/Scripting/UserDataBindings.h"
+
+using namespace otterus_core::ECS;
 
 namespace otterus_core {
 
@@ -38,6 +44,30 @@ namespace otterus_core {
 	{
 		m_WindowHeight = windowHeight;
 		m_ScaledHeight = m_WindowHeight / METERS_TO_PIXELS;
+	}
+
+	void CoreEngineData::RegisterMetaFunctions()
+	{
+		Entity::RegisterMetaComponent<TransformComponent>();
+		Entity::RegisterMetaComponent<SpriteComponent>();
+		Entity::RegisterMetaComponent<AnimationComponent>();
+		Entity::RegisterMetaComponent<BoxColliderComponent>();
+		Entity::RegisterMetaComponent<CircleColliderComponent>();
+		Entity::RegisterMetaComponent<PhysicsComponent>();
+		Entity::RegisterMetaComponent<TextComponent>();
+		Entity::RegisterMetaComponent<RigidBodyComponent>();
+
+		Registry::RegisterMetaComponent<TransformComponent>();
+		Registry::RegisterMetaComponent<SpriteComponent>();
+		Registry::RegisterMetaComponent<AnimationComponent>();
+		Registry::RegisterMetaComponent<BoxColliderComponent>();
+		Registry::RegisterMetaComponent<CircleColliderComponent>();
+		Registry::RegisterMetaComponent<PhysicsComponent>();
+		Registry::RegisterMetaComponent<TextComponent>();
+		Registry::RegisterMetaComponent<RigidBodyComponent>();
+
+		// Register User Data Types
+		Scripting::UserDataBinder::register_meta_user_data<ObjectData>();
 	}
 
 	const float CoreEngineData::MetersToPixels() const
