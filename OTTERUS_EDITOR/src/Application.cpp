@@ -163,176 +163,6 @@ namespace otterus_editor {
 
 		mainRegistry.Initialize();
 
-		auto renderer = std::make_shared<otterus_rendering::Renderer>();
-
-		// Enable Blending
-		renderer->SetBlendCapabilitiy(otterus_rendering::Renderer::BlendingFactors::SRC_ALPHA, otterus_rendering::Renderer::BlendingFactors::ONE_MINUS_SRC_ALPHA);
-
-
-    	auto assetManager = MAIN_REGISTRY().GetContext<std::shared_ptr<otterus_resources::AssetManager>>();
-		if (!assetManager) {
-			OTTERUS_ERROR("Failed to create Asset Manager.");
-			return false;
-		}
-
-
-		// Registry from EnTT 
-		m_registry = std::make_unique<otterus_core::ECS::Registry>();
-		if (!m_registry) {
-			OTTERUS_ERROR("Failed to create the EnTT registry");
-			return false;
-		}
-
-		// Add Renderer to Registry 
-		if (!mainRegistry.AddToContext<std::shared_ptr<otterus_rendering::Renderer>>(renderer)) {
-
-			OTTERUS_ERROR("Failed to add Renderer to registry context.");
-			return false;
-		}
-
-		// Create script module
-		auto lua = std::make_shared<sol::state>();
-
-		if (!lua) {
-		
-			OTTERUS_ERROR("Failed to create the lua state.");
-			return false;
-		}
-
-		lua->open_libraries(sol::lib::base, sol::lib::math, sol::lib::os, sol::lib::table, sol::lib::io, sol::lib::string);
-
-		if (!m_registry->AddToContext<std::shared_ptr<sol::state>>(lua)) {
-		
-			OTTERUS_ERROR("Failed to add sol::state to registry context.");
-			return false;
-		}
-
-		auto scriptingSystem = std::make_shared<otterus_core::Systems::ScriptingSystem>(*m_registry);
-		if (!scriptingSystem) {
-
-			OTTERUS_ERROR("Failed to create the scripting system.");
-			return false;
-		}
-
-		
-
-		if (!m_registry->AddToContext<std::shared_ptr<otterus_core::Systems::ScriptingSystem>>(scriptingSystem)) {
-
-			OTTERUS_ERROR("Failed to add otterus_core::Systems::ScriptingSystem to registry context.");
-			return false;
-		}
-
-		auto renderSystem = std::make_shared<otterus_core::Systems::RenderSystem>();
-		if (!renderSystem) {
-
-			OTTERUS_ERROR("Failed to create the render system.");
-			return false;
-		}
-		if (!mainRegistry.AddToContext<std::shared_ptr<otterus_core::Systems::RenderSystem>>(renderSystem)) {
-			OTTERUS_ERROR("Failed to add Render System into registry context.");
-			return false;
-		}
-
-		auto lightingSystem = std::make_shared<otterus_core::Systems::LightingSystem>();
-		if (!lightingSystem) {
-			OTTERUS_ERROR("Failed to create the lighting system.");
-			return false;
-		}
-		if (!mainRegistry.AddToContext<std::shared_ptr<otterus_core::Systems::LightingSystem>>(lightingSystem)) {
-			OTTERUS_ERROR("Failed to add Lighting System into registry context.");
-			return false;
-		}
-
-		auto renderShapeSystem = std::make_shared<otterus_core::Systems::RenderShapeSystem>();
-		if (!renderShapeSystem) {
-
-			OTTERUS_ERROR("Failed to create the render shape system.");
-			return false;
-		}
-		if (!mainRegistry.AddToContext<std::shared_ptr<otterus_core::Systems::RenderShapeSystem>>(renderShapeSystem)) {
-			OTTERUS_ERROR("Failed to add Render Shape System into registry context.");
-			return false;
-		}
-		
-
-		auto renderUISystem = std::make_shared<otterus_core::Systems::RenderUISystem>();
-		if (!renderUISystem) {
-
-			OTTERUS_ERROR("Failed to create the Render UI System.");
-			return false;
-		}
-		if (!mainRegistry.AddToContext<std::shared_ptr<otterus_core::Systems::RenderUISystem>>(renderUISystem)) {
-			OTTERUS_ERROR("Failed to add Render UI System into registry context.");
-			return false;
-		}
-
-		auto animationSystem = std::make_shared<otterus_core::Systems::AnimationSystem>(*m_registry);
-		if (!animationSystem) {
-
-			OTTERUS_ERROR("Failed to create the animation system.");
-			return false;
-		}
-		if (!m_registry->AddToContext<std::shared_ptr<otterus_core::Systems::AnimationSystem>>(animationSystem)) {
-			OTTERUS_ERROR("Failed to add Animation System into registry context.");
-			return false;
-		}
-
-		auto musicPlayer = MAIN_REGISTRY().GetContext<std::shared_ptr<otterus_sounds::MusicPlayer>>();
-		if (!musicPlayer) {
-			OTTERUS_ERROR("Failed to create music player.");
-			return false;
-		}
-
-		if (!m_registry->AddToContext<std::shared_ptr<otterus_sounds::MusicPlayer>>(musicPlayer)) {
-		
-			OTTERUS_ERROR("Failed to add music player to registry context.");
-			return false;
-		}
-		auto soundFxPlayer = MAIN_REGISTRY().GetContext<std::shared_ptr<otterus_sounds::SoundFxPlayer>>();
-		if (!soundFxPlayer) {
-			OTTERUS_ERROR("Failed to create SoundFxPlayer player.");
-			return false;
-		}
-
-		if (!m_registry->AddToContext<std::shared_ptr<otterus_sounds::SoundFxPlayer>>(soundFxPlayer)) {
-
-			OTTERUS_ERROR("Failed to add Sound FX player to registry context.");
-			return false;
-		}
-
-		// Create temp camera
-		auto camera = std::make_shared<otterus_rendering::Camera2D>();
-
-		if (!m_registry->AddToContext<std::shared_ptr<otterus_resources::AssetManager>>(assetManager)) {
-			OTTERUS_ERROR("Failed to add AssetManager into registry context.");
-			return false;
-		}
-
-		if (!m_registry->AddToContext<std::shared_ptr<otterus_rendering::Camera2D>>(camera)) {
-			OTTERUS_ERROR("Failed to add Camera2D into registry context.");
-			return false;
-		}
-
-		// Create Physics World
-		otterus_physics::PhysicsWorld physicsWorld = std::make_shared<b2World>(b2Vec2{0.f, 9.8f});
-		if (!m_registry->AddToContext<otterus_physics::PhysicsWorld>(physicsWorld)) {
-			OTTERUS_ERROR("Failed to add PhysicsWorld into registry context.");
-			return false;
-		}
-
-		auto contactListener = std::make_shared<otterus_physics::ContactListener>();
-		if (!m_registry->AddToContext<std::shared_ptr<otterus_physics::ContactListener>>(contactListener)) {
-			OTTERUS_ERROR("Failed to add Contact Listener into registry context.");
-			return false;
-		}
-
-		physicsWorld->SetContactListener(contactListener.get());
-
-		auto physicsSystem = std::make_shared <otterus_core::Systems::PhysicsSystem>(*m_registry);
-		if (!m_registry->AddToContext<std::shared_ptr<otterus_core::Systems::PhysicsSystem>>(physicsSystem)) {
-			OTTERUS_ERROR("Failed to add PhysicsSystem into registry context.");
-			return false;
-		}
 
 		if (!InitImGui()) {
 			OTTERUS_ERROR("Failed to initialize ImGUI.");
@@ -349,7 +179,7 @@ namespace otterus_editor {
     		return false;
     	}
 
-    	if (!assetManager->CreateDefaultFonts())
+    	if (!mainRegistry.GetAssetManager().CreateDefaultFonts())
 	    {
 			OTTERUS_ERROR("Failed to load default fonts.");
 			return false;
@@ -394,6 +224,7 @@ namespace otterus_editor {
     	DrawComponentUtils::RegisterUIComponent<otterus_core::ECS::RigidBodyComponent>();
     	DrawComponentUtils::RegisterUIComponent<otterus_core::ECS::BoxColliderComponent>();
     	DrawComponentUtils::RegisterUIComponent<otterus_core::ECS::CircleColliderComponent>();
+    	DrawComponentUtils::RegisterUIComponent<otterus_core::ECS::TileComponent>();
     	DrawComponentUtils::RegisterUIComponent<otterus_core::ECS::LightComponent>();
 
     	otterus_core::CoreEngineData::RegisterMetaFunctions();
@@ -408,7 +239,8 @@ namespace otterus_editor {
 
     bool Application::LoadShaders()
     {
-		auto assetManager = m_registry->GetContext<std::shared_ptr<otterus_resources::AssetManager>>();
+
+		auto assetManager = MAIN_REGISTRY().GetContext<std::shared_ptr<otterus_resources::AssetManager>>();
 		if (!assetManager->AddShader("basic", "assets/shaders/basic_shader.vert", "assets/shaders/basic_shader.frag")) {
 			
 			OTTERUS_ERROR("Failed to add Basic Shader to AssetManager.");
@@ -783,7 +615,7 @@ namespace otterus_editor {
 	}
 
     Application::Application():
-        m_window{ nullptr }, m_registry{nullptr}, m_event {}, m_isRunning{ true }
+        m_window{ nullptr }, m_event {}, m_isRunning{ true }
     {}
 
     Application& Application::GetInstance()

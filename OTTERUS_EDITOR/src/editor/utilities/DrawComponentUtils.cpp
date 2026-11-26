@@ -353,6 +353,9 @@ void DrawComponentUtils::DrawImGuiComponent( Identification& identification )
 	ImGui::PopID();
 }
 
+void DrawComponentUtils::DrawImGuiComponent(TileComponent& tileComponent)
+{}
+
 void DrawComponentUtils::DrawImGuiComponent( LightComponent& light )
 {
 	ImGui::SeparatorText( "Light" );

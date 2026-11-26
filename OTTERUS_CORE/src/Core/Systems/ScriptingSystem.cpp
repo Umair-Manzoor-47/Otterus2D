@@ -38,10 +38,10 @@ using namespace otterus_core::ECS;
 using namespace otterus_resources;
 
 namespace otterus_core::Systems {
-	ScriptingSystem::ScriptingSystem(Registry& registry)
-		: m_registry(registry), m_mainLoaded{false}
+	ScriptingSystem::ScriptingSystem()
+		: m_mainLoaded{false}
 	{}
-	bool ScriptingSystem::LoadMainScript(sol::state & lua)
+	bool ScriptingSystem::LoadMainScript(sol::state & lua, Registry& registry)
 	{
 		auto path = "./assets/scripts/main.lua";
 
@@ -79,7 +79,7 @@ namespace otterus_core::Systems {
 		sol::table render_script = main_lua[2];
 		sol::function render = render_script["render"];
 
-		Entity mainLuaScript{m_registry, "main_script", ""};
+		Entity mainLuaScript{registry, "main_script", ""};
 		mainLuaScript.AddComponent<ScriptComponent>(
 			ScriptComponent{
 			.update = update,
@@ -91,18 +91,18 @@ namespace otterus_core::Systems {
 
 		return true;
 	}
-	void ScriptingSystem::Update()
+	void ScriptingSystem::Update(Registry& registry)
 	{
 		if (!m_mainLoaded) {
 			OTTERUS_ERROR("Main script has not been loaded.");
 			return;
 		}
 
-		auto view = m_registry.GetRegistry().view<ScriptComponent>();
+		auto view = registry.GetRegistry().view<ScriptComponent>();
 
 		for (const auto& entity : view) {
 		
-			Entity ent{ m_registry, entity };
+			Entity ent{ registry, entity };
 			if (ent.GetName() != "main_script") continue;
 
 			auto& script = ent.GetComponent<ScriptComponent>();
@@ -115,21 +115,21 @@ namespace otterus_core::Systems {
 		
 		}
 
-		auto lua = m_registry.GetContext<std::shared_ptr<sol::state>>();
+		auto lua = registry.GetContext<std::shared_ptr<sol::state>>();
 		if (lua) lua->collect_garbage();
 	
 	}
-	void ScriptingSystem::Render()
+	void ScriptingSystem::Render(Registry& registry)
 	{
 		if (!m_mainLoaded) {
 			OTTERUS_ERROR("Main script has not been loaded.");
 			return;
 		}
-		auto view = m_registry.GetRegistry().view<ScriptComponent>();
+		auto view = registry.GetRegistry().view<ScriptComponent>();
 
 		for (const auto& entity : view) {
 
-			Entity ent{ m_registry, entity };
+			Entity ent{ registry, entity };
 			if (ent.GetName() != "main_script") continue;
 
 			auto& script = ent.GetComponent<ScriptComponent>();
@@ -142,7 +142,7 @@ namespace otterus_core::Systems {
 
 		}
 
-		auto lua = m_registry.GetContext<std::shared_ptr<sol::state>>();
+		auto lua = registry.GetContext<std::shared_ptr<sol::state>>();
 		if (lua) lua->collect_garbage();
 	}
 

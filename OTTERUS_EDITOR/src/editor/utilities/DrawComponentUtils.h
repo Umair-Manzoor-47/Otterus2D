@@ -30,6 +30,7 @@ namespace otterus_editor{
         static void DrawImGuiComponent( otterus_core::ECS::RigidBodyComponent& rigidbody);
         static void DrawImGuiComponent( otterus_core::ECS::TextComponent& textComponent);
         static void DrawImGuiComponent( otterus_core::ECS::Identification& identification);
+        static void DrawImGuiComponent( otterus_core::ECS::TileComponent& tileComponent);
         static void DrawImGuiComponent( otterus_core::ECS::LightComponent& light);
 
     };

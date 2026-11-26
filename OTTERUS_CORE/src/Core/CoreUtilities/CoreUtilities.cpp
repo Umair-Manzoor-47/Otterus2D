@@ -2,15 +2,15 @@
 #include "Core/ECS/Components/AllComponents.h"
 
 
-static const std::unordered_map<std::string, otterus_core::ECS::RigidBodyType> StringToRigidBodyType{
-	    { "static", otterus_core::ECS::RigidBodyType::STATIC },
-        { "kinematic", otterus_core::ECS::RigidBodyType::KINEMATIC },
-        { "dynamic", otterus_core::ECS::RigidBodyType::DYNAMIC } };
+static const std::unordered_map<std::string, otterus_physics::RigidBodyType> StringToRigidBodyType{
+	    { "static", otterus_physics::RigidBodyType::STATIC },
+        { "kinematic", otterus_physics::RigidBodyType::KINEMATIC },
+        { "dynamic", otterus_physics::RigidBodyType::DYNAMIC } };
 
-static const std::unordered_map<otterus_core::ECS::RigidBodyType, std::string> RigidBodyTypeToString{
-	    { otterus_core::ECS::RigidBodyType::STATIC, "static" },
-        { otterus_core::ECS::RigidBodyType::KINEMATIC, "kinematic" },
-        { otterus_core::ECS::RigidBodyType::DYNAMIC, "dynamic" } };
+static const std::unordered_map<otterus_physics::RigidBodyType, std::string> RigidBodyTypeToString{
+	    { otterus_physics::RigidBodyType::STATIC, "static" },
+        { otterus_physics::RigidBodyType::KINEMATIC, "kinematic" },
+        { otterus_physics::RigidBodyType::DYNAMIC, "dynamic" } };
 
 
 namespace otterus_core
@@ -62,7 +62,7 @@ namespace otterus_core
         return model;
     }
 
-    std::string GetRigidBodyTypeString( ECS::RigidBodyType eRigidType )
+    std::string GetRigidBodyTypeString( otterus_physics::RigidBodyType eRigidType )
     {
         auto rigidItr = RigidBodyTypeToString.find( eRigidType );
         if ( rigidItr == RigidBodyTypeToString.end() )
@@ -71,11 +71,11 @@ namespace otterus_core
         return rigidItr->second;
     }
 
-    ECS::RigidBodyType GetRigidBodyTypeByString( const std::string sRigidType )
+    otterus_physics::RigidBodyType GetRigidBodyTypeByString( const std::string sRigidType )
     {
         auto rigidItr = StringToRigidBodyType.find( sRigidType );
         if ( rigidItr == StringToRigidBodyType.end() )
-            return ECS::RigidBodyType::STATIC;
+            return otterus_physics::RigidBodyType::STATIC;
 
         return rigidItr->second;
     }

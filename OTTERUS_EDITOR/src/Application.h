@@ -1,6 +1,5 @@
 #pragma once
 #include <Windowing/window/window.h>
-#include <glad/glad.h>
 #include <Core/ECS/Registry.h>
 
 namespace otterus_editor {
@@ -9,7 +8,6 @@ namespace otterus_editor {
 	{
 	private:
 		std::unique_ptr<otterus_windowing::Window> m_window;
-		std::unique_ptr<otterus_core::ECS::Registry> m_registry;
 
 		SDL_Event m_event;
 		bool m_isRunning;
