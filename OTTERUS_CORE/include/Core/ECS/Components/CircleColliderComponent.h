@@ -6,7 +6,7 @@ namespace otterus_core::ECS {
 
 	struct CircleColliderComponent
 	{
-		float radius{ 0 };
+		float radius{ 4.f };
 		glm::vec2 offset{ glm::vec2{0} };
 		bool colliding{ false };
 

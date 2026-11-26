@@ -38,10 +38,13 @@ namespace otterus_editor {
 
     void SceneDisplay::LoadScene()
     {
+		auto& mainRegistry = MAIN_REGISTRY();
 		auto currentScene = SCENE_MANAGER().GetCurrentScene();
 
 		if (!currentScene)
 			return;
+
+		currentScene->CopySceneToRuntime();
 
 		auto& runtimeRegistry = currentScene->GetRuntimeRegistry();
 	    auto lua = runtimeRegistry.AddToContext<std::shared_ptr<sol::state>>(std::make_shared<sol::state>());
@@ -61,15 +64,7 @@ namespace otterus_editor {
 
 		// Systems
 		auto scriptingSystem =
-			runtimeRegistry.AddToContext<std::shared_ptr<ScriptingSystem>>(std::make_shared<ScriptingSystem>(runtimeRegistry));
-
-		runtimeRegistry.AddToContext<std::shared_ptr<AnimationSystem>>(
-			std::make_shared<AnimationSystem>(runtimeRegistry));
-
-		runtimeRegistry.AddToContext<std::shared_ptr<PhysicsSystem>>(
-			std::make_shared<PhysicsSystem>(runtimeRegistry));
-
-
+			mainRegistry.GetContext<std::shared_ptr<ScriptingSystem>>();
 
 		if (!lua)
 			lua = std::make_shared<sol::state>();
@@ -87,8 +82,7 @@ namespace otterus_editor {
 	    ScriptingSystem::RegisterLuaBindings(*lua, runtimeRegistry);
 	    ScriptingSystem::RegisterLuaFunctions(*lua, runtimeRegistry);
 
-	    if (!scriptingSystem->LoadMainScript(*lua)) {
-
+	    if (!scriptingSystem->LoadMainScript(*lua, runtimeRegistry)) {
 	        OTTERUS_ERROR("Failed to load the main lua script.");
 	        return;
 	    }
@@ -108,8 +102,6 @@ namespace otterus_editor {
 		runtimeRegistry.RemoveContext<std::shared_ptr<sol::state>>();
 		runtimeRegistry.RemoveContext<std::shared_ptr<otterus_physics::PhysicsWorld>>();
 		runtimeRegistry.RemoveContext<std::shared_ptr<otterus_physics::ContactListener>>();
-		runtimeRegistry.RemoveContext<std::shared_ptr<AnimationSystem>>();
-		runtimeRegistry.RemoveContext<std::shared_ptr<PhysicsSystem>>();
 
 		auto& mainRegistry = MAIN_REGISTRY();
 		mainRegistry.GetMusicPlayer().Stop();
@@ -300,7 +292,7 @@ namespace otterus_editor {
     void SceneDisplay::Update()
     {
 		if (!m_PlayScene) return;
-
+		auto& mainRegistry = MAIN_REGISTRY();
 		auto currentScene = SCENE_MANAGER().GetCurrentScene();
 
 		if (!currentScene)
@@ -317,8 +309,8 @@ namespace otterus_editor {
 		}
 		camera->Update();
 
-		auto& scriptSystem = runtimeRegistry.GetContext<std::shared_ptr<ScriptingSystem>>();
-		scriptSystem->Update();
+		auto& scriptSystem = mainRegistry.GetContext<std::shared_ptr<ScriptingSystem>>();
+		scriptSystem->Update(runtimeRegistry);
 
 		if (coreGlobals.IsPhysicsEnabled())
 		{
@@ -327,11 +319,11 @@ namespace otterus_editor {
 			physicsWorld->ClearForces();
 		}
 
-		auto& physicsSystem = runtimeRegistry.GetContext<std::shared_ptr<PhysicsSystem>>();
-		physicsSystem->Update(runtimeRegistry.GetRegistry());
+		auto& physicsSystem = mainRegistry.GetContext<std::shared_ptr<PhysicsSystem>>();
+		physicsSystem->Update(runtimeRegistry);
 
-		auto& animationSystem = runtimeRegistry.GetContext<std::shared_ptr<AnimationSystem>>();
-		animationSystem->Update();
+		auto& animationSystem = mainRegistry.GetContext<std::shared_ptr<AnimationSystem>>();
+		animationSystem->Update(runtimeRegistry);
 
         IDisplay::Update();
     }

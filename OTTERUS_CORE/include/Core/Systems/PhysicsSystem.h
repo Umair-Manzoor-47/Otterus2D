@@ -1,17 +1,18 @@
 #pragma once
-#include "../ECS/Registry.h"
+
+namespace otterus_core::ECS{
+	class Registry;
+}
 
 namespace otterus_core::Systems {
 
 	class PhysicsSystem
 	{
-	private:
-		otterus_core::ECS::Registry& m_registry;
 	public:
-		PhysicsSystem(otterus_core::ECS::Registry& registry);
+		PhysicsSystem();
 		~PhysicsSystem() = default;
 
-		void Update(entt::registry& registry);
+		void Update(ECS::Registry& registry);
 	};
 
 }

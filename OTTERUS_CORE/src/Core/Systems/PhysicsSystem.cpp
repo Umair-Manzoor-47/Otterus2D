@@ -4,18 +4,18 @@
 #include "../ECS/Components/TransformComponent.h"
 #include "../ECS/Components/PhysicsComponent.h"
 #include "../CoreUtilities/CoreEngineData.h"
+#include "ECS/MainRegistry.h"
 #include <Logger/Logger.h>
 
 using namespace otterus_core::ECS;
 
 namespace otterus_core::Systems {
-	PhysicsSystem::PhysicsSystem(otterus_core::ECS::Registry& registry)
-		: m_registry{registry}
+	PhysicsSystem::PhysicsSystem()
 	{}
 
-	void PhysicsSystem::Update(entt::registry& registry)
+	void PhysicsSystem::Update(Registry& registry)
 	{
-		auto boxView = registry.view<PhysicsComponent, TransformComponent, BoxColliderComponent>();
+		auto boxView = registry.GetRegistry().view<PhysicsComponent, TransformComponent, BoxColliderComponent>();
 
 		auto& coreEngine = CoreEngineData::GetInstance();
 
@@ -47,7 +47,7 @@ namespace otterus_core::Systems {
 			}
 		}
 
-		auto circleView = registry.view<PhysicsComponent, TransformComponent, CircleColliderComponent>();
+		auto circleView = registry.GetRegistry().view<PhysicsComponent, TransformComponent, CircleColliderComponent>();
 
 		for (auto entity : circleView)
 		{

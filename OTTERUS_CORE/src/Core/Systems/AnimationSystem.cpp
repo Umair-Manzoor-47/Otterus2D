@@ -2,18 +2,18 @@
 #include "../ECS/Components/AnimationComponent.h"
 #include "../ECS/Components/SpriteComponent.h"
 #include "../ECS/Components/TransformComponent.h"
+#include "Core/ECS/MainRegistry.h"
 #include <SDL.h>
 
 
 using namespace otterus_core::ECS;
 namespace otterus_core::Systems {
-	AnimationSystem::AnimationSystem(otterus_core::ECS::Registry & registry)
-		: m_registry(registry)
+	AnimationSystem::AnimationSystem()
 	{}
 
-	void AnimationSystem::Update()
+	void AnimationSystem::Update(Registry& registry)
 	{
-		auto view = m_registry.GetRegistry().view<AnimationComponent, SpriteComponent, TransformComponent>();
+		auto view = registry.GetRegistry().view<AnimationComponent, SpriteComponent, TransformComponent>();
 
 		for (auto entity : view)
 		{

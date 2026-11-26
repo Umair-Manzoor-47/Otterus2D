@@ -4,18 +4,13 @@
 #include <sol/sol.hpp>
 #include <glm/glm.hpp>
 #include <entt.hpp>
+#include "Physics/PhysicsUtilities.h"
 
 namespace otterus_core::ECS {
-	
-	enum class RigidBodyType {
-		STATIC = 0,
-		KINEMATIC,
-		DYNAMIC
-	};
 
 	struct PhysicsAttributes
 	{
-		RigidBodyType type{RigidBodyType::STATIC};
+		otterus_physics::RigidBodyType type{otterus_physics::RigidBodyType::STATIC};
 		float density{ 1.f }, friction{ 0.2f }, restitution{ 0.2f };
 		float restitutionThreshold{ 1.f }, radius{ 0.f }, gravityScale{ 1.f };
 

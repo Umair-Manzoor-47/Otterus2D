@@ -5,6 +5,7 @@ add_library(OTTERUS_PHYSICS STATIC
     include/Physics/Box2Dwrappers.h
     include/Physics/ContactListener.h
     include/Physics/UserData.h
+    include/Physics/PhysicsUtilities.h
 )
 
 target_include_directories(OTTERUS_PHYSICS PUBLIC

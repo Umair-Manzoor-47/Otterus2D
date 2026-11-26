@@ -48,6 +48,7 @@ namespace otterus_core {
 
 	void CoreEngineData::RegisterMetaFunctions()
 	{
+		Entity::RegisterMetaComponent<Identification>();
 		Entity::RegisterMetaComponent<TransformComponent>();
 		Entity::RegisterMetaComponent<SpriteComponent>();
 		Entity::RegisterMetaComponent<AnimationComponent>();
@@ -57,7 +58,9 @@ namespace otterus_core {
 		Entity::RegisterMetaComponent<TextComponent>();
 		Entity::RegisterMetaComponent<RigidBodyComponent>();
 		Entity::RegisterMetaComponent<LightComponent>();
+		Entity::RegisterMetaComponent<TileComponent>();
 
+		Registry::RegisterMetaComponent<Identification>();
 		Registry::RegisterMetaComponent<TransformComponent>();
 		Registry::RegisterMetaComponent<SpriteComponent>();
 		Registry::RegisterMetaComponent<AnimationComponent>();
@@ -67,6 +70,7 @@ namespace otterus_core {
 		Registry::RegisterMetaComponent<TextComponent>();
 		Registry::RegisterMetaComponent<RigidBodyComponent>();
 		Registry::RegisterMetaComponent<LightComponent>();
+		Registry::RegisterMetaComponent<TileComponent>();
 
 		// Register User Data Types
 		Scripting::UserDataBinder::register_meta_user_data<ObjectData>();

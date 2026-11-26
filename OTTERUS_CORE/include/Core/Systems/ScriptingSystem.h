@@ -1,7 +1,11 @@
 #pragma once
 
-#include "../ECS/Registry.h"
 #include <sol/sol.hpp>
+
+namespace otterus_core::ECS
+{
+	class Registry;
+}
 
 namespace otterus_core::Systems {
 
@@ -10,21 +14,20 @@ namespace otterus_core::Systems {
 	{
 
 	private:
-		otterus_core::ECS::Registry& m_registry;
 		bool m_mainLoaded;
 
 	public:
-		ScriptingSystem(otterus_core::ECS::Registry& registry);
+		ScriptingSystem();
 		~ScriptingSystem() = default;
 
-		bool LoadMainScript(sol::state& lua);
-		void Update();
-		void Render();
+		bool LoadMainScript(sol::state& lua, ECS::Registry& registry);
+		void Update(ECS::Registry& registry);
+		void Render(ECS::Registry& registry);
 		
 
-		static void RegisterLuaBindings(sol::state& lua, otterus_core::ECS::Registry& registry);
+		static void RegisterLuaBindings(sol::state& lua, ECS::Registry& registry);
 
-		static void RegisterLuaFunctions(sol::state& lua, otterus_core::ECS::Registry& registry);
+		static void RegisterLuaFunctions(sol::state& lua, ECS::Registry& registry);
 	};
 
 	

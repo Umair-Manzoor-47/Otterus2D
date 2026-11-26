@@ -6,7 +6,7 @@ namespace otterus_core::ECS {
 
 	struct BoxColliderComponent
 	{
-		int width{ 1 }, height{ 1 };
+		int width{ 4 }, height{ 4 };
 		glm::vec2 offset{ glm::vec2{0} };
 		bool colliding{ false };
 
