@@ -45,6 +45,15 @@ namespace otterus_editor
         m_RuntimeRegistry.ClearRegistry();
     }
 
+    otterus_rendering::SceneLighting* SceneObject::GetRuntimeLighting()
+    {
+        if ( m_RuntimeRegistry.GetRegistry().ctx().contains<std::shared_ptr<otterus_rendering::SceneLighting>>() )
+        {
+            return m_RuntimeRegistry.GetContext<std::shared_ptr<otterus_rendering::SceneLighting>>().get();
+        }
+        return nullptr;
+    }
+
     void SceneObject::AddNewLayer()
     {
         static int number{ 0 };

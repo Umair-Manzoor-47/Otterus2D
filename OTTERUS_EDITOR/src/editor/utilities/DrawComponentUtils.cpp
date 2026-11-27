@@ -4,50 +4,50 @@
 #include "Core/CoreUtilities/CoreUtilities.h"
 #include "OtterusUtilities/OtterusUtilities.h"
 #include "Logger/Logger.h"
-
+#include "editor/utilities/EditorUtilities.h"
 #include "editor/utilities/ImGuiUtils.h"
+
+#include <algorithm>
+#include <cstring>
 
 using namespace otterus_core::ECS;
 
 namespace otterus_editor
 {
+namespace
+{
+	void DrawTextProperty( const char* propLabel, const char* id, std::string& value )
+	{
+		char buf[256]{};
+		std::strncpy( buf, value.c_str(), sizeof( buf ) - 1 );
+		ui::PropertyLabel( propLabel );
+		const bool submitted = ImGui::InputText( id, buf, sizeof( buf ), ImGuiInputTextFlags_EnterReturnsTrue );
+		if ( submitted || ImGui::IsItemDeactivatedAfterEdit() )
+		{
+			value = buf;
+		}
+	}
+}
+
 void DrawComponentUtils::DrawImGuiComponent( TransformComponent& transform )
 {
-	ImGui::SeparatorText( "Transform" );
-	ImGui::PushID(entt::type_hash<TransformComponent>::value());
-	if (ImGui::TreeNodeEx("##TranformTree", ImGuiTreeNodeFlags_DefaultOpen))
+	ImGui::PushID( entt::type_hash<TransformComponent>::value() );
+	if ( ui::ComponentSectionHeader( "Transform" ) )
 	{
-		ImGui::PushItemWidth( 120.f );
-		ImGui::InlineLabel( "position" );
-		ImGui::ColoredLabel( "x", LABEL_SINGLE_SIZE, LABEL_RED );
-		ImGui::SameLine();
-		ImGui::InputFloat( "##position_x", &transform.position.x, 1.f, 10.f, "%.1f" );
-		ImGui::SameLine();
-		ImGui::ColoredLabel( "y", LABEL_SINGLE_SIZE, LABEL_GREEN );
-		ImGui::SameLine();
-		ImGui::InputFloat( "##position_y", &transform.position.y, 1.f, 10.f, "%.1f" );
-
-		ImGui::InlineLabel( "scale" );
-		ImGui::ColoredLabel( "x", LABEL_SINGLE_SIZE, LABEL_RED );
-		ImGui::SameLine();
-		if (ImGui::InputFloat("##scale_x", &transform.scale.x, 1.f, 1.f, "%.1f"))
+		if ( ui::BeginPropertyTable( "##TransformProps" ) )
 		{
-			transform.scale.x = std::clamp( transform.scale.x, 0.1f, 150.f );
-		}
-		ImGui::SameLine();
-		ImGui::ColoredLabel( "y", LABEL_SINGLE_SIZE, LABEL_GREEN );
-		ImGui::SameLine();
-		if (ImGui::InputFloat("##scale_y", &transform.scale.y, 1.f, 1.f, "%.1f"))
-		{
-			transform.scale.y = std::clamp( transform.scale.y, 0.1f, 150.f );
-		}
+			ui::PropertyLabel( "Position" );
+			ui::DragFloat2Axis( "##Position", &transform.position.x, &transform.position.y, 1.0f, 0.0f, 0.0f, "%.1f" );
 
-		ImGui::InlineLabel( "rotation" );
-		ImGui::InputFloat( "##rotation", &transform.rotation, 1.f, 1.f, "%.1f" );
-		ImGui::PopItemWidth();
-		ImGui::TreePop();
+			ui::PropertyLabel( "Rotation" );
+			ImGui::DragFloat( "##Rotation", &transform.rotation, 0.5f, 0.0f, 0.0f, "%.1f" );
+
+			ui::PropertyLabel( "Scale" );
+			ui::DragFloat2Axis( "##Scale", &transform.scale.x, &transform.scale.y, 0.1f, 0.1f, 150.0f, "%.2f" );
+
+			ui::EndPropertyTable();
+		}
 	}
-
 	ImGui::PopID();
 }
 
@@ -55,372 +55,255 @@ void DrawComponentUtils::DrawImGuiComponent( SpriteComponent& sprite )
 {
 	bool changed{ false };
 
-	ImGui::SeparatorText( "Sprite" );
 	ImGui::PushID( entt::type_hash<SpriteComponent>::value() );
-	if ( ImGui::TreeNodeEx( "##SpriteTree", ImGuiTreeNodeFlags_DefaultOpen ) )
+	if ( ui::ComponentSectionHeader( "Sprite Renderer" ) )
 	{
-		ImGui::AddSpaces( 2 );
-		if (ImGui::BeginDragDropTarget())
+		if ( ui::BeginPropertyTable( "##SpriteProps" ) )
 		{
-			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload( "AssetDisplayTexture" );
-
-			if (payload)
+			ui::PropertyLabel( "Sprite" );
+			auto& assetManager = MAIN_REGISTRY().GetAssetManager();
+			if ( ImGui::BeginCombo( "##texture", sprite.texture_name.c_str() ) )
 			{
-				const char* texture = (const char*)payload->Data;
-				std::string textureStr{ texture };
-				OTTERUS_ASSERT( !textureStr.empty() && "Texture Name is Empty!" );
-				if (!textureStr.empty())
+				for ( const auto& textureName : assetManager.GetAssetKeyNames( otterus_utils::AssetType::TEXTURE ) )
 				{
-					sprite.texture_name = textureStr;
+					if ( ImGui::Selectable( textureName.c_str(), textureName == sprite.texture_name ) )
+					{
+						sprite.texture_name = textureName;
+						changed = true;
+					}
 				}
+				ImGui::EndCombo();
 			}
 
-			ImGui::EndDragDropTarget();
-		}
-
-		// Color picker
-		ImVec4 col = { sprite.color.r / 255.f, sprite.color.g / 255.f, sprite.color.b / 255.f, sprite.color.a / 255.f };
-		ImGui::InlineLabel( "color" );
-		if (ImGui::ColorEdit4("##color", &col.x, IMGUI_COLOR_PICKER_FLAGS))
-		{
-			sprite.color.r = static_cast<GLubyte>( col.x * 255.f );
-			sprite.color.g = static_cast<GLubyte>( col.y * 255.f );
-			sprite.color.b = static_cast<GLubyte>( col.z * 255.f );
-			sprite.color.a = static_cast<GLubyte>( col.w * 255.f );
-		}
-
-		auto& assetManager = MAIN_REGISTRY().GetAssetManager();
-
-		std::string selectedTexture{ sprite.texture_name };
-		ImGui::InlineLabel( "texture" );
-		if (ImGui::BeginCombo("##texture", selectedTexture.c_str()))
-		{
-			for (const auto& textureName : assetManager.GetAssetKeyNames(otterus_utils::AssetType::TEXTURE))
+			if ( ImGui::BeginDragDropTarget() )
 			{
-				if (ImGui::Selectable(textureName.c_str(), textureName == selectedTexture))
+				if ( const ImGuiPayload* payload = ImGui::AcceptDragDropPayload( DROP_TEXTURE_SRC ) )
 				{
-					selectedTexture = textureName;
-					sprite.texture_name = selectedTexture;
-					changed = true;
+					const std::string textureStr{ static_cast<const char*>( payload->Data ) };
+					OTTERUS_ASSERT( !textureStr.empty() && "Texture Name is Empty!" );
+					if ( !textureStr.empty() )
+					{
+						sprite.texture_name = textureStr;
+						changed = true;
+					}
 				}
+				ImGui::EndDragDropTarget();
 			}
-			ImGui::EndCombo();
-		}
 
-		ImGui::AddSpaces( 2 );
+			ui::PropertyLabel( "Color" );
+			ui::ColorEdit4U8( "##color", sprite.color.r, sprite.color.g, sprite.color.b, sprite.color.a );
 
-		ImGui::PushItemWidth( 120.f );
-		ImGui::InlineLabel( "width" );
-		if (ImGui::InputFloat("##width", &sprite.width, 8.f, 8.f))
-		{
-			sprite.width = std::clamp( sprite.width, 8.f, 1366.f );
-			changed = true;
-		}
+			ui::PropertyLabel( "Width" );
+			changed |= ImGui::DragFloat( "##width", &sprite.width, 1.0f, 8.f, 1366.f, "%.1f", ImGuiSliderFlags_AlwaysClamp );
 
-		ImGui::InlineLabel( "height" );
-		if ( ImGui::InputFloat( "##height", &sprite.height, 8.f, 8.f ) )
-		{
-			sprite.height = std::clamp( sprite.height, 8.f, 768.f );
-			changed = true;
-		}
+			ui::PropertyLabel( "Height" );
+			changed |= ImGui::DragFloat( "##height", &sprite.height, 1.0f, 8.f, 768.f, "%.1f", ImGuiSliderFlags_AlwaysClamp );
 
-		ImGui::InlineLabel( "layer" );
-		if ( ImGui::InputInt( "##layer", &sprite.layer, 1, 1 ) )
-		{
-			sprite.layer = std::clamp( sprite.layer, 0, 10);
-		}
+			ui::PropertyLabel( "Sorting Layer" );
+			ImGui::DragInt( "##layer", &sprite.layer, 0.25f, 0, 10, "%d", ImGuiSliderFlags_AlwaysClamp );
 
-		ImGui::InlineLabel( "Sprite Sheet Position" );
-		ImGui::ColoredLabel( "x", LABEL_SINGLE_SIZE, LABEL_RED );
-		ImGui::SameLine();
-		if (ImGui::InputInt("##start_x", &sprite.start_x, 1, 1))
-		{
-			sprite.start_x = std::clamp( sprite.start_x, 0, 32 );
-			changed = true;
-		}
-		ImGui::SameLine();
-		ImGui::ColoredLabel( "y", LABEL_SINGLE_SIZE, LABEL_RED );
-		ImGui::SameLine();
-		if ( ImGui::InputInt( "##start_y", &sprite.start_y, 1, 1 ) )
-		{
-			sprite.start_y = std::clamp( sprite.start_y, 0, 32 );
-			changed = true;
-		}
+			ui::PropertyLabel( "Sheet Pos" );
+			changed |= ui::DragInt2Axis( "##SheetPos", &sprite.start_x, &sprite.start_y, 0.25f, 0, 32 );
 
-		ImGui::TreePop();
-		ImGui::PopItemWidth();
+			ui::EndPropertyTable();
+		}
 	}
-
 	ImGui::PopID();
 
-	if (changed)
+	if ( changed )
 	{
-		auto texture = MAIN_REGISTRY().GetAssetManager().GetTexture( sprite.texture_name );
-		if ( !texture )
-			return;
-
-		otterus_core::GenerateUVs(sprite, texture->GetWidth(), texture->GetHeight());
+		if ( auto texture = MAIN_REGISTRY().GetAssetManager().GetTexture( sprite.texture_name ) )
+		{
+			otterus_core::GenerateUVs( sprite, texture->GetWidth(), texture->GetHeight() );
+		}
 	}
 }
 
 void DrawComponentUtils::DrawImGuiComponent( AnimationComponent& animation )
 {
-	ImGui::SeparatorText( "Animation Component" );
 	ImGui::PushID( entt::type_hash<AnimationComponent>::value() );
-	if ( ImGui::TreeNodeEx( "", ImGuiTreeNodeFlags_DefaultOpen ) )
+	if ( ui::ComponentSectionHeader( "Animation" ) )
 	{
-		ImGui::PushItemWidth( 120.f );
-		ImGui::InlineLabel( "num frames" );
-		if ( ImGui::InputInt( "##1", &animation.numFrames, 1, 1 ) )
-			animation.numFrames = std::clamp( animation.numFrames, 1, 15 );
+		if ( ui::BeginPropertyTable( "##AnimationProps" ) )
+		{
+			ui::PropertyLabel( "Frames" );
+			ImGui::DragInt( "##num_frames", &animation.numFrames, 0.25f, 1, 15, "%d", ImGuiSliderFlags_AlwaysClamp );
 
-		ImGui::InlineLabel( "frame rate" );
-		if ( ImGui::InputInt( "##frame_rate", &animation.frameRate, 1, 1 ) )
-			animation.frameRate = std::clamp( animation.frameRate, 1, 25 );
+			ui::PropertyLabel( "Frame Rate" );
+			ImGui::DragInt( "##frame_rate", &animation.frameRate, 0.25f, 1, 25, "%d", ImGuiSliderFlags_AlwaysClamp );
 
-		ImGui::InlineLabel( "frame offset" );
-		if ( ImGui::InputInt( "##frame_offset", &animation.frameOffset, 1, 1 ) )
-			animation.frameOffset = std::clamp( animation.frameOffset, 0, 15 );
+			ui::PropertyLabel( "Frame Offset" );
+			ImGui::DragInt( "##frame_offset", &animation.frameOffset, 0.25f, 0, 15, "%d", ImGuiSliderFlags_AlwaysClamp );
 
-		ImGui::InlineLabel( "vertical" );
-		ImGui::Checkbox( "##vertical", &animation.vertical );
-		ImGui::InlineLabel( "looped" );
-		ImGui::Checkbox( "##looped", &animation.looped );
-		ImGui::TreePop();
-		ImGui::PopItemWidth();
+			ui::PropertyLabel( "Vertical" );
+			ui::ToggleSwitch( "##vertical", &animation.vertical );
+
+			ui::PropertyLabel( "Looped" );
+			ui::ToggleSwitch( "##looped", &animation.looped );
+
+			ui::EndPropertyTable();
+		}
 	}
 	ImGui::PopID();
 }
 
 void DrawComponentUtils::DrawImGuiComponent( BoxColliderComponent& boxCollider )
 {
-	ImGui::SeparatorText( "Box Collider Component" );
 	ImGui::PushID( entt::type_hash<BoxColliderComponent>::value() );
-	if ( ImGui::TreeNodeEx( "", ImGuiTreeNodeFlags_DefaultOpen ) )
+	if ( ui::ComponentSectionHeader( "Box Collider 2D" ) )
 	{
-		ImGui::PushItemWidth( 120.f );
-		ImGui::InlineLabel( "width" );
-		if ( ImGui::InputInt( "##width", &boxCollider.width, 4, 4 ) )
-			boxCollider.width = std::clamp( boxCollider.width, 4, 1366 );
+		if ( ui::BeginPropertyTable( "##BoxColliderProps" ) )
+		{
+			ui::PropertyLabel( "Width" );
+			ImGui::DragInt( "##width", &boxCollider.width, 1.0f, 4, 1366, "%d", ImGuiSliderFlags_AlwaysClamp );
 
-		ImGui::InlineLabel( "height" );
-		if ( ImGui::InputInt( "##height", &boxCollider.height, 4, 4 ) )
-			boxCollider.height = std::clamp( boxCollider.height, 4, 768 );
+			ui::PropertyLabel( "Height" );
+			ImGui::DragInt( "##height", &boxCollider.height, 1.0f, 4, 768, "%d", ImGuiSliderFlags_AlwaysClamp );
 
-		ImGui::InlineLabel( "offset" );
-		ImGui::ColoredLabel( "x", LABEL_SINGLE_SIZE, LABEL_RED );
-		ImGui::SameLine();
-		if ( ImGui::InputFloat( "##offset_x", &boxCollider.offset.x, 4.f, 4.f ) )
-			boxCollider.offset.x = std::clamp( boxCollider.offset.x, 0.f, 128.f );
-		ImGui::SameLine();
-		ImGui::ColoredLabel( "y", LABEL_SINGLE_SIZE, LABEL_RED );
-		ImGui::SameLine();
-		if ( ImGui::InputFloat( "##offset_y", &boxCollider.offset.y, 4.f, 4.f ) )
-			boxCollider.offset.y = std::clamp( boxCollider.offset.y, 0.f, 128.f );
-		ImGui::TreePop();
-		ImGui::PopItemWidth();
+			ui::PropertyLabel( "Offset" );
+			ui::DragFloat2Axis( "##Offset", &boxCollider.offset.x, &boxCollider.offset.y, 0.5f, 0.f, 128.f, "%.1f" );
+
+			ui::EndPropertyTable();
+		}
 	}
 	ImGui::PopID();
 }
 
 void DrawComponentUtils::DrawImGuiComponent( CircleColliderComponent& circleCollider )
 {
-	ImGui::SeparatorText( "Circle Collider Component" );
 	ImGui::PushID( entt::type_hash<CircleColliderComponent>::value() );
-	if ( ImGui::TreeNodeEx( "", ImGuiTreeNodeFlags_DefaultOpen ) )
+	if ( ui::ComponentSectionHeader( "Circle Collider 2D" ) )
 	{
-		ImGui::PushItemWidth( 120.f );
-		ImGui::InlineLabel( "radius" );
-		if ( ImGui::InputFloat( "##radius", &circleCollider.radius, 4, 4 ) )
-			circleCollider.radius = std::clamp( circleCollider.radius, 4.f, 1366.f );
+		if ( ui::BeginPropertyTable( "##CircleColliderProps" ) )
+		{
+			ui::PropertyLabel( "Radius" );
+			ImGui::DragFloat( "##radius", &circleCollider.radius, 0.5f, 4.f, 1366.f, "%.1f", ImGuiSliderFlags_AlwaysClamp );
 
-		ImGui::InlineLabel( "offset" );
-		ImGui::ColoredLabel( "x", LABEL_SINGLE_SIZE, LABEL_RED );
-		ImGui::SameLine();
-		if ( ImGui::InputFloat( "##offset_x", &circleCollider.offset.x, 4.f, 4.f ) )
-			circleCollider.offset.x = std::clamp( circleCollider.offset.x, 0.f, 128.f );
-		ImGui::SameLine();
-		ImGui::ColoredLabel( "y", LABEL_SINGLE_SIZE, LABEL_RED );
-		ImGui::SameLine();
-		if ( ImGui::InputFloat( "##offset_y", &circleCollider.offset.y, 4.f, 4.f ) )
-			circleCollider.offset.y = std::clamp( circleCollider.offset.y, 0.f, 128.f );
-		ImGui::TreePop();
-		ImGui::PopItemWidth();
+			ui::PropertyLabel( "Offset" );
+			ui::DragFloat2Axis( "##Offset", &circleCollider.offset.x, &circleCollider.offset.y, 0.5f, 0.f, 128.f, "%.1f" );
+
+			ui::EndPropertyTable();
+		}
 	}
 	ImGui::PopID();
 }
 
 void DrawComponentUtils::DrawImGuiComponent( PhysicsComponent& physics )
 {
-	ImGui::SeparatorText( "Physics Component" );
 	ImGui::PushID( entt::type_hash<PhysicsComponent>::value() );
-	if ( ImGui::TreeNodeEx( "", ImGuiTreeNodeFlags_DefaultOpen ) )
+	if ( ui::ComponentSectionHeader( "Physics 2D" ) )
 	{
-		// TODO: Fill in when Component is ready
-		ImGui::TreePop();
+		ImGui::TextDisabled( "No configurable properties." );
 	}
 	ImGui::PopID();
 }
 
 void DrawComponentUtils::DrawImGuiComponent( RigidBodyComponent& rigidbody )
 {
-	ImGui::SeparatorText( "Rigidbody Component" );
 	ImGui::PushID( entt::type_hash<RigidBodyComponent>::value() );
-	if ( ImGui::TreeNodeEx( "", ImGuiTreeNodeFlags_DefaultOpen ) )
+	if ( ui::ComponentSectionHeader( "Rigidbody 2D" ) )
 	{
-		// TODO: Fill in when Component is ready
-		ImGui::TreePop();
+		ImGui::TextDisabled( "No configurable properties." );
 	}
 	ImGui::PopID();
 }
 
 void DrawComponentUtils::DrawImGuiComponent( TextComponent& textComponent )
 {
-	ImGui::SeparatorText( "Text Component" );
 	ImGui::PushID( entt::type_hash<TextComponent>::value() );
-	if ( ImGui::TreeNodeEx( "", ImGuiTreeNodeFlags_DefaultOpen ) )
+	if ( ui::ComponentSectionHeader( "Text" ) )
 	{
-		std::string sTextBuffer{ textComponent.textStr };
-		ImGui::InlineLabel( "text" );
-		if ( ImGui::InputText(
-				 "##_textStr", sTextBuffer.data(), sizeof( char ) * 255, ImGuiInputTextFlags_EnterReturnsTrue ) )
+		if ( ui::BeginPropertyTable( "##TextProps" ) )
 		{
-			textComponent.textStr = std::string{ sTextBuffer.data() };
-		}
+			DrawTextProperty( "Text", "##_textStr", textComponent.textStr );
 
-		std::string fontName{ textComponent.fontName };
-		ImGui::PushItemWidth( 164.f );
-		ImGui::InlineLabel( "font" );
-		if ( ImGui::BeginCombo( "##fontName", fontName.c_str() ) )
-		{
-			auto& assetManager = MAIN_REGISTRY().GetAssetManager();
-			for ( const auto& sFont : assetManager.GetAssetKeyNames( otterus_utils::AssetType::FONT ) )
+			ui::PropertyLabel( "Font" );
+			if ( ImGui::BeginCombo( "##fontName", textComponent.fontName.c_str() ) )
 			{
-				if ( ImGui::Selectable( sFont.c_str(), sFont == fontName ) )
+				auto& assetManager = MAIN_REGISTRY().GetAssetManager();
+				for ( const auto& sFont : assetManager.GetAssetKeyNames( otterus_utils::AssetType::FONT ) )
 				{
-					fontName = sFont;
-					textComponent.fontName = fontName;
+					if ( ImGui::Selectable( sFont.c_str(), sFont == textComponent.fontName ) )
+					{
+						textComponent.fontName = sFont;
+					}
 				}
+				ImGui::EndCombo();
 			}
 
-			ImGui::EndCombo();
-		}
+			ui::PropertyLabel( "Padding" );
+			ImGui::DragInt( "##padding", &textComponent.padding, 0.25f );
 
-		ImGui::PushItemWidth( 120.f );
-		ImGui::InlineLabel( "padding" );
-		if ( ImGui::InputInt( "##padding", &textComponent.padding, 0, 0 ) )
-		{
-			// TODO
-		}
+			ui::PropertyLabel( "Wrap" );
+			ImGui::DragFloat( "##textWrap", &textComponent.wrap, 0.5f, 0.f, 0.f, "%.1f" );
 
-		ImGui::InlineLabel( "wrap" );
-		if ( ImGui::InputFloat( "##textWrap", &textComponent.wrap, 0.f, 0.f ) )
-		{
-			// TODO
+			ui::EndPropertyTable();
 		}
-
-		ImGui::PopItemWidth();
-		ImGui::PopItemWidth();
-		ImGui::TreePop();
 	}
 	ImGui::PopID();
 }
 
 void DrawComponentUtils::DrawImGuiComponent( Identification& identification )
 {
-	ImGui::SeparatorText( "Identificaton" );
 	ImGui::PushID( entt::type_hash<Identification>::value() );
-	if ( ImGui::TreeNodeEx( "", ImGuiTreeNodeFlags_DefaultOpen ) )
+	if ( ui::ComponentSectionHeader( "Identification" ) )
 	{
-		std::string nameBuffer{ identification.name };
-		ImGui::InlineLabel( "name" );
-		if ( ImGui::InputText(
-				 "##_name", nameBuffer.data(), sizeof( char ) * 255, ImGuiInputTextFlags_EnterReturnsTrue ) )
+		if ( ui::BeginPropertyTable( "##IdentificationProps" ) )
 		{
-			identification.name = std::string{ nameBuffer.data() };
-		}
+			DrawTextProperty( "Name", "##_name", identification.name );
+			DrawTextProperty( "Tag / Group", "##_group", identification.group );
 
-		std::string groupBuffer{ identification.group };
-		ImGui::InlineLabel( "group" );
-		if ( ImGui::InputText(
-				 "##_group", groupBuffer.data(), sizeof( char ) * 255, ImGuiInputTextFlags_EnterReturnsTrue ) )
-		{
-			identification.group = std::string{ groupBuffer.data() };
+			ui::EndPropertyTable();
 		}
-
-		ImGui::TreePop();
 	}
 	ImGui::PopID();
 }
 
-void DrawComponentUtils::DrawImGuiComponent(TileComponent& tileComponent)
+void DrawComponentUtils::DrawImGuiComponent( TileComponent& tileComponent )
 {}
 
 void DrawComponentUtils::DrawImGuiComponent( LightComponent& light )
 {
-	ImGui::SeparatorText( "Light" );
 	ImGui::PushID( entt::type_hash<LightComponent>::value() );
-	if ( ImGui::TreeNodeEx( "##LightTree", ImGuiTreeNodeFlags_DefaultOpen ) )
+	if ( ui::ComponentSectionHeader( "Light 2D" ) )
 	{
-		ImVec4 col = { light.color.r / 255.f, light.color.g / 255.f, light.color.b / 255.f, light.color.a / 255.f };
-		ImGui::InlineLabel( "color" );
-		if ( ImGui::ColorEdit4( "##light_color", &col.x, IMGUI_COLOR_PICKER_FLAGS ) )
+		if ( ui::BeginPropertyTable( "##LightProps" ) )
 		{
-			light.color.r = static_cast<GLubyte>( col.x * 255.f );
-			light.color.g = static_cast<GLubyte>( col.y * 255.f );
-			light.color.b = static_cast<GLubyte>( col.z * 255.f );
-			light.color.a = static_cast<GLubyte>( col.w * 255.f );
-		}
+			ui::PropertyLabel( "Color" );
+			ui::ColorEdit4U8( "##light_color", light.color.r, light.color.g, light.color.b, light.color.a );
 
-		ImGui::PushItemWidth( 120.f );
-		ImGui::InlineLabel( "offset" );
-		ImGui::ColoredLabel( "x", LABEL_SINGLE_SIZE, LABEL_RED );
-		ImGui::SameLine();
-		ImGui::InputFloat( "##light_offset_x", &light.offset.x, 1.f, 5.f, "%.1f" );
-		ImGui::SameLine();
-		ImGui::ColoredLabel( "y", LABEL_SINGLE_SIZE, LABEL_GREEN );
-		ImGui::SameLine();
-		ImGui::InputFloat( "##light_offset_y", &light.offset.y, 1.f, 5.f, "%.1f" );
+			ui::PropertyLabel( "Offset" );
+			ui::DragFloat2Axis( "##Offset", &light.offset.x, &light.offset.y, 0.5f, 0.f, 0.f, "%.1f" );
 
-		ImGui::PushItemWidth( 160.f );
+			ui::PropertyLabel( "Intensity" );
+			ImGui::DragFloat( "##light_intensity", &light.intensity, 0.05f, 0.0f, 100.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp );
 
-		ImGui::InlineLabel( "intensity" );
-		if ( ImGui::InputFloat( "##light_intensity", &light.intensity, 0.1f, 0.5f, "%.2f" ) )
-			light.intensity = std::max( light.intensity, 0.0f );
+			ui::PropertyLabel( "Radius" );
+			ImGui::DragFloat( "##light_radius", &light.radius, 1.0f, 1.0f, 5000.0f, "%.1f", ImGuiSliderFlags_AlwaysClamp );
 
-		ImGui::InlineLabel( "radius" );
-		if ( ImGui::InputFloat( "##light_radius", &light.radius, 5.f, 25.f, "%.1f" ) )
-			light.radius = std::max( light.radius, 1.0f );
+			ui::PropertyLabel( "Falloff" );
+			ImGui::DragFloat( "##light_falloff", &light.falloff, 0.05f, 0.1f, 100.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp );
 
-		ImGui::InlineLabel( "falloff" );
-		if ( ImGui::InputFloat( "##light_falloff", &light.falloff, 0.1f, 0.5f, "%.2f" ) )
-			light.falloff = std::max( light.falloff, 0.1f );
+			ui::PropertyLabel( "Spotlight" );
+			ui::ToggleSwitch( "##light_spotlight", &light.isSpotlight );
 
-		ImGui::InlineLabel( "spotlight" );
-		ImGui::Checkbox( "##light_spotlight", &light.isSpotlight );
-
-		if ( light.isSpotlight )
-		{
-			ImGui::InlineLabel( "inner angle" );
-			if ( ImGui::InputFloat( "##light_inner_angle", &light.innerAngle, 1.f, 5.f, "%.1f" ) )
+			if ( light.isSpotlight )
 			{
-				light.innerAngle = std::clamp( light.innerAngle, 0.0f, 180.0f );
-				light.outerAngle = std::max( light.outerAngle, light.innerAngle );
+				ui::PropertyLabel( "Inner Angle" );
+				if ( ImGui::DragFloat( "##light_inner_angle", &light.innerAngle, 0.5f, 0.0f, 180.0f, "%.1f", ImGuiSliderFlags_AlwaysClamp ) )
+				{
+					light.outerAngle = std::max( light.outerAngle, light.innerAngle );
+				}
+
+				ui::PropertyLabel( "Outer Angle" );
+				ImGui::DragFloat( "##light_outer_angle", &light.outerAngle, 0.5f, light.innerAngle, 180.0f, "%.1f", ImGuiSliderFlags_AlwaysClamp );
 			}
 
-			ImGui::InlineLabel( "outer angle" );
-			if ( ImGui::InputFloat( "##light_outer_angle", &light.outerAngle, 1.f, 5.f, "%.1f" ) )
-			{
-				light.outerAngle = std::clamp( light.outerAngle, light.innerAngle, 180.0f );
-			}
+			ui::PropertyLabel( "Cast Shadows" );
+			ui::ToggleSwitch( "##light_cast_shadows", &light.castShadows );
+
+			ui::EndPropertyTable();
 		}
-
-		ImGui::InlineLabel( "cast shadows" );
-		ImGui::Checkbox( "##light_cast_shadows", &light.castShadows );
-
-		ImGui::PopItemWidth();
-		ImGui::PopItemWidth();
-		ImGui::TreePop();
 	}
 	ImGui::PopID();
 }

@@ -13,8 +13,9 @@
 #include "imgui_internal.h"
 #include "editor/scene/SceneManager.h"
 #include "editor/utilities/EditorUtilities.h"
+#include "editor/utilities/EditorTheme.h"
 
-constexpr float DEFAULT_ASSET_SIZE = 128.f;
+constexpr float DEFAULT_ASSET_SIZE = 64.f;
 constexpr float MIN_ASSET_SIZE = 32.f;
 constexpr float MAX_ASSET_SIZE = 512.f;
 constexpr float ASSET_SIZE_STEP = 16.f;
@@ -107,7 +108,7 @@ namespace otterus_editor {
 
 				if ( bSelectedAsset )
 					ImGui::TableSetBgColor( ImGuiTableBgTarget_CellBg,
-											ImGui::GetColorU32( ImVec4{ 0.f, 0.9f, 0.f, 0.3f } ) );
+											ImGui::GetColorU32( EditorTheme::GetTokens().selectionBg ) );
 
 				GLuint textureID{ GetTextureID( *assetItr ) };
 				std::string sCheckName{ m_RenameBuf.data() };
@@ -273,9 +274,10 @@ namespace otterus_editor {
     }
 
     void AssetDisplay::CheckRename(const std::string &sCheckName) const {
+        const auto& errorColor = EditorTheme::GetTokens().errorColor;
         if ( sCheckName.empty() )
         {
-            ImGui::TextColored( ImVec4{ 1.f, 0.f, 0.f, 1.f }, "Rename text cannot be blank!" );
+            ImGui::TextColored( errorColor, "Rename text cannot be blank!" );
             return;
         }
 
@@ -293,7 +295,7 @@ namespace otterus_editor {
         }
 
         if ( bHasAsset )
-            ImGui::TextColored( ImVec4{ 1.f, 0.f, 0.f, 1.f },
+            ImGui::TextColored( errorColor, "%s",
                                 fmt::format( "Asset name [{}] already exists!", sCheckName ).c_str() );
     }
 

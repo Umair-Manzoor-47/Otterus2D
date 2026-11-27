@@ -16,6 +16,7 @@ namespace otterus_editor {
 		bool Initialize();
 		bool LoadShaders();
 		bool LoadEditorTextures();
+		void SetWindowIcon();
 
 		void ProcessEvents();
 		void Update();

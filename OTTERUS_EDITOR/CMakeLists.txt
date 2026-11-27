@@ -30,11 +30,13 @@ add_executable(OTTERUS_EDITOR
     src/editor/utilities/EditorUtilities.h
     src/editor/utilities/editor_textures.h
     src/editor/utilities/EditorFrameBuffer.h
+    src/editor/utilities/EditorTheme.h
+    src/editor/utilities/EditorTheme.cpp
     src/editor/utilities/ImGuiUtils.h
     src/editor/utilities/ImGuiUtils.cpp
-    src/editor/Utilities/DrawComponentUtils.h
-    src/editor/Utilities/DrawComponentUtils.inl
-    src/editor/Utilities/DrawComponentUtils.cpp
+    src/editor/utilities/DrawComponentUtils.h
+    src/editor/utilities/DrawComponentUtils.inl
+    src/editor/utilities/DrawComponentUtils.cpp
 
     #Tools
     src/editor/tools/AbstractTool.h

@@ -1,5 +1,6 @@
 ﻿#include "TileDetailsDisplay.h"
 #include "editor/utilities/ImGuiUtils.h"
+#include "editor/utilities/EditorTheme.h"
 #include "editor/utilities/DrawComponentUtils.h"
 #include "editor/scene/SceneManager.h"
 #include "editor/scene/SceneObject.h"
@@ -14,88 +15,63 @@
 #include "Logger/Logger.h"
 
 #include <imgui.h>
+#include <algorithm>
 #include <ranges>
-
-
 
 using namespace otterus_core::ECS;
 
 namespace otterus_editor
 {
-    void TileDetailsDisplay::DrawSpriteComponent(SpriteComponent& sprite, SceneObject* scene)
+    void TileDetailsDisplay::DrawSpriteComponent( SpriteComponent& sprite, SceneObject* scene )
     {
         bool changed{ false };
 
-        ImGui::SeparatorText( "Sprite" );
         ImGui::PushID( entt::type_hash<SpriteComponent>::value() );
-        if ( ImGui::TreeNodeEx( "##SpriteTree", ImGuiTreeNodeFlags_DefaultOpen ) )
+        if ( ui::ComponentSectionHeader( "Sprite" ) )
         {
-            ImGui::AddSpaces( 2 );
-
-            ImGui::InlineLabel( "texture: " );
-            ImGui::TextColored( ImVec4{ 0.f, 1.f, 0.f, 1.f }, sprite.texture_name.c_str() );
-
-            std::string layer{ "" };
-
-            // TODO: Add layer description
-            if ( sprite.layer >= 0 && sprite.layer < scene->GetLayerParams().size() )
+            if ( ui::BeginPropertyTable( "##TileSpriteProps" ) )
             {
-                layer = scene->GetLayerParams()[ sprite.layer ].layerName;
+                const auto& highlightText = EditorTheme::GetTokens().highlightText;
+                ui::PropertyLabel( "Texture" );
+                ImGui::TextColored( highlightText, "%s", sprite.texture_name.c_str() );
+
+                std::string layer{ "" };
+                if ( sprite.layer >= 0 && sprite.layer < scene->GetLayerParams().size() )
+                {
+                    layer = scene->GetLayerParams()[ sprite.layer ].layerName;
+                }
+
+                ui::PropertyLabel( "Layer" );
+                ImGui::TextColored( highlightText, "%s", layer.c_str() );
+
+                ui::PropertyLabel( "Color" );
+                ui::ColorEdit4U8( "##color", sprite.color.r, sprite.color.g, sprite.color.b, sprite.color.a );
+
+                ui::PropertyLabel( "Width" );
+                changed |= ImGui::DragFloat( "##width", &sprite.width, 1.0f, 8.f, 1366.f, "%.1f", ImGuiSliderFlags_AlwaysClamp );
+
+                ui::PropertyLabel( "Height" );
+                changed |= ImGui::DragFloat( "##height", &sprite.height, 1.0f, 8.f, 768.f, "%.1f", ImGuiSliderFlags_AlwaysClamp );
+
+                ui::EndPropertyTable();
             }
-
-            ImGui::InlineLabel( "layer: " );
-            ImGui::TextColored( ImVec4{ 0.f, 1.f, 0.f, 1.f }, layer.c_str() );
-
-            ImGui::AddSpaces( 2 );
-
-            // Color picker
-            ImVec4 col = { sprite.color.r / 255.f, sprite.color.g / 255.f, sprite.color.b / 255.f, sprite.color.a / 255.f };
-            ImGui::InlineLabel( "color" );
-            if ( ImGui::ColorEdit4( "##color", &col.x, IMGUI_COLOR_PICKER_FLAGS ) )
-            {
-                sprite.color.r = static_cast<GLubyte>( col.x * 255.f );
-                sprite.color.g = static_cast<GLubyte>( col.y * 255.f );
-                sprite.color.b = static_cast<GLubyte>( col.z * 255.f );
-                sprite.color.a = static_cast<GLubyte>( col.w * 255.f );
-            }
-
-            ImGui::AddSpaces( 2 );
-
-            ImGui::PushItemWidth( 120.f );
-            ImGui::InlineLabel( "width" );
-            if ( ImGui::InputFloat( "##width", &sprite.width, 8.f, 8.f ) )
-            {
-                sprite.width = std::clamp( sprite.width, 8.f, 1366.f );
-                changed = true;
-            }
-
-            ImGui::InlineLabel( "height" );
-            if ( ImGui::InputFloat( "##height", &sprite.height, 8.f, 8.f ) )
-            {
-                sprite.height = std::clamp( sprite.height, 8.f, 768.f );
-                changed = true;
-            }
-
-            ImGui::TreePop();
-            ImGui::PopItemWidth();
         }
 
         ImGui::PopID();
 
         if ( changed )
         {
-            auto texture = MAIN_REGISTRY().GetAssetManager().GetTexture( sprite.texture_name );
-            if ( !texture )
-                return;
-
-            otterus_core::GenerateUVs( sprite, texture->GetWidth(), texture->GetHeight() );
+            if ( auto texture = MAIN_REGISTRY().GetAssetManager().GetTexture( sprite.texture_name ) )
+            {
+                otterus_core::GenerateUVs( sprite, texture->GetWidth(), texture->GetHeight() );
+            }
         }
     }
 
     TileDetailsDisplay::TileDetailsDisplay()
-        : m_SelectedLayer{-1}
+        : m_SelectedLayer{ -1 }
         , m_RenameLayerBuf{ "" }
-        , m_Rename{false}
+        , m_Rename{ false }
     {}
 
     TileDetailsDisplay::~TileDetailsDisplay()
@@ -103,158 +79,148 @@ namespace otterus_editor
 
     void TileDetailsDisplay::Draw()
     {
-        auto currentScene = SCENE_MANAGER().GetCurrentScene();
-        auto& toolManager = SCENE_MANAGER().GetToolManager();
-
-        auto activeTool = toolManager.GetActiveTool();
-        if ( !activeTool )
-            return;
-
-        if ( !ImGui::Begin( "Tile Details" ) || !currentScene )
+        if ( !ImGui::Begin( "Tile Details" ) )
         {
+            ImGui::End();
+            return;
+        }
+
+        auto currentScene = SCENE_MANAGER().GetCurrentScene();
+        auto activeTool = SCENE_MANAGER().GetToolManager().GetActiveTool();
+        if ( !currentScene || !activeTool )
+        {
+            ImGui::TextDisabled( "Select a scene and an active tile tool to inspect tile details." );
             ImGui::End();
             return;
         }
 
         auto& tileData = activeTool->GetTileData();
 
-	// Transform
-	DrawComponentUtils::DrawComponentInfo( tileData.transform );
+        // Transform
+        DrawComponentUtils::DrawComponentInfo( tileData.transform );
+        ImGui::Spacing();
 
-	ImGui::AddSpaces( 2 );
-	// Sprite
-	DrawSpriteComponent( tileData.sprite, currentScene.get() );
+        // Sprite
+        DrawSpriteComponent( tileData.sprite, currentScene.get() );
 
-	ImGui::AddSpaces( 2 );
-	ImGui::Separator();
-	ImGui::AddSpaces( 2 );
+        auto drawSectionToggle = []( const char* label, bool& enabled, auto&& drawBody ) {
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::Spacing();
+            ui::ToggleSwitch( label, &enabled );
+            if ( enabled )
+            {
+                drawBody();
+            }
+        };
 
-	ImGui::Checkbox( "Box Collider", &tileData.hasCollider );
-	if ( tileData.hasCollider )
-	{
-		DrawComponentUtils::DrawComponentInfo( tileData.boxCollider );
-	}
+        drawSectionToggle( "Box Collider", tileData.hasCollider, [&]() {
+            DrawComponentUtils::DrawComponentInfo( tileData.boxCollider );
+        } );
+        drawSectionToggle( "Circle Collider", tileData.isCircle, [&]() {
+            DrawComponentUtils::DrawComponentInfo( tileData.circleCollider );
+        } );
+        drawSectionToggle( "Animation", tileData.hasAnimation, [&]() {
+            DrawComponentUtils::DrawComponentInfo( tileData.animation );
+        } );
+        drawSectionToggle( "Physics", tileData.enablePhysics, [&]() {
+            DrawComponentUtils::DrawComponentInfo( tileData.physics );
+        } );
 
-	ImGui::AddSpaces( 2 );
-	ImGui::Separator();
-	ImGui::AddSpaces( 2 );
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
 
-	ImGui::Checkbox( "Cicle Collider", &tileData.isCircle );
-	if ( tileData.isCircle )
-	{
-		DrawComponentUtils::DrawComponentInfo( tileData.circleCollider );
-	}
+        if ( ImGui::BeginChild( "##TileLayers" ) )
+        {
+            ImGui::SeparatorText( "Tile Layers" );
+            auto& spriteLayers = currentScene->GetLayerParams();
 
-	ImGui::AddSpaces( 2 );
-	ImGui::Separator();
-	ImGui::AddSpaces( 2 );
+            if ( ImGui::Button( "Add" ) )
+            {
+                currentScene->AddNewLayer();
+            }
 
-	ImGui::Checkbox( "Animation", &tileData.hasAnimation );
-	if ( tileData.hasAnimation )
-	{
-		DrawComponentUtils::DrawComponentInfo( tileData.animation );
-	}
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::Spacing();
 
-	ImGui::AddSpaces( 2 );
-	ImGui::Separator();
-	ImGui::AddSpaces( 2 );
+            const float toggleReserve = ui::GetToggleSwitchWidth() + ImGui::GetStyle().ItemSpacing.x * 2.0f;
+            const float itemWidth = std::max( 40.f, ImGui::GetContentRegionAvail().x - toggleReserve );
+            auto rView = spriteLayers | std::ranges::views::reverse;
 
-	ImGui::Checkbox( "Physics", &tileData.enablePhysics );
-	if ( tileData.enablePhysics )
-	{
-		DrawComponentUtils::DrawComponentInfo( tileData.physics );
-	}
+            for ( auto rit = rView.begin(); rit != rView.end(); rit++ )
+            {
+                int n = static_cast<int>( std::distance( rit, rView.end() ) ) - 1;
+                ImGui::PushID( n );
 
-	ImGui::AddSpaces( 2 );
-	ImGui::Separator();
-	ImGui::AddSpaces( 2 );
+                auto& spriteLayer = *rit;
+                bool bIsSelected{ m_SelectedLayer == n };
 
-	if ( ImGui::BeginChild( " Tile Layers" ) )
-	{
-		ImGui::SeparatorText( "Tile Layers" );
-		auto& spriteLayers = currentScene->GetLayerParams();
+                const char* layerLabel = spriteLayer.layerName.empty() ? "Layer" : spriteLayer.layerName.c_str();
+                ImGui::Selectable( layerLabel, bIsSelected, 0, ImVec2{ itemWidth, 0.f } );
 
-		if ( ImGui::Button( "Add" ) )
-		{
-			currentScene->AddNewLayer();
-		}
+                if ( ImGui::IsItemActive() && !ImGui::IsItemHovered() )
+                {
+                    int n_next = n + ( ImGui::GetMouseDragDelta( 0 ).y < 0.f ? 1 : -1 );
+                    if ( n_next >= 0 && n_next < static_cast<int>( rView.size() ) )
+                    {
+                        // We need to swap the sprite layers here, not the reverse view.
+                        // Because the indexes are not reversed anymore.
+                        std::swap( spriteLayers[ n ], spriteLayers[ n_next ] );
 
-		ImGui::AddSpaces( 2 );
-		ImGui::Separator();
-		ImGui::AddSpaces( 2 );
+                        auto spriteView = currentScene->GetRegistry().GetRegistry().view<SpriteComponent, TileComponent>();
 
-		float itemWidth{ ImGui::GetWindowWidth() - 32.f };
-		auto rView = spriteLayers | std::ranges::views::reverse;
+                        for ( auto entity : spriteView )
+                        {
+                            auto& sprite = spriteView.get<SpriteComponent>( entity );
+                            if ( sprite.layer == n )
+                            {
+                                sprite.layer = n_next;
+                            }
+                            else if ( sprite.layer == n_next )
+                            {
+                                sprite.layer = n;
+                            }
+                        }
 
-		for ( auto rit = rView.begin(); rit != rView.end(); rit++ )
-		{
-			int n = std::distance( rit, rView.end() ) - 1;
+                        m_SelectedLayer = n_next;
+                        tileData.sprite.layer = n_next;
 
-			auto& spriteLayer = *rit;
-			bool bIsSelected{ m_SelectedLayer == n };
+                        ImGui::ResetMouseDragDelta();
+                    }
+                }
 
-			ImGui::Selectable( spriteLayer.layerName.c_str(), bIsSelected, 0, ImVec2{ itemWidth, 20.f } );
+                // Set the current selected layer
+                if ( ImGui::IsItemHovered() && ImGui::IsMouseClicked( 0 ) && !m_Rename )
+                {
+                    m_SelectedLayer = n;
+                    tileData.sprite.layer = n;
+                }
 
-			if ( ImGui::IsItemActive() && !ImGui::IsItemHovered() )
-			{
-				int n_next = n + ( ImGui::GetMouseDragDelta( 0 ).y < 0.f ? 1 : -1 );
-				if ( n_next >= 0 && n_next < rView.size() )
-				{
-					// We need to swap the sprite layers here, not the reverse view.
-					// Because the indexes are not reversed anymore.
-					std::swap( spriteLayers[ n ], spriteLayers[ n_next ] );
+                // Start the rename
+                if ( ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked( 0 ) && !m_Rename && bIsSelected )
+                {
+                    m_Rename = true;
+                    m_RenameLayerBuf.clear();
+                    m_RenameLayerBuf = spriteLayer.layerName;
+                }
 
-					auto spriteView = currentScene->GetRegistry().GetRegistry().view<SpriteComponent, TileComponent>();
+                if ( m_Rename && bIsSelected )
+                {
+                    // TODO: Rename stuff
+                }
 
-					for ( auto entity : spriteView )
-					{
-						auto& sprite = spriteView.get<SpriteComponent>( entity );
-						if ( sprite.layer == n )
-						{
-							sprite.layer = n_next;
-						}
-						else if ( sprite.layer == n_next )
-						{
-							sprite.layer = n;
-						}
-					}
+                ImGui::SameLine();
 
-					m_SelectedLayer = n_next;
-					tileData.sprite.layer = n_next;
+                // Layer Visibility
+                ui::ToggleSwitch( "##visible", &spriteLayer.visible );
+                ImGui::PopID();
+            }
 
-					ImGui::ResetMouseDragDelta();
-				}
-			}
+            ImGui::EndChild();
+        }
 
-			// Set the current selected layer
-			if ( ImGui::IsItemHovered() && ImGui::IsMouseClicked( 0 ) && !m_Rename )
-			{
-				m_SelectedLayer = n;
-				tileData.sprite.layer = n;
-			}
-
-			// Start the rename
-			if ( ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked( 0 ) && !m_Rename && bIsSelected )
-			{
-				m_Rename = true;
-				m_RenameLayerBuf.clear();
-				m_RenameLayerBuf = spriteLayer.layerName;
-			}
-
-			if ( m_Rename && bIsSelected )
-			{
-				// TODO: Rename stuff
-			}
-
-			ImGui::SameLine();
-
-			// Layer Visibility
-			ImGui::Checkbox( fmt::format( "##visible_{}", spriteLayer.layerName ).c_str(), &spriteLayer.visible );
-		}
-
-		ImGui::EndChild();
-	}
-
-	ImGui::End();
+        ImGui::End();
     }
 }

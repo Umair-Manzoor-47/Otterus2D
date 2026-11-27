@@ -6,6 +6,7 @@
 #include "Core/ECS/Components/AllComponents.h"
 #include "Core/ECS/MetaUtilities.h"
 #include "editor/utilities/ImGuiUtils.h"
+#include "editor/utilities/EditorTheme.h"
 
 using namespace otterus_core::ECS;
 using namespace entt::literals;
@@ -20,6 +21,7 @@ namespace otterus_editor{
     bool SceneHierarchyDisplay::OpenTreeNode(Entity &entity) {
 
         auto& name = entity.GetName();
+        const char* displayName = name.empty() ? "GameObject" : name.c_str();
 
         ImGui::PushID(static_cast<int32_t>(entity.GetEntity()));
 
@@ -30,7 +32,7 @@ namespace otterus_editor{
             treenNodeFlags |= ImGuiTreeNodeFlags_Selected;
         bool treeNodeOpen { false };
 
-        treeNodeOpen = ImGui::TreeNodeEx(name.c_str(), treenNodeFlags);
+        treeNodeOpen = ImGui::TreeNodeEx(displayName, treenNodeFlags);
 
         if (ImGui::IsItemClicked()) {
             m_SelectedEntity = std::make_shared<Entity>( SCENE_MANAGER().GetCurrentScene()->GetRegistry(), entity.GetEntity() );
@@ -89,7 +91,7 @@ namespace otterus_editor{
 
             if (hasError)
             {
-                ImGui::TextColored(ImVec4{1.f, 0.f, 0.f, 1.f},
+                ImGui::TextColored(EditorTheme::GetTokens().errorColor, "%s",
                     fmt::format("Game Object already has [{}].", componentStr).c_str());
             }
 
@@ -181,31 +183,51 @@ namespace otterus_editor{
             return;
 
         auto& registry = m_SelectedEntity->GetRegistry();
+        ImGui::PushID(static_cast<int32_t>(m_SelectedEntity->GetEntity()));
 
-        for (const auto&& [id, storage] : registry.storage() ) {
+        constexpr entt::id_type idType = entt::type_hash<Identification>::value();
+        constexpr entt::id_type transformType = entt::type_hash<TransformComponent>::value();
+        constexpr entt::id_type tileType = entt::type_hash<TileComponent>::value();
+
+        // Always draw Identification and Transform first (non-removable)
+        for (const entt::id_type fixedId : { idType, transformType })
+        {
+            if (auto* storage = registry.storage(fixedId); storage && storage->contains(m_SelectedEntity->GetEntity()))
+            {
+                otterus_core::Utils::InvokeMetaFunction(fixedId, "DrawEntityComponentInfo"_hs, *m_SelectedEntity);
+                ImGui::Spacing();
+                ImGui::Separator();
+            }
+        }
+
+        for (const auto&& [id, storage] : registry.storage()) {
             if (!storage.contains(m_SelectedEntity->GetEntity()))
                 continue;
 
-            if (id == entt::type_hash<TileComponent>::value())
+            if (id == tileType || id == idType || id == transformType)
                 continue;
 
             const auto drawInfo = otterus_core::Utils::InvokeMetaFunction(id, "DrawEntityComponentInfo"_hs, *m_SelectedEntity);
 
-            if ( drawInfo )
+            if (drawInfo)
             {
-                ImGui::Spacing();
-                ImGui::PushID( id );
-                if ( ImGui::Button( "remove" ) )
+                ImGui::PushID(id);
+                const float buttonWidth = ImGui::CalcTextSize("Remove Component").x + ImGui::GetStyle().FramePadding.x * 2.0f;
+                const float avail = ImGui::GetContentRegionAvail().x;
+                if (avail > buttonWidth)
+                    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + avail - buttonWidth);
+                if (ImGui::SmallButton("Remove Component"))
                 {
-                    storage.remove( m_SelectedEntity->GetEntity() );
+                    storage.remove(m_SelectedEntity->GetEntity());
                 }
                 ImGui::PopID();
+
+                ImGui::Spacing();
+                ImGui::Separator();
             }
-
-            ImGui::Spacing();
-            ImGui::Separator();
-
         }
+
+        ImGui::PopID();
     }
 
     SceneHierarchyDisplay::SceneHierarchyDisplay() {

@@ -22,6 +22,7 @@ namespace otterus_editor {
 		size_t m_ErrorCount{ 0 };
 
 		int m_SelectedLine{ -1 };
+		float m_DetailsHeight{ 150.0f };
 
 		ImGuiTextFilter m_Filter;
 
@@ -30,6 +31,7 @@ namespace otterus_editor {
 		void UpdateFilter();
 		void DrawToolbar();
 		void DrawLogList(float reservedHeight);
+		void DrawDetailsSplitter(float availHeight);
 		void DrawDetailsPane();
 
 	public:
