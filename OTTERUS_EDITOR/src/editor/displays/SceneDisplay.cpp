@@ -22,6 +22,8 @@
 #include "editor/scene/SceneManager.h"
 #include "editor/scene/SceneObject.h"
 #include "editor/utilities/EditorFrameBuffer.h"
+#include "editor/utilities/EditorTheme.h"
+#include "editor/utilities/ImGuiUtils.h"
 #include "physics/ContactListener.h"
 #include "Rendering/Core/Renderer.h"
 
@@ -123,11 +125,13 @@ namespace otterus_editor {
 		auto playTexture = assetManager.GetTexture( "play_button" );
 		auto stopTexture = assetManager.GetTexture( "stop_button" );
 
-		if (m_PlayScene)
+		const bool pushedPlayStyle = m_PlayScene;
+		if ( pushedPlayStyle )
 		{
-			ImGui::PushStyleColor( ImGuiCol_Button, ImVec4{ 0.f, 0.9f, 0.f, 0.3 } );
-			ImGui::PushStyleColor( ImGuiCol_ButtonHovered, ImVec4{ 0.f, 0.9f, 0.f, 0.3 } );
-			ImGui::PushStyleColor( ImGuiCol_ButtonActive, ImVec4{ 0.f, 0.9f, 0.f, 0.3 } );
+			const auto& playColor = EditorTheme::GetTokens().playActiveBg;
+			ImGui::PushStyleColor( ImGuiCol_Button, playColor );
+			ImGui::PushStyleColor( ImGuiCol_ButtonHovered, playColor );
+			ImGui::PushStyleColor( ImGuiCol_ButtonActive, playColor );
 		}
 
 		if ( ImGui::ImageButton( "##PlayButton",
@@ -141,19 +145,21 @@ namespace otterus_editor {
 			LoadScene();
 		}
 
-		if ( ImGui::GetColorStackSize() > 0 )
-			ImGui::PopStyleColor( ImGui::GetColorStackSize() );
+		if ( pushedPlayStyle )
+			ImGui::PopStyleColor( 3 );
 
 		if ( ImGui::IsItemHovered( ImGuiHoveredFlags_DelayNormal ) )
 			ImGui::SetTooltip( "Play Scene" );
 
 		ImGui::SameLine();
 
-		if ( !m_PlayScene )
+		const bool pushedStopStyle = !m_PlayScene;
+		if ( pushedStopStyle )
 		{
-			ImGui::PushStyleColor( ImGuiCol_Button, ImVec4{ 0.f, 0.9f, 0.f, 0.3 } );
-			ImGui::PushStyleColor( ImGuiCol_ButtonHovered, ImVec4{ 0.f, 0.9f, 0.f, 0.3 } );
-			ImGui::PushStyleColor( ImGuiCol_ButtonActive, ImVec4{ 0.f, 0.9f, 0.f, 0.3 } );
+			const auto& stopColor = EditorTheme::GetTokens().stopActiveBg;
+			ImGui::PushStyleColor( ImGuiCol_Button, stopColor );
+			ImGui::PushStyleColor( ImGuiCol_ButtonHovered, stopColor );
+			ImGui::PushStyleColor( ImGuiCol_ButtonActive, stopColor );
 		}
 
 		if ( ImGui::ImageButton( "##StopButton",
@@ -167,8 +173,8 @@ namespace otterus_editor {
 			UnloadScene();
 		}
 
-		if ( ImGui::GetColorStackSize() > 0 )
-			ImGui::PopStyleColor( ImGui::GetColorStackSize() );
+		if ( pushedStopStyle )
+			ImGui::PopStyleColor( 3 );
 
 		if ( ImGui::IsItemHovered( ImGuiHoveredFlags_DelayNormal ) )
 			ImGui::SetTooltip( "Stop Scene" );
@@ -181,24 +187,15 @@ namespace otterus_editor {
 
 			if ( ImGui::BeginPopup( "SceneLightingPopup" ) )
 			{
-				auto& runtimeRegistry = currentScene->GetRuntimeRegistry();
-				auto& lighting = ( m_SceneLoaded && m_PlayScene && runtimeRegistry.GetRegistry().ctx().contains<std::shared_ptr<SceneLighting>>() )
-					? *runtimeRegistry.GetContext<std::shared_ptr<SceneLighting>>()
-					: currentScene->GetLighting();
-				ImGui::Checkbox( "Enable Lighting", &lighting.enabled );
-				float col[4] = {
-					lighting.ambientColor.r / 255.f,
-					lighting.ambientColor.g / 255.f,
-					lighting.ambientColor.b / 255.f,
-					lighting.ambientColor.a / 255.f
-				};
-				if ( ImGui::ColorEdit4( "Ambient Color", col ) )
-				{
-					lighting.ambientColor.r = static_cast<GLubyte>( col[0] * 255.f );
-					lighting.ambientColor.g = static_cast<GLubyte>( col[1] * 255.f );
-					lighting.ambientColor.b = static_cast<GLubyte>( col[2] * 255.f );
-					lighting.ambientColor.a = static_cast<GLubyte>( col[3] * 255.f );
-				}
+				auto* runtimeLighting = ( m_SceneLoaded && m_PlayScene ) ? currentScene->GetRuntimeLighting() : nullptr;
+				auto& lighting = runtimeLighting ? *runtimeLighting : currentScene->GetLighting();
+
+				otterus_editor::ui::ToggleSwitch( "Enable Lighting", &lighting.enabled );
+				otterus_editor::ui::ColorEdit4U8( "Ambient Color",
+					lighting.ambientColor.r,
+					lighting.ambientColor.g,
+					lighting.ambientColor.b,
+					lighting.ambientColor.a );
 				ImGui::EndPopup();
 			}
 		}
@@ -270,9 +267,8 @@ namespace otterus_editor {
 		{
 			auto& runtimeRegistry = currentScene->GetRuntimeRegistry();
 			auto& camera = runtimeRegistry.GetContext<std::shared_ptr<Camera2D>>();
-			const bool lightingEnabled = runtimeRegistry.GetRegistry().ctx().contains<std::shared_ptr<SceneLighting>>()
-				? runtimeRegistry.GetContext<std::shared_ptr<SceneLighting>>()->enabled
-				: currentScene->GetLighting().enabled;
+			const auto* runtimeLighting = currentScene->GetRuntimeLighting();
+			const bool lightingEnabled = runtimeLighting ? runtimeLighting->enabled : currentScene->GetLighting().enabled;
 
 			if ( lightingEnabled )
 				lightingSystem->BeginScenePass( fb->GetWidth(), fb->GetHeight() );

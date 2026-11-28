@@ -59,6 +59,7 @@
 
 #include "editor/utilities/editor_textures.h"
 #include "editor/utilities/EditorFrameBuffer.h"
+#include "editor/utilities/EditorTheme.h"
 #include "editor/systems/GridSystem.h"
 #include "editor/scene/SceneManager.h"
 
@@ -131,6 +132,8 @@ namespace otterus_editor {
 			std::cout << "Failed to create widow.\n" << std::endl;
 			return false;
 		}
+
+		SetWindowIcon();
 
 
 		// Create OPENGL CONTEXT
@@ -311,44 +314,57 @@ namespace otterus_editor {
         return true;
     }
 
-    bool Application::LoadEditorTextures() {
-    	auto& registry = MAIN_REGISTRY();
-    	auto& assetManager = registry.GetAssetManager();
+    void Application::SetWindowIcon()
+    {
+        int width{ 0 }, height{ 0 }, channels{ 0 };
+        unsigned char* pixels = SOIL_load_image_from_memory(
+            otterus_app_icon,
+            static_cast<int>(otterus_app_icon_size),
+            &width,
+            &height,
+            &channels,
+            SOIL_LOAD_RGBA
+        );
+        if (!pixels)
+            return;
 
-    	if ( !assetManager.AddTextureFromMemory(
-				 "play_button", play_button, sizeof( play_button ) / sizeof( play_button[ 0 ] ) ) )
-    	{
-    		OTTERUS_ERROR( "Failed to load texture [play_button] from memory." );
-    		return false;
-    	}
-    	assetManager.GetTexture( "play_button" )->SetIsEditorTexture( true );
-    	if ( !assetManager.AddTextureFromMemory(
-				 "stop_button", stop_button, sizeof( stop_button ) / sizeof( stop_button[ 0 ] ) ) )
-    	{
-    		OTTERUS_ERROR( "Failed to load texture [stop_button] from memory." );
-    		return false;
-    	}
-    	assetManager.GetTexture( "stop_button" )->SetIsEditorTexture( true );
+        if (SDL_Surface* surface = SDL_CreateRGBSurfaceWithFormatFrom(
+                pixels, width, height, 32, width * 4, SDL_PIXELFORMAT_RGBA32))
+        {
+            SDL_SetWindowIcon(m_window->GetWindow().get(), surface);
+            SDL_FreeSurface(surface);
+        }
+        SOIL_free_image_data(pixels);
+    }
 
-    	if ( !assetManager.AddTextureFromMemory(
-				 "music_icon", music_icon, sizeof( music_icon ) / sizeof( music_icon[ 0 ] ) ) )
-    	{
-    		OTTERUS_ERROR( "Failed to load texture [music_icon] from memory." );
-    		return false;
-    	}
+    bool Application::LoadEditorTextures()
+    {
+        struct EmbeddedTexture
+        {
+            const char* name;
+            const unsigned char* data;
+            size_t size;
+        };
 
-    	assetManager.GetTexture( "music_icon" )->SetIsEditorTexture( true );
+        const EmbeddedTexture textures[] = {
+            { "play_button", play_button, sizeof(play_button) },
+            { "stop_button", stop_button, sizeof(stop_button) },
+            { "music_icon",  music_icon,  sizeof(music_icon) },
+            { "scene_icon",  scene_icon,  sizeof(scene_icon) },
+        };
 
-    	if ( !assetManager.AddTextureFromMemory(
-				 "scene_icon", scene_icon, sizeof( scene_icon ) / sizeof( scene_icon[ 0 ] ) ) )
-    	{
-    		OTTERUS_ERROR( "Failed to load texture [scene_icon] from memory." );
-    		return false;
-    	}
+        auto& assetManager = MAIN_REGISTRY().GetAssetManager();
+        for (const auto& tex : textures)
+        {
+            if (!assetManager.AddTextureFromMemory(tex.name, tex.data, tex.size))
+            {
+                OTTERUS_ERROR("Failed to load texture [{}] from memory.", tex.name);
+                return false;
+            }
+            assetManager.GetTexture(tex.name)->SetIsEditorTexture(true);
+        }
 
-    	assetManager.GetTexture( "scene_icon" )->SetIsEditorTexture( true );
-
-    	return true;
+        return true;
     }
 
     void Application::ProcessEvents()
@@ -531,6 +547,9 @@ namespace otterus_editor {
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 		io.ConfigWindowsMoveFromTitleBarOnly = true;
+
+		EditorTheme::ConfigureFonts(io);
+		EditorTheme::Apply();
 
 		if (!ImGui_ImplSDL2_InitForOpenGL(
 			m_window->GetWindow().get(),

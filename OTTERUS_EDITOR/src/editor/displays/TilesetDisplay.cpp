@@ -9,6 +9,7 @@
 
 #include "editor/tools/TileTool.h"
 #include "editor/tools/ToolManager.h"
+#include "editor/utilities/EditorTheme.h"
 
 namespace otterus_editor {
     void TilesetDisplay::Draw() {
@@ -30,6 +31,10 @@ namespace otterus_editor {
                 bool isSelected = m_Tileset == tileset;
                 if (ImGui::Selectable(tileset.c_str(), isSelected))
                 {
+                    if (m_Tileset != tileset)
+                    {
+                        m_Selected = -1;
+                    }
                     m_Tileset = tileset;
                     SCENE_MANAGER().SetCurrentTileset(m_Tileset);
                 }
@@ -79,7 +84,7 @@ namespace otterus_editor {
 
                     if (m_Selected == id) {
                         ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(
-                            ImVec4{ 0.f, 0.9f, 0.f, 0.3f }));
+                            EditorTheme::GetTokens().selectionBg));
                     }
 
                     // Normalized UVs [0.0, 1.0] for this specific tile

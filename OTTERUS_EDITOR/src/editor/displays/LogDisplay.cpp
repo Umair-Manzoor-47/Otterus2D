@@ -1,11 +1,21 @@
 #include "LogDisplay.h"
+#include "editor/utilities/EditorTheme.h"
+#include "editor/utilities/ImGuiUtils.h"
 #include <Logger/Logger.h>
+#include <algorithm>
 #include <ranges>
 #include <fmt/format.h>
 
 #include "imgui_internal.h"
 
 namespace otterus_editor {
+
+	namespace
+	{
+		constexpr float kSplitterHeight = 6.0f;
+		constexpr float kMinDetailsHeight = 56.0f;
+		constexpr float kMinLogListHeight = 80.0f;
+	}
 
 	LogDisplay::LogDisplay()
 		: m_AutoScroll{ true }
@@ -80,13 +90,14 @@ namespace otterus_editor {
 			ImGui::SetClipboardText(allLogs.c_str());
 		}
 		ImGui::SameLine();
-		ImGui::Checkbox("Auto-scroll", &m_AutoScroll);
+		ui::ToggleSwitch("Auto-scroll", &m_AutoScroll);
 
-		auto FilterButton = [this](const char* label, bool& state, const ImVec4& activeColor) {
+		const auto& tokens = EditorTheme::GetTokens();
+		auto FilterButton = [this, &tokens](const char* label, bool& state, const ImVec4& activeColor) {
 			if (state)
 				ImGui::PushStyleColor(ImGuiCol_Button, activeColor);
 			else
-				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+				ImGui::PushStyleColor(ImGuiCol_Text, tokens.mutedText);
 
 			if (ImGui::Button(label))
 			{
@@ -97,11 +108,11 @@ namespace otterus_editor {
 		};
 
 		ImGui::SameLine();
-		FilterButton(fmt::format("Info ({0})###filter_info", m_InfoCount).c_str(), m_ShowInfo, ImVec4(0.2f, 0.5f, 0.2f, 1.f));
+		FilterButton(fmt::format("Info ({0})###filter_info", m_InfoCount).c_str(), m_ShowInfo, tokens.filterInfoActiveBg);
 		ImGui::SameLine();
-		FilterButton(fmt::format("Warn ({0})###filter_warn", m_WarnCount).c_str(), m_ShowWarn, ImVec4(0.6f, 0.5f, 0.1f, 1.f));
+		FilterButton(fmt::format("Warn ({0})###filter_warn", m_WarnCount).c_str(), m_ShowWarn, tokens.filterWarnActiveBg);
 		ImGui::SameLine();
-		FilterButton(fmt::format("Error ({0})###filter_err", m_ErrorCount).c_str(), m_ShowError, ImVec4(0.6f, 0.2f, 0.2f, 1.f));
+		FilterButton(fmt::format("Error ({0})###filter_err", m_ErrorCount).c_str(), m_ShowError, tokens.filterErrorActiveBg);
 
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(200.0f);
@@ -129,6 +140,7 @@ namespace otterus_editor {
 	{
 		ImGui::BeginChild("LogList", ImVec2{ 0.f, -reservedHeight }, false, ImGuiWindowFlags_HorizontalScrollbar);
 
+		const auto& tokens = EditorTheme::GetTokens();
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0.f, 2.f });
 		ImGuiListClipper clipper;
 		clipper.Begin(static_cast<int>(m_FilteredIndices.size()));
@@ -139,20 +151,20 @@ namespace otterus_editor {
 				int logIndex = m_FilteredIndices[i];
 				const auto& entry = m_Logs[logIndex];
 
-				ImVec4 color{ 1.f, 1.f, 1.f, 1.f };
+				ImVec4 color = tokens.infoColor;
 				const char* typeTag = "[INFO]";
 				switch (entry.type)
 				{
 				case otterus_logger::LogType::INFO:
-					color = ImVec4{ 0.2f, 1.0f, 0.4f, 1.f };
+					color = tokens.infoColor;
 					typeTag = "[INFO]";
 					break;
 				case otterus_logger::LogType::WARN:
-					color = ImVec4{ 1.0f, 0.85f, 0.2f, 1.f };
+					color = tokens.warnColor;
 					typeTag = "[WARN]";
 					break;
 				case otterus_logger::LogType::ERR:
-					color = ImVec4{ 1.0f, 0.3f, 0.3f, 1.f };
+					color = tokens.errorColor;
 					typeTag = "[ERROR]";
 					break;
 				default:
@@ -228,7 +240,7 @@ namespace otterus_editor {
 			if (!selected.stackTrace.empty())
 			{
 				ImGui::Spacing();
-				ImGui::TextColored(ImVec4{ 1.0f, 0.35f, 0.35f, 1.0f }, "Stack Trace:");
+				ImGui::TextColored(EditorTheme::GetTokens().errorColor, "Stack Trace:");
 				ImGui::Separator();
 				ImGui::TextUnformatted(selected.stackTrace.c_str());
 			}
@@ -239,6 +251,29 @@ namespace otterus_editor {
 		}
 
 		ImGui::EndChild();
+	}
+
+	void LogDisplay::DrawDetailsSplitter(float availHeight)
+	{
+		const float maxDetailsHeight = std::max(kMinDetailsHeight, availHeight - kMinLogListHeight);
+
+		ImGui::InvisibleButton("##LogDetailsSplitter", ImVec2{ -1.0f, kSplitterHeight });
+		const bool hovered = ImGui::IsItemHovered();
+		const bool active = ImGui::IsItemActive();
+		if (hovered || active)
+		{
+			ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNS);
+		}
+		if (active)
+		{
+			m_DetailsHeight = std::clamp(m_DetailsHeight - ImGui::GetIO().MouseDelta.y, kMinDetailsHeight, maxDetailsHeight);
+		}
+
+		const ImVec2 sMin = ImGui::GetItemRectMin();
+		const ImVec2 sMax = ImGui::GetItemRectMax();
+		const float lineY = (sMin.y + sMax.y) * 0.5f;
+		const ImU32 sepCol = ImGui::GetColorU32((hovered || active) ? ImGuiCol_SeparatorHovered : ImGuiCol_Separator);
+		ImGui::GetWindowDrawList()->AddLine(ImVec2{ sMin.x, lineY }, ImVec2{ sMax.x, lineY }, sepCol, 1.5f);
 	}
 
 	void LogDisplay::Draw()
@@ -252,8 +287,13 @@ namespace otterus_editor {
 		GetLogs();
 		DrawToolbar();
 		ImGui::Separator();
-		DrawLogList(150.0f);
-		ImGui::Separator();
+
+		const float availHeight = ImGui::GetContentRegionAvail().y;
+		const float maxDetailsHeight = std::max(kMinDetailsHeight, availHeight - kMinLogListHeight);
+		m_DetailsHeight = std::clamp(m_DetailsHeight, kMinDetailsHeight, maxDetailsHeight);
+
+		DrawLogList(m_DetailsHeight + kSplitterHeight + ImGui::GetStyle().ItemSpacing.y * 2.0f);
+		DrawDetailsSplitter(availHeight);
 		DrawDetailsPane();
 
 		ImGui::End();

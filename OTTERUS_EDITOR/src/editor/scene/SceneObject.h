@@ -28,6 +28,7 @@ namespace otterus_editor
         inline Canvas& GetCanvas(){ return m_Canvas; }
         inline otterus_rendering::SceneLighting& GetLighting() { return m_Lighting; }
         inline const otterus_rendering::SceneLighting& GetLighting() const { return m_Lighting; }
+        otterus_rendering::SceneLighting* GetRuntimeLighting();
         inline const std::string& GetName() { return m_SceneName; }
         inline void SetName( const std::string& sceneName ) { m_SceneName = sceneName; }
         inline otterus_core::ECS::Registry& GetRegistry() { return m_Registry; }
