@@ -109,7 +109,7 @@ namespace otterus_core::ECS
 
 		serializer.StartNewObject( "physics" )
 			.StartNewObject( "attributes" )
-			.AddKeyValuePair( "type", GetRigidBodyTypeString( attributes.type ) )
+			.AddKeyValuePair( "type", otterus_physics::GetRigidBodyTypeString( attributes.type ) )
 			.AddKeyValuePair( "density", attributes.density )
 			.AddKeyValuePair( "friction", attributes.friction )
 			.AddKeyValuePair( "restitution", attributes.restitution )

@@ -1,11 +1,14 @@
 ﻿#pragma once
+#include <cstdint>
+#include <string>
+#include <map>
 
 namespace otterus_physics
 {
 	enum class RigidBodyType {
-		STATIC = 0,
-		KINEMATIC,
-		DYNAMIC
+		STATIC = 0, // zero mass, zero velocity, may be manually moved
+		KINEMATIC,  // zero mass, velocity set by user, moved by solver
+		DYNAMIC     // positive mass, velocity determined by forces, moved by solver
 	};
 
 /*
@@ -36,5 +39,17 @@ enum class FilterCategory : std::uint16_t
 	CATEGORY_14 = 1 << 14,
 	CATEGORY_15 = 1 << 15
 };
+
+std::string GetFilterCategoryString(FilterCategory eCat);
+
+FilterCategory GetFilterCategoryByString(const std::string& sCat);
+
+bool AddCustomFilterCategoryType(const std::string& sNewFilterCatType, std::string& sErrorStr);
+	
+const std::map<FilterCategory, std::string> GetFilterCategoryToStringMap();
+
+std::string GetRigidBodyTypeString(RigidBodyType eRigidType);
+RigidBodyType GetRigidBodyTypeByString(const std::string sRigidType);
+const std::map<RigidBodyType, std::string>& GetRigidBodyStringMap();
 
 }

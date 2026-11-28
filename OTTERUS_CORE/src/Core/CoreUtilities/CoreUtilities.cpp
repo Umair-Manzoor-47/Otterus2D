@@ -1,18 +1,6 @@
 ﻿#include "CoreUtilities.h"
 #include "Core/ECS/Components/AllComponents.h"
 
-
-static const std::unordered_map<std::string, otterus_physics::RigidBodyType> StringToRigidBodyType{
-	    { "static", otterus_physics::RigidBodyType::STATIC },
-        { "kinematic", otterus_physics::RigidBodyType::KINEMATIC },
-        { "dynamic", otterus_physics::RigidBodyType::DYNAMIC } };
-
-static const std::unordered_map<otterus_physics::RigidBodyType, std::string> RigidBodyTypeToString{
-	    { otterus_physics::RigidBodyType::STATIC, "static" },
-        { otterus_physics::RigidBodyType::KINEMATIC, "kinematic" },
-        { otterus_physics::RigidBodyType::DYNAMIC, "dynamic" } };
-
-
 namespace otterus_core
 {
     bool EntityInView( const ECS::TransformComponent& transform, float width, float height,
@@ -60,24 +48,6 @@ namespace otterus_core
         }
 
         return model;
-    }
-
-    std::string GetRigidBodyTypeString( otterus_physics::RigidBodyType eRigidType )
-    {
-        auto rigidItr = RigidBodyTypeToString.find( eRigidType );
-        if ( rigidItr == RigidBodyTypeToString.end() )
-            return {};
-
-        return rigidItr->second;
-    }
-
-    otterus_physics::RigidBodyType GetRigidBodyTypeByString( const std::string sRigidType )
-    {
-        auto rigidItr = StringToRigidBodyType.find( sRigidType );
-        if ( rigidItr == StringToRigidBodyType.end() )
-            return otterus_physics::RigidBodyType::STATIC;
-
-        return rigidItr->second;
     }
 
     void GenerateUVs( ECS::SpriteComponent& sprite, int textureWidth, int textureHeight )

@@ -32,7 +32,7 @@ namespace otterus_sounds {
 		}
 	}
 
-	void SoundFxPlayer::SetVolume(int channel, int volume)
+	void SoundFxPlayer::SetVolume(int volume, int channel)
 	{
 		if (volume < 0 || volume > 100)
 		{

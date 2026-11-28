@@ -6,11 +6,28 @@
 #include "Logger/Logger.h"
 #include "editor/utilities/EditorUtilities.h"
 #include "editor/utilities/ImGuiUtils.h"
+#include "Physics/PhysicsUtilities.h"
 
 #include <algorithm>
 #include <cstring>
 
+using namespace otterus_utils;
+using namespace otterus_physics;
 using namespace otterus_core::ECS;
+
+namespace
+{
+	const char* GetPhysicsBodyDescription( RigidBodyType eType )
+	{
+		switch ( eType )
+		{
+		case RigidBodyType::STATIC: return "zero mass, zero velocity, may be manually moved";
+		case RigidBodyType::KINEMATIC: return "zero mass, velocity set by user, moved by solver";
+		case RigidBodyType::DYNAMIC: return "positive mass, velocity determined by forces, moved by solver";
+		default: return "";
+		}
+	}
+}
 
 namespace otterus_editor
 {
@@ -178,6 +195,7 @@ void DrawComponentUtils::DrawImGuiComponent( CircleColliderComponent& circleColl
 		{
 			ui::PropertyLabel( "Radius" );
 			ImGui::DragFloat( "##radius", &circleCollider.radius, 0.5f, 4.f, 1366.f, "%.1f", ImGuiSliderFlags_AlwaysClamp );
+			ImGui::SetItemTooltip( "The radius of the circle component. This is clamped to [4 : 1366]" );
 
 			ui::PropertyLabel( "Offset" );
 			ui::DragFloat2Axis( "##Offset", &circleCollider.offset.x, &circleCollider.offset.y, 0.5f, 0.f, 128.f, "%.1f" );
@@ -193,7 +211,185 @@ void DrawComponentUtils::DrawImGuiComponent( PhysicsComponent& physics )
 	ImGui::PushID( entt::type_hash<PhysicsComponent>::value() );
 	if ( ui::ComponentSectionHeader( "Physics 2D" ) )
 	{
-		ImGui::TextDisabled( "No configurable properties." );
+		PhysicsAttributes& physicsAttributes = physics.GetChangableAttributes();
+
+		if ( ui::BeginPropertyTable( "##PhysicsProps" ) )
+		{
+			std::string sSelectedBodyType = GetRigidBodyTypeString( physicsAttributes.type );
+			ui::PropertyLabel( "Body Type" );
+			if ( ImGui::BeginCombo( "##body_type", sSelectedBodyType.c_str() ) )
+			{
+				for ( const auto& [ eBodyType, sBodyStr ] : GetRigidBodyStringMap() )
+				{
+					if ( ImGui::Selectable( sBodyStr.c_str(), sBodyStr == sSelectedBodyType ) )
+					{
+						physicsAttributes.type = eBodyType;
+					}
+					ImGui::SetItemTooltip( "%s", GetPhysicsBodyDescription( eBodyType ) );
+				}
+				ImGui::EndCombo();
+			}
+			ImGui::SetItemTooltip( "The body type: static, kinematic, or dynamic." );
+
+			std::string sSelectedCategoryType =
+				GetFilterCategoryString( static_cast<FilterCategory>( physicsAttributes.filterCategory ) );
+			ui::PropertyLabel( "Category Type" );
+			if ( ImGui::BeginCombo( "##category_type", sSelectedCategoryType.c_str() ) )
+			{
+				for ( const auto& [ eCategoryType, sCategoryStr ] : GetFilterCategoryToStringMap() )
+				{
+					if ( ImGui::Selectable( sCategoryStr.c_str(), sCategoryStr == sSelectedCategoryType ) )
+					{
+						physicsAttributes.filterCategory = static_cast<uint16_t>( eCategoryType );
+					}
+				}
+				ImGui::EndCombo();
+			}
+			ImGui::SetItemTooltip( "The collision category bits. Bodies will usually only use one category type." );
+
+			static std::string sSelectedMaskBit{ "" };
+			static FilterCategory eMaskCategory{ FilterCategory::NO_CATEGORY };
+			ui::PropertyLabel( "Masks" );
+			if ( ImGui::BeginCombo( "##mask_bits", sSelectedMaskBit.c_str() ) )
+			{
+				for ( const auto& [ eCategoryType, sCategoryStr ] : GetFilterCategoryToStringMap() )
+				{
+					if ( ImGui::Selectable( sCategoryStr.c_str(), sCategoryStr == sSelectedMaskBit ) )
+					{
+						sSelectedMaskBit = sCategoryStr;
+						eMaskCategory = eCategoryType;
+					}
+				}
+				ImGui::EndCombo();
+			}
+			ImGui::SetItemTooltip(
+				"The collision mask bits. This states the categories that this shape would accept for collision." );
+
+			if ( !sSelectedMaskBit.empty() && eMaskCategory != FilterCategory::NO_CATEGORY )
+			{
+				ui::PropertyLabel( "" );
+				if ( ImGui::Button( "Apply Mask" ) )
+				{
+					uint16_t filterCat = static_cast<uint16_t>( eMaskCategory );
+					if ( !IsBitSet( physicsAttributes.filterMask, filterCat ) )
+					{
+						physicsAttributes.filterMask += filterCat;
+						eMaskCategory = FilterCategory::NO_CATEGORY;
+						sSelectedMaskBit.clear();
+					}
+					else
+					{
+						OTTERUS_ERROR( "Masks already contain [{}]", sSelectedMaskBit );
+					}
+				}
+			}
+
+			if ( physicsAttributes.filterMask > 0 )
+			{
+				ui::PropertyLabel( "Applied Masks" );
+				if ( ImGui::BeginListBox( "##applied_masks", ImVec2{ -FLT_MIN, 48.f } ) )
+				{
+					auto setMaskBits{ GetAllSetBits( physicsAttributes.filterMask ) };
+					for ( auto mask : setMaskBits )
+					{
+						ImGui::Selectable(
+							GetFilterCategoryString( static_cast<FilterCategory>( Bit( mask ) ) ).c_str() );
+					}
+					ImGui::EndListBox();
+				}
+
+				ui::PropertyLabel( "" );
+				if ( ImGui::Button( "Clear Masks" ) )
+				{
+					physicsAttributes.filterMask = 0;
+					eMaskCategory = FilterCategory::NO_CATEGORY;
+					sSelectedMaskBit.clear();
+				}
+			}
+
+			ui::PropertyLabel( "Density" );
+			ImGui::InputFloat( "##density", &physicsAttributes.density, 1.f, 1.f, "%.1f" );
+			ImGui::SetItemTooltip( "The density, usually in kg/m^2." );
+
+			ui::PropertyLabel( "Friction" );
+			if ( ImGui::InputFloat( "##friction", &physicsAttributes.friction, 0.1f, 0.1f, "%.1f" ) )
+			{
+				physicsAttributes.friction = std::clamp( physicsAttributes.friction, 0.f, 1.f );
+			}
+			ImGui::SetItemTooltip( "The Coulomb (dry) friction coefficient, usually in the range [0,1]." );
+
+			ui::PropertyLabel( "Restitution" );
+			if ( ImGui::InputFloat( "##restitution", &physicsAttributes.restitution, 0.1f, 0.1f, "%.1f" ) )
+			{
+				physicsAttributes.restitution = std::clamp( physicsAttributes.restitution, 0.f, 1.f );
+			}
+			ImGui::SetItemTooltip( "The restitution (bounce) usually in the range [0,1]." );
+
+			ui::PropertyLabel( "Gravity Scale" );
+			ImGui::InputFloat( "##gravityScale", &physicsAttributes.gravityScale, 1.f, 1.f, "%.1f" );
+			ImGui::SetItemTooltip( "Scale the gravity applied to this body. Non-dimensional." );
+
+			ui::PropertyLabel( "Box Shape" );
+			if ( ui::ToggleSwitch( "##boxShape", &physicsAttributes.boxShape ) )
+			{
+				if ( physicsAttributes.circle )
+					physicsAttributes.circle = false;
+			}
+			ImGui::SetItemTooltip( "If the entity is a box, the box collider is used in construction for the size." );
+
+			if ( physicsAttributes.boxShape && !physicsAttributes.circle )
+			{
+				ui::PropertyLabel( "" );
+				ImGui::TextColored( ImVec4{ 1.f, 1.f, 0.f, 1.f }, "Must have a Box Collider Component." );
+			}
+
+			ui::PropertyLabel( "Circle Shape" );
+			if ( ui::ToggleSwitch( "##circle", &physicsAttributes.circle ) )
+			{
+				if ( physicsAttributes.boxShape )
+					physicsAttributes.boxShape = false;
+			}
+			ImGui::SetItemTooltip(
+				"If the entity is a circle, the circle collider is used in construction for the size." );
+
+			if ( !physicsAttributes.boxShape && physicsAttributes.circle )
+			{
+				ui::PropertyLabel( "" );
+				ImGui::TextColored( ImVec4{ 1.f, 1.f, 0.f, 1.f }, "Must have a Circle Collider Component." );
+			}
+
+			ui::PropertyLabel( "Fixed Rotation" );
+			ui::ToggleSwitch( "##fixedRotation", &physicsAttributes.fixedRotation );
+			ImGui::SetItemTooltip( "Should the body be prevented from rotating?" );
+
+			ui::PropertyLabel( "Sensor" );
+			ui::ToggleSwitch( "##sensor", &physicsAttributes.isSensor );
+			ImGui::SetItemTooltip(
+				"A sensor shape generates overlap events but never generates a collision response.\n"
+				"Sensors do not collide with other sensors and do not have continuous collision." );
+
+			ui::EndPropertyTable();
+		}
+
+		ImGui::SeparatorText( "Physics Object Data" );
+		if ( ui::BeginPropertyTable( "##PhysicsObjectDataProps" ) )
+		{
+			auto& objectData = physicsAttributes.objectData;
+
+			DrawTextProperty( "Tag", "##_tag", objectData.tag );
+			DrawTextProperty( "Group", "##_group", objectData.group );
+
+			ui::PropertyLabel( "Collider" );
+			ui::ToggleSwitch( "##objectDataCollider", &objectData.isCollider );
+
+			ui::PropertyLabel( "Trigger" );
+			ui::ToggleSwitch( "##objectDataTrigger", &objectData.isTrigger );
+
+			ui::PropertyLabel( "Friendly" );
+			ui::ToggleSwitch( "##objectDataFriendly", &objectData.isFriendly );
+
+			ui::EndPropertyTable();
+		}
 	}
 	ImGui::PopID();
 }

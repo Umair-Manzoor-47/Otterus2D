@@ -323,57 +323,52 @@ namespace otterus_core::Systems {
 	}
 	void ScriptingSystem::RegisterLuaFunctions(sol::state& lua, Registry& registry)
 	{
-		lua.set_function(
-			"run_script", [&](const std::string& path) {
-			
-				try {
-				
-					lua.safe_script_file(path);
-				}
-				catch (const sol::error& error) {
-				
-					OTTERUS_ERROR("Error loading lua script file: {}", error.what());
-					return false;
-				
-				}
-				return true;
+		auto runScriptFn = [&](const std::string& path) {
+			try {
+				lua.safe_script_file(path);
 			}
-		);
+			catch (const sol::error& error) {
+				OTTERUS_ERROR("Error loading lua script file: {}", error.what());
+				return false;
+			}
+			return true;
+		};
+		lua.set_function("O2D_RunScript", runScriptFn);
+		lua.set_function("run_script", runScriptFn);
 
-		lua.set_function(
-			"O2D_load_script_table", [&](const sol::table& scriptList)
+		auto loadScriptTableFn = [&](const sol::table& scriptList) {
+			if (!scriptList.valid())
 			{
-				if (!scriptList.valid())
+				OTTERUS_ERROR("Failed to load script list: Table is invalid.");
+				return;
+			}
+			for (const auto& [index, script] : scriptList)
+			{
+				try
 				{
-					OTTERUS_ERROR("Invalid Load script table.");
-					return;
-				}
-				for (const auto& [index, script] : scriptList)
-				{
-					try
+					auto result = lua.safe_script_file(script.as<std::string>());
+					if (!result.valid())
 					{
-						auto result = lua.safe_script_file(script.as<std::string>());
-						if (!result.valid())
-						{
-							sol::error err = result;
-							throw err;
-						}
-					} catch (const sol::error& e)
-					{
-						OTTERUS_ERROR("Failed to load script [{}], Error: {}", script.as<std::string>(), e.what());
-						return;
+						sol::error err = result;
+						throw err;
 					}
 				}
+				catch (const sol::error& e)
+				{
+					OTTERUS_ERROR("Failed to load script [{}], Error: {}", script.as<std::string>(), e.what());
+					return;
+				}
 			}
-		);
+		};
+		lua.set_function("O2D_LoadScriptTable", loadScriptTableFn);
+		lua.set_function("O2D_load_script_table", loadScriptTableFn);
 
-		lua.set_function("get_ticks", [] {
-			return SDL_GetTicks();
-			}
-		);
+		auto getTicksFn = [] { return SDL_GetTicks(); };
+		lua.set_function("O2D_GetTicks", getTicksFn);
+		lua.set_function("get_ticks", getTicksFn);
 
 		auto& assetManager = MAIN_REGISTRY().GetAssetManager();
-		lua.set_function("measure_text", [&](const std::string& text, const std::string& fontName) {
+		auto measureTextFn = [&](const std::string& text, const std::string& fontName) {
 			const auto& pFont = assetManager.GetFont(fontName);
 			if (!pFont)
 			{
@@ -386,30 +381,46 @@ namespace otterus_core::Systems {
 				pFont->GetNextCharPos(character, temp_pos);
 
 			return std::abs((position - temp_pos).x);
-			}
-		);
+		};
+		lua.set_function("O2D_MeasureText", measureTextFn);
+		lua.set_function("measure_text", measureTextFn);
 
 		auto& engine = CoreEngineData::GetInstance();
+		lua.set_function("O2D_DeltaTime", [&] { return engine.GetDeltaTime(); });
+		lua.set_function("O2D_WindowWidth", [&] { return engine.WindowWidth(); });
+		lua.set_function("O2D_WindowHeight", [&] { return engine.WindowHeight(); });
 		lua.set_function("GetDeltaTime", [&] { return engine.GetDeltaTime(); });
 		lua.set_function("WindowWidth", [&] { return engine.WindowWidth(); });
 		lua.set_function("WindowHeight", [&] { return engine.WindowHeight(); });
 
 		// Physics Enable functions
+		lua.set_function("O2D_DisablePhysics", [&] { engine.DisablePhysics(); });
+		lua.set_function("O2D_EnablePhysics", [&] { engine.EnablePhysics(); });
+		lua.set_function("O2D_IsPhysicsEnabled", [&] { return engine.IsPhysicsEnabled(); });
 		lua.set_function("EnablePhysics", [&] { engine.EnablePhysics(); });
 		lua.set_function("DisablePhysics", [&] { engine.DisablePhysics(); });
 		lua.set_function("IsPhysicsEnabled", [&] { return engine.IsPhysicsEnabled(); });
 
 		// Render Collider Enable functions
+		lua.set_function("O2D_DisableCollisionRendering", [&] { engine.DisableColliderRender(); });
+		lua.set_function("O2D_EnableCollisionRendering", [&] { engine.EnableColliderRender(); });
+		lua.set_function("O2D_CollisionRenderingEnabled", [&] { return engine.RenderCollidersEnabled(); });
 		lua.set_function("EnableRenderColliders", [&] { engine.EnableColliderRender(); });
 		lua.set_function("DisableRenderColliders", [&] { engine.DisableColliderRender(); });
-		lua.set_function("IsRenderCollidersEnabled", [&] { engine.RenderCollidersEnabled(); });
+		lua.set_function("IsRenderCollidersEnabled", [&] { return engine.RenderCollidersEnabled(); });
 
-		lua.new_usertype<otterus_utils::RandomGenerator>(
-			"Random",
+		lua.new_usertype<otterus_utils::RandomIntGenerator>(
+			"RandomInt",
 			sol::call_constructor,
-			sol::constructors<otterus_utils::RandomGenerator(uint32_t, uint32_t), otterus_utils::RandomGenerator()>(),
-			"get_float", &otterus_utils::RandomGenerator::GetFloat,
-			"get_int", &otterus_utils::RandomGenerator::GetInt
+			sol::constructors<otterus_utils::RandomIntGenerator(uint32_t, uint32_t), otterus_utils::RandomIntGenerator()>(),
+			"get_value", &otterus_utils::RandomIntGenerator::GetValue
+		);
+
+		lua.new_usertype<otterus_utils::RandomFloatGenerator>(
+			"RandomFloat",
+			sol::call_constructor,
+			sol::constructors<otterus_utils::RandomFloatGenerator(float, float), otterus_utils::RandomFloatGenerator()>(),
+			"get_value", &otterus_utils::RandomFloatGenerator::GetValue
 		);
 	
 	}

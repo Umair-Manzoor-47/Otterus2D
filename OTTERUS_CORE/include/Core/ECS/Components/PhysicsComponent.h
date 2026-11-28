@@ -16,10 +16,18 @@ namespace otterus_core::ECS {
 
 		glm::vec2 position{ 0.f }, scale{ 1.f }, boxSize{ 0.f }, offset{ 0.f };
 		bool circle{ false }, boxShape{ true }, fixedRotation{ true }, isSensor{ false };
+		bool isBullet{ false };
 
-		uint16_t filterCategory{ 0 }, filterMask{ 0 };
+		/*
+		 * Filters - This is used to filter collisions on shapes.
+		 * It affects shape-vs-shape collision and shape-versus-query collision (such as b2World_CastRay).
+		 * See https://box2d.org/documentation/group__shape.html#structb2_filter for more information.
+		 */
+		uint16_t filterCategory{ 0 };
+		uint16_t filterMask{ 0 };
 		int16_t groupIndex{ 0 };
 
+		/* This is the user specified data for each body. */
 		otterus_physics::ObjectData objectData{};
 	};
 
@@ -38,7 +46,11 @@ namespace otterus_core::ECS {
 
 		void Init(otterus_physics::PhysicsWorld physicsWorld, int windowWidth, int windowHeight);
 		b2Body* GetBody() { return m_RigidBody.get(); };
+
+		/* The attributes may have changed.
+		 * we need to make a function that will refill the attributes */
 		const PhysicsAttributes& GetAttributes() const { return m_InitialAttribs; }
+		PhysicsAttributes& GetChangableAttributes() { return m_InitialAttribs; }
 		otterus_physics::UserData* GetUserData() { return m_UserData.get(); };
 		const bool IsSensor() const;
 

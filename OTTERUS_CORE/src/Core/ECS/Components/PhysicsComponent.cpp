@@ -153,8 +153,6 @@ namespace otterus_core::ECS {
 			"isFriendly", &ObjectData::isFriendly,
 			"isCollider", &ObjectData::isCollider,
 			"isTrigger", &ObjectData::isTrigger,
-			"bTrigger", &ObjectData::isTrigger,
-			"bCollider", &ObjectData::isCollider,
 			"contactEntities", &ObjectData::contactEntities,
 			"entityId", &ObjectData::entityId,
 			"entityID", &ObjectData::entityId
@@ -356,7 +354,14 @@ namespace otterus_core::ECS {
 					
 					body->SetTransform(b2Vec2{bx, by}, 0.f);
 				}
-			)
+			),
+			"set_filter_category", [](PhysicsComponent& pc) {
+				auto body = pc.GetBody();
+				if (!body)
+				{
+					return;
+				}
+			}
 		);
 
 	}

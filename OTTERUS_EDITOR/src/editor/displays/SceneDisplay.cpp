@@ -19,6 +19,7 @@
 #include "Core/Systems/LightingSystem.h"
 #include "Core/Systems/RenderSystem.h"
 #include "core/Systems/RenderUISystem.h"
+#include "Core/ECS/Components/AllComponents.h"
 #include "editor/scene/SceneManager.h"
 #include "editor/scene/SceneObject.h"
 #include "editor/utilities/EditorFrameBuffer.h"
@@ -30,6 +31,7 @@
 constexpr float one_over_sixty = 1.f / 60.f;
 using namespace otterus_rendering;
 using namespace otterus_core::Systems;
+using namespace otterus_core::ECS;
 
 namespace otterus_editor {
 
@@ -83,6 +85,51 @@ namespace otterus_editor {
 
 	    ScriptingSystem::RegisterLuaBindings(*lua, runtimeRegistry);
 	    ScriptingSystem::RegisterLuaFunctions(*lua, runtimeRegistry);
+
+	    // We need to initialize all of the physics entities
+	    auto physicsEntities = runtimeRegistry.GetRegistry().view<PhysicsComponent>();
+	    const auto& coreGlobals = otterus_core::CoreEngineData::GetInstance();
+
+	    for (auto entity : physicsEntities)
+	    {
+	        Entity ent{ runtimeRegistry, entity };
+
+	        const bool bBoxCollider{ ent.HasComponent<BoxColliderComponent>() };
+	        const bool bCircleCollider{ ent.HasComponent<CircleColliderComponent>() };
+
+	        if (!bBoxCollider && !bCircleCollider)
+	        {
+	            OTTERUS_ERROR("Entity must have a box or circle collider component to initialize physics on it.");
+	            continue;
+	        }
+
+	        auto& physics = ent.GetComponent<PhysicsComponent>();
+	        auto& physicsAttributes = physics.GetChangableAttributes();
+
+	        if (bBoxCollider)
+	        {
+	            const auto& boxCollider = ent.GetComponent<BoxColliderComponent>();
+	            physicsAttributes.boxSize = glm::vec2{ boxCollider.width, boxCollider.height };
+	            physicsAttributes.offset = boxCollider.offset;
+	        }
+	        else if (bCircleCollider)
+	        {
+	            const auto& circleCollider = ent.GetComponent<CircleColliderComponent>();
+	            physicsAttributes.radius = circleCollider.radius;
+	            physicsAttributes.offset = circleCollider.offset;
+	        }
+
+	        const auto& transform = ent.GetComponent<TransformComponent>();
+	        physicsAttributes.position = transform.position;
+	        physicsAttributes.scale = transform.scale;
+	        physicsAttributes.objectData.entityId = static_cast<std::uint32_t>(entity);
+
+	        /*
+	         * TODO: Set Filters/Masks/Group Index
+	         */
+
+	        physics.Init(physicsWorld, coreGlobals.WindowWidth(), coreGlobals.WindowHeight());
+	    }
 
 	    if (!scriptingSystem->LoadMainScript(*lua, runtimeRegistry)) {
 	        OTTERUS_ERROR("Failed to load the main lua script.");

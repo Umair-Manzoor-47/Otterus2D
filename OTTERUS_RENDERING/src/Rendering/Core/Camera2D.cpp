@@ -4,10 +4,8 @@
 namespace otterus_rendering {
 	void Camera2D::Initialize()
 	{
-		float width = static_cast<float>( m_width );
-		float height = static_cast<float>( m_height );
 		// Init ortho projection
-		m_orthoProjection = glm::ortho( 0.f, width, height, 0.f, 0.f, 1.f );
+		m_orthoProjection = glm::ortho( 0.f, static_cast<float>( m_width ), static_cast<float>( m_height ), 0.f, 0.f, 1.f );
 
 		m_needsUpdate = true;
 		Update();
